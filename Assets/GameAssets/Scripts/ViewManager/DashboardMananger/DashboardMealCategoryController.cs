@@ -35,8 +35,8 @@ public class DashboardMealCategoryController : MonoBehaviour, IPointerClickHandl
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GlobalAnimator.Instance.WobbleObject(gameObject);
-        openExplorerScreen();
+        //GlobalAnimator.Instance.WobbleObject(gameObject);
+        //openExplorerScreen();
     }
 
     public void openExplorerScreen()
