@@ -40,7 +40,6 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
         {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
-
         canvasGroup.alpha = fadeIn ? 0 : 1;
         float targetAlpha = fadeIn ? 1 : 0;
         float duration = 0.25f;
