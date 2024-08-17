@@ -132,9 +132,9 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
         overlayBlocker.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         overlayBlocker.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);
         overlayBlocker.GetComponent<Image>().color = new Color(0, 0, 0, 0); 
-        overlayBlocker.transform.SetAsFirstSibling(); 
-
-        targetPage.transform.position = new Vector3(-Screen.width, targetPage.transform.position.y, targetPage.transform.position.z);
+        overlayBlocker.transform.SetAsFirstSibling();
+        var sidebarScreen = targetPage.transform.Find("sidebarScreen");
+        sidebarScreen.transform.position = new Vector3(-Screen.width, targetPage.transform.position.y, targetPage.transform.position.z);
         targetPage.SetActive(true);
 
         DOTween.Sequence()
@@ -142,7 +142,7 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
             {
                 overlayBlocker.GetComponent<Image>().DOFade(0.7f, 0.4f).SetEase(Ease.Linear);
             })
-            .Append(targetPage.transform.DOMoveX(Screen.width / 2f, 0.4f).SetEase(Ease.OutQuad))
+            .Append(sidebarScreen.transform.DOMoveX(Screen.width / 1f, 0.4f).SetEase(Ease.OutQuad))
             .OnComplete(() =>
             {
             });
@@ -154,13 +154,14 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
         if (overlayBlocker != null && overlayBlocker.GetComponent<Image>() != null)
         {
             currentPage.SetActive(true);
+            var sidebarScreen = currentPage.transform.Find("sidebarScreen");
 
             DOTween.Sequence()
                 .OnStart(() =>
                 {
                     overlayBlocker.SetActive(true);
                 })
-                .Append(currentPage.transform.DOMoveX(-Screen.width, 0.4f).SetEase(Ease.OutQuad))
+                .Append(sidebarScreen.transform.DOMoveX(-Screen.width, 0.4f).SetEase(Ease.OutQuad))
                 .Join(overlayBlocker.GetComponent<Image>().DOFade(0, 0.4f).SetEase(Ease.OutQuad))
                 .OnComplete(() =>
                 {
