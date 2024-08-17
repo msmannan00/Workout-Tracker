@@ -20,6 +20,7 @@ public class StateManager : GenericSingletonClass<StateManager>
 
         var prefabPath = "Prefabs/"+ folderPath + "/" + newPage;
         var prefabResource = Resources.Load<GameObject>(prefabPath);
+        print(prefabResource);
         var prefab = Instantiate(prefabResource);
         var container = GameObject.FindGameObjectWithTag(newPage);
 

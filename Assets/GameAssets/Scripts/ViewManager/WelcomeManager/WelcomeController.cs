@@ -13,11 +13,11 @@ public class WelcomeController : MonoBehaviour, PageController
 
     private string[] mPointerImage = { "pagePointer1", "pagePointer2", "pagePointer3" };
     private string[] mFoodImage = { "welcome1", "welcome2", "welcome3" };
-    private string[] mTitleList = { "Mindful Eating", "Keep a food diary", "Traditional Pakistani Recipes" };
+    private string[] mTitleList = { "Dedication", "Tracking", "Traditional Exploration" };
     private string[] mDescriptionList = {
-        "Practice mindful awareness while eating food",
-        "Track your daily meals and snacks using this app",
-        "Explore authentic and flavorful meals and dishes"
+        "Achieve your fitness goals with mindful workout routines",
+        "Track your progress and performance effortlessly",
+        "Discover challenging and effective workout plans"
     };
 
     public void onInit(Dictionary<string, object> pData)
