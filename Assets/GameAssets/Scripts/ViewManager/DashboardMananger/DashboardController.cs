@@ -20,12 +20,15 @@ public class DashboardController : MonoBehaviour, PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object> { };
         StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData, true);
+        
     }
 
     public void viewPlanDetail()
     {
+        StateManager.Instance.onRemoveBackHistory();
         Dictionary<string, object> mData = new Dictionary<string, object> { };
-        StateManager.Instance.OpenStaticScreen("dailyMeal", gameObject, "dailyMealScreen", mData, true);
+        //StateManager.Instance.OpenStaticScreen("dailyMeal", gameObject, "dailyMealScreen", mData, true);
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true);
     }
 
     public void initFoodCategories()

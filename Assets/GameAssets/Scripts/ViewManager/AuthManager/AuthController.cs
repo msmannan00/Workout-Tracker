@@ -207,7 +207,8 @@ public class AuthController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
 
-            StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
+            //StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
+            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
         else
         {
