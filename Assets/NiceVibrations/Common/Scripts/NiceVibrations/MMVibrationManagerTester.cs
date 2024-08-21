@@ -131,7 +131,7 @@ namespace MoreMountains.NiceVibrations
                 if (AllowRumble)
                 {
                     #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
-                        MMNVRumble.RumbleContinuous(intensity, sharpness);
+                       // MMNVRumble.RumbleContinuous(intensity, sharpness);
                     #endif
                 }
                 yield return null;

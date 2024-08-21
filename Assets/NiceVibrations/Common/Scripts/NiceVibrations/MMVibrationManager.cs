@@ -259,37 +259,37 @@ namespace MoreMountains.NiceVibrations
                         // do nothing
                         break;
                     case HapticTypes.Selection:
-                        MMNVRumble.Rumble(_rumbleLight.x, _rumbleMedium.y, _rumbleLight.z, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_rumbleLight.x, _rumbleMedium.y, _rumbleLight.z, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.Success:
-                        MMNVRumble.Rumble(_successPattern, _successPatternAmplitude, -1, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_successPattern, _successPatternAmplitude, -1, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.Warning:
-                        MMNVRumble.Rumble(_warningPattern, _warningPatternAmplitude, -1, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_warningPattern, _warningPatternAmplitude, -1, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.Failure:
-                        MMNVRumble.Rumble(_failurePattern, _failurePatternAmplitude, -1, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_failurePattern, _failurePatternAmplitude, -1, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.LightImpact:
-                        MMNVRumble.Rumble(_rumbleLight.x, _rumbleLight.y, _rumbleLight.z, coroutineSupport, controllerID);
+                       // MMNVRumble.Rumble(_rumbleLight.x, _rumbleLight.y, _rumbleLight.z, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.MediumImpact:
-                        MMNVRumble.Rumble(_rumbleMedium.x, _rumbleMedium.y, _rumbleMedium.z, coroutineSupport, controllerID);
+                       // MMNVRumble.Rumble(_rumbleMedium.x, _rumbleMedium.y, _rumbleMedium.z, coroutineSupport, controllerID);
                         break;
 
                     case HapticTypes.HeavyImpact:
-                        MMNVRumble.Rumble(_rumbleHeavy.x, _rumbleHeavy.y, _rumbleHeavy.z, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_rumbleHeavy.x, _rumbleHeavy.y, _rumbleHeavy.z, coroutineSupport, controllerID);
                         break;
                     case HapticTypes.RigidImpact:
-                        MMNVRumble.Rumble(_rumbleRigid.x, _rumbleRigid.y, _rumbleRigid.z, coroutineSupport, controllerID);
+                       // MMNVRumble.Rumble(_rumbleRigid.x, _rumbleRigid.y, _rumbleRigid.z, coroutineSupport, controllerID);
                         break;
                     case HapticTypes.SoftImpact:
-                        MMNVRumble.Rumble(_rumbleSoft.x, _rumbleSoft.y, _rumbleSoft.z, coroutineSupport, controllerID);
+                        //MMNVRumble.Rumble(_rumbleSoft.x, _rumbleSoft.y, _rumbleSoft.z, coroutineSupport, controllerID);
                         break;
                 }
                 #endif
@@ -341,7 +341,7 @@ namespace MoreMountains.NiceVibrations
             if (alsoRumble && (coroutineSupport != null))
             {
                 #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
-                    MMNVRumble.Rumble(intensity, sharpness, 0.08f, coroutineSupport, controllerID);
+                   // MMNVRumble.Rumble(intensity, sharpness, 0.08f, coroutineSupport, controllerID);
                 #endif
             }
         }
@@ -382,7 +382,7 @@ namespace MoreMountains.NiceVibrations
             if (alsoRumble && (mono != null))
             {
                 #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
-                    MMNVRumble.RumbleContinuous(intensity, sharpness, controllerID);
+                   // MMNVRumble.RumbleContinuous(intensity, sharpness, controllerID);
                 #endif
             }
         }
@@ -405,7 +405,7 @@ namespace MoreMountains.NiceVibrations
             if (alsoRumble)
             {
                 #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
-                    MMNVRumble.RumbleContinuous(intensity, sharpness, controllerID);
+                    //MMNVRumble.RumbleContinuous(intensity, sharpness, controllerID);
                 #endif
             }
         }
@@ -422,7 +422,7 @@ namespace MoreMountains.NiceVibrations
 			#if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
 				if (alsoRumble)
 				{
-						MMNVRumble.StopRumble();
+						//MMNVRumble.StopRumble();
 				}
 			#endif
 		}
@@ -438,7 +438,7 @@ namespace MoreMountains.NiceVibrations
             #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
                 if (alsoRumble)
                 {
-                    MMNVRumble.StopRumble();
+                   // MMNVRumble.StopRumble();
                 }
             #endif
         }
@@ -482,7 +482,7 @@ namespace MoreMountains.NiceVibrations
             #if MOREMOUNTAINS_NICEVIBRATIONS_RUMBLE
             if (coroutineSupport != null)
             {
-                MMNVRumble.Rumble(rumblePattern, rumbleLowFreqAmplitudes, rumbleHighFreqAmplitudes, rumbleRepeat, coroutineSupport, controllerID);
+               // MMNVRumble.Rumble(rumblePattern, rumbleLowFreqAmplitudes, rumbleHighFreqAmplitudes, rumbleRepeat, coroutineSupport, controllerID);
             }
             #endif
         }

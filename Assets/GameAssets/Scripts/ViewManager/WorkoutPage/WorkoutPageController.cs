@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WorkoutPageController : MonoBehaviour, PageController
 {
@@ -11,7 +12,8 @@ public class WorkoutPageController : MonoBehaviour, PageController
 
     public void EditTemplete()
     {
-
+        Dictionary<string, object> mData = new Dictionary<string, object> { };
+        StateManager.Instance.OpenStaticScreen("editWorkoutTemplete", gameObject, "editWorkoutTempleteScreen", mData, true);
     }
     public void Play()
     {
