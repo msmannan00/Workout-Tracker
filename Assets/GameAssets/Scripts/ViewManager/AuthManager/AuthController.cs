@@ -208,14 +208,16 @@ public class AuthController : MonoBehaviour, PageController
             };
 
             //StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            //StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            StateManager.Instance.OpenStaticScreen("workoutPage", gameObject, "workoutPageScreen", mData);
         }
         else
         {
 
             //GlobalAnimator.Instance.FadeOutLoader();
             Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            //StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            StateManager.Instance.OpenStaticScreen("workoutPage", gameObject, "workoutPageScreen", mData);
             print("2nd time log in");
         }
         userSessionManager.Instance.LoadPlanModel();

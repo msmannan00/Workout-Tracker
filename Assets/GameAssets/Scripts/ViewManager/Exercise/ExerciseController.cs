@@ -12,18 +12,7 @@ public class ExerciseController : MonoBehaviour,PageController
     {
         StateManager.Instance.onRemoveBackHistory();
         Dictionary<string, object> mData = new Dictionary<string, object> { };
-        StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true);
         //Destroy(this.gameObject);
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
