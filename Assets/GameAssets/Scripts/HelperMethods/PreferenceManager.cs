@@ -35,6 +35,10 @@ public class PreferenceManager : GenericSingletonClass<PreferenceManager>
     {
         return PlayerPrefs.GetInt(pKey, pDefaultValue);
     }
+    public void DeleteKey(string key)
+    {
+        PlayerPrefs.DeleteKey(key);
+    }
 
     public void Save()
     {

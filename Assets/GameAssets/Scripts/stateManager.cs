@@ -126,4 +126,15 @@ public class StateManager : GenericSingletonClass<StateManager>
     {
         return inactivePages.Count;
     }
+    public bool checkPageByTag(string tag)
+    {
+        foreach(GameObject page in inactivePages)
+        {
+            if(page.tag == tag)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

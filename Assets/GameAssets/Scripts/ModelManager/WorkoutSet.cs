@@ -8,7 +8,7 @@ public class WorkoutSet : MonoBehaviour
 {
     public TextMeshProUGUI numberText;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         numberText.text = (transform.parent.childCount-1).ToString();
     }

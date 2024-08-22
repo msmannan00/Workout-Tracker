@@ -64,8 +64,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
 --- !u!114 &7914236674558621352
 MonoBehaviour:
@@ -316,6 +316,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exerciseDetailPrefab: {fileID: 9182746951073486356, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
   exerciseParent: {fileID: 8512317227207014287}
+  workoutName: {fileID: 8990147165439802455}
+  exercises: []
 --- !u!1 &1608930112525140402
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +660,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7805685020920245839
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1278,7 +1280,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates: []
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7941518166680062828}
+          m_TargetAssemblyTypeName: EditWorkoutTemplete, Assembly-CSharp
+          m_MethodName: ClosePanel
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &4681599750029623641
 GameObject:
   m_ObjectHideFlags: 0
@@ -1289,6 +1307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 461844089151756249}
   - component: {fileID: 1936485842177784358}
+  - component: {fileID: 8772942676769285536}
   m_Layer: 5
   m_Name: Add Exercise Button
   m_TagString: Untagged
@@ -1311,10 +1330,10 @@ RectTransform:
   - {fileID: 9154146859876806646}
   m_Father: {fileID: 8512317227207014287}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0.5, y: -15}
+  m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1936485842177784358
 MonoBehaviour:
@@ -1336,6 +1355,47 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8772942676769285536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4681599750029623641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7941518166680062828}
+          m_TargetAssemblyTypeName: EditWorkoutTemplete, Assembly-CSharp
+          m_MethodName: AddExerciseButton
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 9205545523621557522}
+          m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+          m_MethodName: WobbleObject
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 4681599750029623641}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &5212028429013527950
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,6 +2093,18 @@ PrefabInstance:
     - target: {fileID: 5314675058952429458, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
       propertyPath: m_SizeDelta.y
       value: 296.274
+      objectReference: {fileID: 0}
+    - target: {fileID: 5314675058952429458, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5314675058952429458, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5314675058952429458, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5314675058952429458, guid: ea3760313dfb25b43849adfaab846e8e, type: 3}
       propertyPath: m_LocalPosition.x

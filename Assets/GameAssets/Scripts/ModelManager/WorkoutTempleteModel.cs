@@ -25,6 +25,7 @@ public class WorkoutTempleteModel : MonoBehaviour
         {
             PreferenceManager.Instance.SetString("TempleteName", templeteNameText.text);
         }
+        templeteNameText.text = PreferenceManager.Instance.GetString("TempleteName");
         if (!PreferenceManager.Instance.HasKey("Exercises"))
         {
             PreferenceManager.Instance.SetInt("Exercises", totalExercises);
@@ -39,23 +40,17 @@ public class WorkoutTempleteModel : MonoBehaviour
             {
                 PreferenceManager.Instance.SetInt("Exercise" + i + "set", sets[i].sets);
             }
+            if (!PreferenceManager.Instance.HasKey("Exercise" + i + "note"))
+            {
+                PreferenceManager.Instance.SetString("Exercise" + i + "note", "");
+            }
         }
-        for(int i = 0; i < totalExercises; ++i)
+        totalExercises= PreferenceManager.Instance.GetInt("Exercises");
+        for (int i = 0; i < totalExercises; ++i)
         {
             GameObject obj = Instantiate(exercisePrefab, this.transform);
             obj.GetComponent<Text>().text= PreferenceManager.Instance.GetInt("Exercise" + i + "set").ToString()+" x " + PreferenceManager.Instance.GetString("Exercise" + i);
         }
 
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
