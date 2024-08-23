@@ -24,7 +24,17 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        FindObjectOfType<ExerciseController>().AddExerciseToTemplete(data.exerciseName);
+        if (PreferenceManager.Instance.GetBool("EmptyWorkout"))
+        {
+            FindObjectOfType<ExerciseController>().AddExerciseToNewTemplete(data.exerciseName);
+        }
+        else 
+        {
+            FindObjectOfType<ExerciseController>().AddExerciseToDefaultTemplete(data.exerciseName);
+            
+        }
+
+        
         
     }
 }

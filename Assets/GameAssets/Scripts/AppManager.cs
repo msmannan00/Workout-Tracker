@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AppManager : MonoBehaviour
 {
+
     private void Start()
     {
         /*Initiating app pages*/
