@@ -1,15 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 
-[System.Serializable]
-public class DefaultTemplete
-{
-    public string templeteName;
-    public List<Exercise> exerciseTemplete = new List<Exercise>();
-}
 public class WorkoutPageController : MonoBehaviour, PageController
 {
     public string templatesFolder = "WorkoutTemplates";
@@ -22,6 +15,7 @@ public class WorkoutPageController : MonoBehaviour, PageController
     {
         
     }
+    
     private void Awake()
     {
         if (!PreferenceManager.Instance.HasKey("TotalTempletes"))

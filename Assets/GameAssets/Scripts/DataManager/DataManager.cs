@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
-using DG.Tweening; // Include DOTween for animations
+using DG.Tweening;
 
 public class DataManager : GenericSingletonClass<DataManager>
 {

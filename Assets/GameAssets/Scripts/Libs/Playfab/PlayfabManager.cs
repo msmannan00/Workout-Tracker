@@ -2,18 +2,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
 using System;
-using System.Security.Cryptography;
 using System.Collections;
-using PlayFab.SharedModels;
-
-
-
-
-#if !UNITY_IOS
-//using GooglePlayGames;
-//using GooglePlayGames.BasicApi;
-#else
-#endif
 
 #if UNITY_IOS
 using UnityEngine.iOS;
@@ -34,18 +23,6 @@ public class PlayfabManager : GenericSingletonClass<PlayfabManager>
 
     public void OnServerInitialized()
     {
-#if !UNITY_IOS
-        //PlayGamesClientConfiguration mConfig = new PlayGamesClientConfiguration.Builder()
-        //.AddOauthScope("profile")
-        //.RequestServerAuthCode(false)
-        //.Build();
-
-        //PlayGamesPlatform.InitializeInstance(mConfig);
-        //PlayGamesPlatform.DebugLogEnabled = false;
-        //PlayGamesPlatform.Activate();
-
-#else
-#endif
     }
 
     public void OnTryLogin(string pEmail, string pPassword, Action<string, string> pCallbackSuccess, Action<PlayFabError> pCallbackFailure)
@@ -90,79 +67,6 @@ public class PlayfabManager : GenericSingletonClass<PlayfabManager>
         PlayerPrefs.DeleteKey("password");
     }
 
-#if !UNITY_IOS
-    //public void OnSignGmail(Action pCallbackSuccess, Action<PlayFabError> pCallbackFailure, Action<string, string> pCallbackSuccessPlayfab, Action<PlayFabError> pCallbackFailurePlayfab)
-    //{
-
-    //    Social.localUser.Authenticate((bool pSuccess) => {
-    //        if (pSuccess)
-    //        {
-    //            var mServerAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode();
-    //            PlayFabClientAPI.LoginWithGoogleAccount(new LoginWithGoogleAccountRequest()
-    //            {
-    //                TitleId = "B9E19",
-    //                ServerAuthCode = mServerAuthCode,
-    //                CreateAccount = true
-    //            },
-    //            res =>
-    //            {
-    //                OnSaveuser("raza@gmail.com", "123456789");
-    //                pCallbackSuccess();
-    //            },
-    //            err =>
-    //            {
-    //                OnTryLogin(PlayerPrefs.GetString("username"),
-    //                PlayerPrefs.GetString("password"), pCallbackSuccessPlayfab, pCallbackFailurePlayfab);
-    //                pCallbackSuccess();
-    //            });
-    //        }
-    //        else
-    //        {
-    //            pCallbackFailure(null);
-    //        }
-    //    });
-    //}
-#else
-#endif
-
-
-#if UNITY_IOS
-    //public void OnSignIOS(Action pCallbackSuccess, Action<PlayFabError> pCallbackFailure, Action<string, string> pCallbackSuccessPlayfab, Action<PlayFabError> pCallbackFailurePlayfab)
-    //    {
-    //        Device.RequestStoreReview();
-    //        if (Device.systemVersion.StartsWith("10"))
-    //        {
-    //            NativeAPI.Authorize((success) =>
-    //            {
-    //                if (success)
-    //                {
-    //                    OnTryLogin("player@gmail.com", "killprg1", pCallbackSuccessPlayfab, pCallbackFailurePlayfab);
-    //                    pCallbackSuccess();
-    //                }
-    //                else
-    //                {
-    //                    pCallbackFailure(null);
-    //                }
-    //            });
-    //        }
-    //        else
-    //        {
-    //            pCallbackFailure(null);
-    //        }
-    //    }
-
-    //    public static class NativeAPI
-    //    {
-    //        public delegate void SignInCallback(bool pSuccess);
-
-    //        public static void Authorize(SignInCallback pCallback)
-    //        {
-    //            bool mSuccess = true;
-    //            pCallback?.Invoke(mSuccess);
-    //        }
-    //    }
-#else
-#endif
 
     public void OnTryRegisterNewAccount(string pEmail, string pPassword, Action pCallbackSuccess, Action<PlayFabError> pCallbackFailure)
     {
