@@ -172,14 +172,13 @@ public class AuthController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
 
-            StateManager.Instance.OpenStaticScreen("workoutPage", gameObject, "workoutPageScreen", mData);
+            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
         else
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("workoutPage", gameObject, "workoutPageScreen", mData);
+            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
-        userSessionManager.Instance.LoadPlanModel();
     }
 
     public void FBSignIn()
@@ -249,7 +248,6 @@ public class AuthController : MonoBehaviour, PageController
             Dictionary<string, object> mData = new Dictionary<string, object> { };
             StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
-        userSessionManager.Instance.LoadPlanModel();
     }
 
     public void onInit(Dictionary<string, object> pData)

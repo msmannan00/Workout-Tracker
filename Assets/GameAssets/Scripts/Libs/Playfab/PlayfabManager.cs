@@ -135,7 +135,8 @@ public class PlayfabManager : GenericSingletonClass<PlayfabManager>
                 {
                     callbackFailure(error);
                 }
-            });
+            }
+        );
     }
 
 

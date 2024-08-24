@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-public class DefaultTemplete
+public class DefaultTempleteModel
 {
     public string templeteName;
-    public List<Exercise> exerciseTemplete = new List<Exercise>();
+    public List<ExerciseModel> exerciseTemplete = new List<ExerciseModel>();
 }
