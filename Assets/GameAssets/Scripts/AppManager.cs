@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +8,8 @@ public class AppManager : MonoBehaviour
     {
         /*Initiating app pages*/
         #if UNITY_ANDROID && !UNITY_EDITOR
-                    Screen.fullScreen = false;
-                    AndroidUtility.ShowStatusBar(new Color32(9, 126, 57, 255));
+            Screen.fullScreen = false;
+            AndroidUtility.ShowStatusBar(new Color32(9, 126, 57, 255));
         #endif
 
         Application.targetFrameRate = 60;
@@ -24,9 +23,8 @@ public class AppManager : MonoBehaviour
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-            StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+            //StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
         }
-        DataManager.Instance.OnServerInitialized();
 
     }
 

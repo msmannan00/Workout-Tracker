@@ -2,7 +2,6 @@ using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
 using System;
-using System.Collections;
 
 #if UNITY_IOS
 using UnityEngine.iOS;
@@ -37,21 +36,12 @@ public class PlayfabManager : GenericSingletonClass<PlayfabManager>
         res =>
         {
             OnSaveuser(pEmail, pPassword);
-            StartCoroutine(WaitForCategoriesToInitialize(pEmail, res, pCallbackSuccess));
+            pCallbackSuccess(HelperMethods.Instance.ExtractUsernameFromEmail(pEmail), res.PlayFabId);
         },
         err =>
         {
             pCallbackFailure(err);
         });
-    }
-
-    IEnumerator WaitForCategoriesToInitialize(string pEmail, LoginResult res, Action<string, string> pCallbackSuccess)
-    {
-        while (DataManager.Instance.GetCategories() == null)
-        {
-            yield return null;
-        }
-        pCallbackSuccess(HelperMethods.Instance.ExtractUsernameFromEmail(pEmail), res.PlayFabId);
     }
 
     public void OnLogout()
