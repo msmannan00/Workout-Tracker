@@ -18,6 +18,7 @@ public class ExerciseController : MonoBehaviour, PageController
         this.callback = callback;
     }
 
+
     void Start()
     {
         for (char letter = 'A'; letter <= 'Z'; letter++)
