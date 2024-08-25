@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PreferenceManager : GenericSingletonClass<PreferenceManager>
 {
+    public bool HasKey(string key)
+    {
+        return PlayerPrefs.HasKey(key);
+    }
     public void SetBool(string pKey, bool pValue)
     {
         PlayerPrefs.SetInt(pKey, pValue ? 1 : 0);
@@ -30,6 +34,10 @@ public class PreferenceManager : GenericSingletonClass<PreferenceManager>
     public int GetInt(string pKey, int pDefaultValue = 0)
     {
         return PlayerPrefs.GetInt(pKey, pDefaultValue);
+    }
+    public void DeleteKey(string key)
+    {
+        PlayerPrefs.DeleteKey(key);
     }
 
     public void Save()

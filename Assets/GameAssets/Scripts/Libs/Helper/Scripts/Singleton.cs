@@ -24,14 +24,6 @@ public class GenericSingletonClass<T> : MonoBehaviour where T : Component
 
     public virtual void Awake()
     {
-        if (mInstance == null)
-        {
-            mInstance = this as T;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        mInstance = this as T;
     }
 }
