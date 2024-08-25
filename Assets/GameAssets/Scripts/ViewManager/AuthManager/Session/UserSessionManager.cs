@@ -1,80 +1,77 @@
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
     public string mProfileUsername;
     public string mProfileID;
-    public userStatsModel mUserStatsModel;
-    public PlanModel mPlanModel = new PlanModel();
     public bool mSidebar = false;
+    public ExcerciseData excerciseData = new ExcerciseData();
 
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
-        mSidebar = false;
         this.mProfileUsername = pProfileUsername;
         this.mProfileID = pProfileID;
-        this.mUserStatsModel = new userStatsModel();
-        LoadPlanModel();
-
         PreferenceManager.Instance.SetString("login_username", pProfileUsername);
-        bool mContinueWeeklyPlan = PreferenceManager.Instance.GetBool("ContinuePlan", false);
-        string mStartingDate = PreferenceManager.Instance.GetString("DateRangeStart", DateTime.Now.ToString());
-        string mEndingDate = PreferenceManager.Instance.GetString("DateRangeEnd", DateTime.Now.ToString());
-        this.mUserStatsModel.OnInitialize(pContinueWeeklyPlan: mContinueWeeklyPlan, pStartingDate: HelperMethods.Instance.ParseDateString(mStartingDate), pEndingDate: HelperMethods.Instance.ParseDateString(mEndingDate));
+        mSidebar = false;
     }
 
     public void OnResetSession()
     {
         this.mProfileUsername = null;
         this.mProfileID = null;
-
     }
 
-    public void createPlan(bool pContinuePlan, string pDateRangeStartText, string pDateRangeEndText)
+    public void SaveExcerciseData()
     {
-        PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
-        PreferenceManager.Instance.SetBool("ContinuePlan", pContinuePlan);
-        PreferenceManager.Instance.SetString("DateRangeStart", pDateRangeStartText);
-        PreferenceManager.Instance.SetString("DateRangeEnd", pDateRangeEndText);
-
-        string mStartingDate = PreferenceManager.Instance.GetString("DateRangeStart", DateTime.Now.ToString());
-        string mEndingDate = PreferenceManager.Instance.GetString("DateRangeEnd", DateTime.Now.ToString());
-
-        userSessionManager.Instance.mUserStatsModel.OnInitialize(pContinueWeeklyPlan: pContinuePlan, pStartingDate: HelperMethods.Instance.ParseDateString(mStartingDate), pEndingDate: HelperMethods.Instance.ParseDateString(mEndingDate));
+        string json = JsonUtility.ToJson(excerciseData);
+        PreferenceManager.Instance.SetString("excerciseData", json);
+        PreferenceManager.Instance.Save();
     }
 
-    public void SavePlanModel()
+    public void LoadExcerciseData()
     {
-        string json = JsonConvert.SerializeObject(mPlanModel, Formatting.Indented);
-        PlayerPrefs.SetString(mProfileUsername, json);
-        PlayerPrefs.Save();
-    }
-
-    public void LoadPlanModel()
-    {
-        string json = PlayerPrefs.GetString(mProfileUsername);
-        if (!string.IsNullOrEmpty(json))
+        if (PreferenceManager.Instance.HasKey("excerciseData"))
         {
-            mPlanModel = JsonConvert.DeserializeObject<PlanModel>(json);
+            string json = PreferenceManager.Instance.GetString("excerciseData");
+            excerciseData = JsonUtility.FromJson<ExcerciseData>(json);
         }
         else
         {
-            mPlanModel = new PlanModel();
+            excerciseData = new ExcerciseData();
+            CreateRandomDefaultEntry();
         }
     }
 
-    public void RemovePlanModel()
+    public void CreateRandomDefaultEntry()
     {
-        if (PlayerPrefs.HasKey(mProfileUsername))
+        ExerciseTypeModel defaultExerciseType = new ExerciseTypeModel
         {
-            PlayerPrefs.DeleteKey(mProfileUsername);
-            PlayerPrefs.Save();
-            mPlanModel = new PlanModel();
-        }
+            index = 0,
+            name = "Default Exercise",
+            exerciseModel = new List<ExerciseModel>()
+        };
+
+        ExerciseModel defaultExerciseModel = new ExerciseModel
+        {
+            setID = 1,
+            previous = "-",
+            weight = 20,
+            lbs = 45,
+            reps = 6
+        };
+
+        defaultExerciseType.exerciseModel.Add(defaultExerciseModel);
+
+        DefaultTempleteModel defaultTemplate = new DefaultTempleteModel
+        {
+            templeteName = "Default Workout",
+            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType }
+        };
+
+        excerciseData.exerciseTemplete.Clear();
+        excerciseData.exerciseTemplete.Add(defaultTemplate);
+
+        SaveExcerciseData();
     }
 }
-

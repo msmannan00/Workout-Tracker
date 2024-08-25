@@ -8,10 +8,6 @@ public static class AndroidUtility
 
     private static AndroidJavaObject activity;
 
-    /// <summary>
-    /// Shows the Android Status bar
-    /// </summary>
-    /// <param name="color">Color of status bar to be used</param>
     public static void ShowStatusBar(Color color)
     {
         int androidColor = ConvertColorToAndroidColor(color);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class WelcomeController : MonoBehaviour, PageController
         "Discover challenging and effective workout plans"
     };
 
-    public void onInit(Dictionary<string, object> pData)
+    public void onInit(Dictionary<string, object> pData, Action<object> callback)
     {
         if (pData != null)
         {

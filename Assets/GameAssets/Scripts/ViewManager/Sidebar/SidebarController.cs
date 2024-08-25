@@ -9,7 +9,7 @@ public class SidebarController : MonoBehaviour, PageController
 {
     public TMP_Text aUsername;
 
-    public void onInit(Dictionary<string, object> data)
+    public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
     }
 

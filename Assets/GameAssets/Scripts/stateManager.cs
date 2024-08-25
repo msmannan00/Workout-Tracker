@@ -8,7 +8,7 @@ public class StateManager : GenericSingletonClass<StateManager>
     private List<GameObject> inactivePages = new List<GameObject>();
     private bool isProcessing = false;
 
-    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false)
+    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null)
     {
         if (isProcessing) return;
         isProcessing = true;
@@ -20,13 +20,12 @@ public class StateManager : GenericSingletonClass<StateManager>
 
         var prefabPath = "Prefabs/"+ folderPath + "/" + newPage;
         var prefabResource = Resources.Load<GameObject>(prefabPath);
-        print(prefabResource);
         var prefab = Instantiate(prefabResource);
         var container = GameObject.FindGameObjectWithTag(newPage);
 
         prefab.transform.SetParent(container.transform, false);
         var mController = prefab.GetComponent<PageController>();
-        mController.onInit(data);
+        mController.onInit(data, callback);
 
         if (currentPage != null)
         {
@@ -125,5 +124,16 @@ public class StateManager : GenericSingletonClass<StateManager>
     public int getInactivePagesCount()
     {
         return inactivePages.Count;
+    }
+    public bool checkPageByTag(string tag)
+    {
+        foreach(GameObject page in inactivePages)
+        {
+            if(page.tag == tag)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
