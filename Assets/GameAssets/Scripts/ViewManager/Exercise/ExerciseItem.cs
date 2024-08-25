@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static EditWorkoutTemplete;
 
 public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
 {
@@ -22,7 +22,7 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
 
     }
 
-    public void onInit(Dictionary<string, object> data)
+    public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
         if (data.TryGetValue("data", out object exerciseDataObj) && exerciseDataObj is ExerciseDataItem exerciseData)
         {

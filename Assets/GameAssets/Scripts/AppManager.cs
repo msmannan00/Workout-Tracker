@@ -12,6 +12,7 @@ public class AppManager : MonoBehaviour
             AndroidUtility.ShowStatusBar(new Color32(9, 126, 57, 255));
         #endif
 
+        userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
         DataManager.Instance.loadData();
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))

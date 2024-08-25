@@ -8,7 +8,7 @@ public class StateManager : GenericSingletonClass<StateManager>
     private List<GameObject> inactivePages = new List<GameObject>();
     private bool isProcessing = false;
 
-    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false)
+    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null)
     {
         if (isProcessing) return;
         isProcessing = true;
@@ -25,7 +25,7 @@ public class StateManager : GenericSingletonClass<StateManager>
 
         prefab.transform.SetParent(container.transform, false);
         var mController = prefab.GetComponent<PageController>();
-        mController.onInit(data);
+        mController.onInit(data, callback);
 
         if (currentPage != null)
         {

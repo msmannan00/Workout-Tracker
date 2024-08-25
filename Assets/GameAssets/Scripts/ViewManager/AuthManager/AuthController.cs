@@ -250,7 +250,7 @@ public class AuthController : MonoBehaviour, PageController
         }
     }
 
-    public void onInit(Dictionary<string, object> pData)
+    public void onInit(Dictionary<string, object> pData, Action<object> callback)
     {
         this.mAuthType = (string)pData.GetValueOrDefault(AuthKey.sAuthType, AuthConstant.sAuthTypeSignup);
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
