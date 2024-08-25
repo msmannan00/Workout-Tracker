@@ -17,6 +17,7 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     {
     }
 
+
     public void OnPointerClick(PointerEventData eventData)
     {
 
