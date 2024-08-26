@@ -17,7 +17,7 @@ public class AppManager : MonoBehaviour
         DataManager.Instance.loadData();
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))
         {
-            StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
+            NavigationManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
         }
         else
         {
@@ -25,7 +25,7 @@ public class AppManager : MonoBehaviour
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-            StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
         }
 
     }

@@ -46,7 +46,7 @@ public class WelcomeController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-            StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
         }
         else
         {
@@ -54,7 +54,7 @@ public class WelcomeController : MonoBehaviour, PageController
             {
                 { WelcomeKeys.sPageNumber, mPageNumber + 1 }
             };
-            StateManager.Instance.OpenStaticScreen("welcome", gameObject, "welcomeScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("welcome", gameObject, "welcomeScreen", mData);
         }
     }
 
@@ -65,7 +65,7 @@ public class WelcomeController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-        StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+        NavigationManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
     }
 
 }

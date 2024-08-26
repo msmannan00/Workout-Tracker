@@ -97,7 +97,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public void AddExerciseButton()
     {
         Dictionary<string, object> mData = new Dictionary<string, object>();
-        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
+        NavigationManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
     }
 
     public void OnExerciseAdd(object data)
@@ -167,7 +167,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
         {
             userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
-            StateManager.Instance.HandleBackAction(gameObject);
+            NavigationManager.Instance.HandleBackAction(gameObject);
             this.callback.Invoke(null);
             userSessionManager.Instance.SaveExcerciseData();
         }
@@ -176,6 +176,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void OnBack()
     {
-        StateManager.Instance.HandleBackAction(gameObject);
+        NavigationManager.Instance.HandleBackAction(gameObject);
     }
 }

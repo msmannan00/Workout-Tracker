@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateManager : GenericSingletonClass<StateManager>
+public class NavigationManager : GenericSingletonClass<NavigationManager>
 {
     private List<GameObject> inactivePages = new List<GameObject>();
     private bool isProcessing = false;

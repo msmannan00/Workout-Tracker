@@ -172,12 +172,12 @@ public class AuthController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
 
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
         else
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
     }
 
@@ -240,13 +240,13 @@ public class AuthController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
 
-            StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
         }
         else
         {
 
             Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
         }
     }
 
@@ -317,7 +317,7 @@ public class AuthController : MonoBehaviour, PageController
                 {
                     { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
                 };
-                StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+                NavigationManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
             };
 
             Action<PlayFabError> callbackFailure = (pError) =>
@@ -394,7 +394,7 @@ public class AuthController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
-            StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
@@ -403,7 +403,7 @@ public class AuthController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-            StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+            NavigationManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
         }
     }
 

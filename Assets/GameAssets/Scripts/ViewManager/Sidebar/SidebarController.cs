@@ -15,7 +15,7 @@ public class SidebarController : MonoBehaviour, PageController
 
     public void onGoBack()
     {
-        StateManager.Instance.HandleSidebarBackAction(gameObject);
+        NavigationManager.Instance.HandleSidebarBackAction(gameObject);
         StartCoroutine(DelaySidebarToggle());
     }
     public void onLogout()

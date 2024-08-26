@@ -36,7 +36,7 @@ public class DashboardController : MonoBehaviour, PageController
         };
         Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        NavigationManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
     }
 
     public void onReloadData(object data)
@@ -77,7 +77,7 @@ public class DashboardController : MonoBehaviour, PageController
 
         Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        NavigationManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
     }
 
     public void SelectWorkout(GameObject obj)

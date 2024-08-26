@@ -72,9 +72,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
                 Dictionary<string, object> initData = new Dictionary<string, object>
-            {
-                { "data", exercise },
-            };
+                {
+                  { ExcercisKeyModel.mData, exercise },
+                };
 
                 newExerciseItem.onInit(initData);
 
@@ -101,6 +101,6 @@ public class ExerciseController : MonoBehaviour, PageController
 
     public void OnClose()
     {
-        StateManager.Instance.HandleBackAction(gameObject);
+        NavigationManager.Instance.HandleBackAction(gameObject);
     }
 }
