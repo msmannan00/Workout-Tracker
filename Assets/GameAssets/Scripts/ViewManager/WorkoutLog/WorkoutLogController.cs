@@ -152,18 +152,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void Finish()
     {
-        foreach (var exerciseType in templeteModel.exerciseTemplete)
-        {
-            foreach (var exercise in exerciseType.exerciseModel)
-            {
-                exercise.setID = 1;
-                exercise.previous = "-";
-                exercise.weight = 0;
-                exercise.lbs = 0;
-                exercise.reps = 0;
-            }
-        }
-
         if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
         {
             userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
