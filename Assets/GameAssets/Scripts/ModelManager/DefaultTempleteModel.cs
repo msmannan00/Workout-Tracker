@@ -30,4 +30,5 @@ public class ExerciseModel
     public int weight = 0;
     public int lbs = 0;
     public int reps = 0;
+    public bool toggle;
 }

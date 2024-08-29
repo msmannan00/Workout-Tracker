@@ -7,6 +7,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string mProfileID;
     public bool mSidebar = false;
     public ExcerciseData excerciseData = new ExcerciseData();
+    public HistoryModel historyData = new HistoryModel();
 
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
@@ -25,6 +26,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public void SaveExcerciseData()
     {
         string json = JsonUtility.ToJson(excerciseData);
+        print(json);
         PreferenceManager.Instance.SetString("excerciseData", json);
         PreferenceManager.Instance.Save();
     }
@@ -35,6 +37,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             string json = PreferenceManager.Instance.GetString("excerciseData");
             excerciseData = JsonUtility.FromJson<ExcerciseData>(json);
+            print(json);
         }
         else
         {
