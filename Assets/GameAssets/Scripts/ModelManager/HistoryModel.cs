@@ -11,7 +11,7 @@ public class HistoryTempleteModel
 {
     public string templeteName;
     public DateTime dateTime;
-    public TimeSpan completedTime;
+    public int completedTime;
     public int totalWeight;
     public int prs;
     public List<HistoryExerciseTypeModel> exerciseTypeModel = new List<HistoryExerciseTypeModel>();
@@ -28,5 +28,5 @@ public class HistoryExerciseModel
 {
     public float weight;
     public int reps;
-    public TimeSpan time;
+    public int time;
 }

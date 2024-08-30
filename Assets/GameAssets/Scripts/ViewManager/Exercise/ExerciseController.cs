@@ -3,15 +3,20 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 
 public class ExerciseController : MonoBehaviour, PageController
 {
     public Transform content;
     public TMP_InputField searchInputField;
+    public Button alphabetic, byRank, performed;
 
+    private ButtonType currentButton;
     private List<GameObject> alphabetLabels = new List<GameObject>();
     private List<GameObject> exerciseItems = new List<GameObject>();
     private Action<ExerciseDataItem> callback;
+
+    public HistoryModel testHistory = new HistoryModel();
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -20,6 +25,17 @@ public class ExerciseController : MonoBehaviour, PageController
 
 
     void Start()
+    {
+        SaveTestHistory();
+        AddAlphabeticLabels();
+
+        LoadExercises();
+        searchInputField.onValueChanged.AddListener(OnSearchChanged);
+        alphabetic.onClick.AddListener(() => LoadExercises());
+        byRank.onClick.AddListener(() => ByRankExercises(""));
+        performed.onClick.AddListener(() => PerformedExercises(""));
+    }
+    void AddAlphabeticLabels()
     {
         for (char letter = 'A'; letter <= 'Z'; letter++)
         {
@@ -36,13 +52,43 @@ public class ExerciseController : MonoBehaviour, PageController
 
             alphabetLabels.Add(textLabelObject);
         }
-
-        LoadExercises();
-        searchInputField.onValueChanged.AddListener(OnSearchChanged);
     }
-
-    void LoadExercises(string filter = "")
+    public static List<string> GetUniqueExercises(HistoryModel historyData)
     {
+        // Create a HashSet to store unique exercise names
+        HashSet<string> uniqueExercises = new HashSet<string>();
+
+        // Iterate over each HistoryTempleteModel in the historyData
+        foreach (var template in historyData.exerciseTempleteModel)
+        {
+            // Iterate over each HistoryExerciseTypeModel in the current HistoryTempleteModel
+            foreach (var exerciseType in template.exerciseTypeModel)
+            {
+                // Add each exercise name to the HashSet
+                uniqueExercises.Add(exerciseType.exerciseName);
+            }
+        }
+
+        // Convert HashSet to List and return it
+        return uniqueExercises.ToList();
+    }
+    void PerformedExercises(string filter)
+    {
+        currentButton = ButtonType.Performed;
+        SetSelectedButton();
+
+        if (alphabetLabels != null)
+        {
+            foreach (GameObject label in alphabetLabels)
+            {
+                if (label != null)
+                {
+                    Destroy(label);
+                }
+            }
+            alphabetLabels.Clear();
+        }
+
         foreach (GameObject item in exerciseItems)
         {
             Destroy(item);
@@ -50,10 +96,95 @@ public class ExerciseController : MonoBehaviour, PageController
         exerciseItems.Clear();
 
         ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        HistoryModel historyData = userSessionManager.Instance.historyData;
+        List<string> filterExercises = GetUniqueExercises(historyData);
+
+        string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
 
         foreach (ExerciseDataItem exercise in exerciseData.exercises)
         {
-            if (!string.IsNullOrEmpty(filter) && !exercise.exerciseName.ToLower().Contains(filter.ToLower()))
+            // Check if the exercise name or category should be filtered out
+            if (!string.IsNullOrEmpty(lowerFilter) &&
+                !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+                  exercise.category.ToLower().Contains(lowerFilter)))
+            {
+                continue;
+            }
+
+            // Check if the exercise name is in the list of filterExercises
+            if (filterExercises != null && !filterExercises.Contains(exercise.exerciseName))
+            {
+                continue;
+            }
+
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+
+            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+            Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", exercise },
+            };
+
+            newExerciseItem.onInit(initData);
+
+            Button button = newExerciseObject.GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(() =>
+                {
+                    callback?.Invoke(exercise);
+                    OnClose();
+                });
+            }
+
+            exerciseItems.Add(newExerciseObject);
+        }
+    }
+    void SetSelectedButton()
+    {
+        if (currentButton == ButtonType.Alphabetic)
+        {
+            alphabetic.gameObject.GetComponent<Image>().color = Color.blue;
+            byRank.gameObject.GetComponent<Image>().color = Color.white;
+            performed.gameObject.GetComponent<Image>().color = Color.white;
+        }
+        else if(currentButton == ButtonType.ByRank)
+        {
+            alphabetic.gameObject.GetComponent<Image>().color = Color.white;
+            byRank.gameObject.GetComponent<Image>().color = Color.blue;
+            performed.gameObject.GetComponent<Image>().color = Color.white;
+        }
+        else if (currentButton == ButtonType.Performed)
+        {
+            alphabetic.gameObject.GetComponent<Image>().color = Color.white;
+            byRank.gameObject.GetComponent<Image>().color = Color.white;
+            performed.gameObject.GetComponent<Image>().color = Color.blue;
+        }
+    }
+    void LoadExercises(string filter = "")
+    {
+        currentButton = ButtonType.Alphabetic;
+        SetSelectedButton();
+        foreach (GameObject item in exerciseItems)
+        {
+            Destroy(item);
+        }
+        exerciseItems.Clear();
+
+        AddAlphabeticLabels();
+
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+
+        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        {
+            string lowerFilter = filter.ToLower();
+
+            if (!string.IsNullOrEmpty(lowerFilter) &&
+                !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+                  exercise.category.ToLower().Contains(lowerFilter)))
             {
                 continue;
             }
@@ -72,9 +203,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
                 Dictionary<string, object> initData = new Dictionary<string, object>
-            {
+                {
                 { "data", exercise },
-            };
+                };
 
                 newExerciseItem.onInit(initData);
 
@@ -93,14 +224,107 @@ public class ExerciseController : MonoBehaviour, PageController
         }
     }
 
+    void ByRankExercises(string filter)
+    {
+        currentButton = ButtonType.ByRank;
+        SetSelectedButton();
 
+        if (alphabetLabels != null)
+        {
+            foreach (GameObject label in alphabetLabels)
+            {
+                if (label != null)
+                {
+                    Destroy(label);
+                }
+            }
+            alphabetLabels.Clear();
+        }
+
+        foreach (GameObject item in exerciseItems)
+        {
+            Destroy(item);
+        }
+        exerciseItems.Clear();
+
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+
+        string lowerFilter = filter.ToLower();
+
+        var filteredAndSortedExercises = exerciseData.exercises
+            .Where(exercise =>
+                string.IsNullOrEmpty(lowerFilter) ||
+                exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+                exercise.category.ToLower().Contains(lowerFilter))
+            .OrderByDescending(exercise => exercise.rank)
+            .ToList();
+
+        foreach (ExerciseDataItem exercise in filteredAndSortedExercises)
+        {
+            
+            char firstLetter = char.ToUpper(exercise.exerciseName[0]);
+
+           
+
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+
+            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+            Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", exercise },
+            };
+
+            newExerciseItem.onInit(initData);
+
+            Button button = newExerciseObject.GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(() =>
+                {
+                    callback?.Invoke(exercise);
+                    OnClose();
+                });
+            }
+
+            exerciseItems.Add(newExerciseObject);
+        }
+    }
     void OnSearchChanged(string searchQuery)
     {
-        LoadExercises(searchQuery);
+        switch (currentButton)
+        {
+            case ButtonType.Alphabetic:
+                LoadExercises(searchQuery);
+                break;
+            case ButtonType.ByRank:
+                ByRankExercises(searchQuery);
+                break;
+            case ButtonType.Performed:
+                PerformedExercises(searchQuery);
+                break;
+        }
+
     }
 
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+    }
+   
+    public void SaveTestHistory()
+    {
+        // test code for history
+        if (!PreferenceManager.Instance.HasKey("historyData"))
+        {
+            string json = JsonUtility.ToJson(testHistory);
+            PreferenceManager.Instance.SetString("historyData", json);
+            PreferenceManager.Instance.Save();
+            print("save");
+            print(json);
+        }
+        userSessionManager.Instance.LoadHistory();
     }
 }

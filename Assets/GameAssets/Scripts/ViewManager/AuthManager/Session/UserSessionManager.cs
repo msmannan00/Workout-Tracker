@@ -9,14 +9,17 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public ExcerciseData excerciseData = new ExcerciseData();
     public HistoryModel historyData = new HistoryModel();
 
+    
+
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
         this.mProfileUsername = pProfileUsername;
         this.mProfileID = pProfileID;
         PreferenceManager.Instance.SetString("login_username", pProfileUsername);
         mSidebar = false;
-    }
 
+        LoadHistory();
+    }
     public void OnResetSession()
     {
         this.mProfileUsername = null;
@@ -76,5 +79,26 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         excerciseData.exerciseTemplete.Add(defaultTemplate);
 
         SaveExcerciseData();
+    }
+
+    public void SaveHistory()
+    {
+        string json = JsonUtility.ToJson(historyData);
+        //print(json);
+        PreferenceManager.Instance.SetString("historyData", json);
+        PreferenceManager.Instance.Save();
+    }
+    public void LoadHistory()
+    {
+        if (PreferenceManager.Instance.HasKey("historyData"))
+        {
+            string json = PreferenceManager.Instance.GetString("historyData");
+            historyData = JsonUtility.FromJson<HistoryModel>(json);
+            print(json);
+        }
+        else
+        {
+            historyData = new HistoryModel();
+        }
     }
 }
