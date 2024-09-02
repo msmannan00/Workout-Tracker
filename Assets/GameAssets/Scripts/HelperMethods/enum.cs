@@ -1,5 +1,5 @@
 
-public enum ButtonType
+public enum SearchButtonType
 {
     Alphabetic=1,
     ByRank=2,

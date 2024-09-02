@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 [System.Serializable]
 public class ExerciseDataItem
 {
@@ -5,10 +6,11 @@ public class ExerciseDataItem
     public string category;
     public string icon;
     public int rank;
+    public bool isWeightExercise;
 }
 
 [System.Serializable]
 public class ExerciseData
 {
-    public ExerciseDataItem[] exercises;
+    public List<ExerciseDataItem> exercises=new List<ExerciseDataItem>();
 }

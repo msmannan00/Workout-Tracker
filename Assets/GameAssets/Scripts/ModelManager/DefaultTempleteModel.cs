@@ -19,6 +19,7 @@ public class ExerciseTypeModel
 {
     public int index = 0;
     public string name;
+    public bool isWeigtExercise;
     public List<ExerciseModel> exerciseModel = new List<ExerciseModel>();
 }
 

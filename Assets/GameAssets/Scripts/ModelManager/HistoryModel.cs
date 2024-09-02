@@ -21,6 +21,7 @@ public class HistoryExerciseTypeModel
 {
     public string exerciseName;
     public int index;
+    public bool isWeightExercise;
     public List<HistoryExerciseModel> exerciseModel = new List<HistoryExerciseModel>();
 }
 [Serializable]

@@ -33,7 +33,9 @@ public class WorkoutLogController : MonoBehaviour, PageController
             DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
-                OnExerciseAdd(exerciseType);
+                List<object>  list = new List<object>();
+                list.Add(exerciseType);
+                OnExerciseAdd(list);
             }
         }
     }
@@ -102,35 +104,47 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void OnExerciseAdd(object data)
     {
-        ExerciseTypeModel typeModel;
-
-        if (data is ExerciseDataItem dataItem)
+        //List<object> dataList = data as List<object>;
+        if(data == null)
         {
-            typeModel = new ExerciseTypeModel
+            print("data null");
+        }
+        if (data is List<ExerciseDataItem> dataList)
+        {
+            foreach (object item in dataList)
             {
-                name = dataItem.exerciseName,
-                exerciseModel = new List<ExerciseModel>(),
-                index = exerciseCounter++
-            };
+                ExerciseTypeModel typeModel;
 
-            templeteModel.exerciseTemplete.Add(typeModel);
+                if (item is ExerciseDataItem dataItem)
+                {
+                    typeModel = new ExerciseTypeModel
+                    {
+                        name = dataItem.exerciseName,
+                        exerciseModel = new List<ExerciseModel>(),
+                        index = exerciseCounter++
+                    };
 
-            exerciseDataItems.Add(dataItem);
+                    templeteModel.exerciseTemplete.Add(typeModel);
+
+                    exerciseDataItems.Add(dataItem);
+                }
+                else
+                {
+                    typeModel = (ExerciseTypeModel)item;
+                    templeteModel.exerciseTemplete.Add(typeModel);
+                }
+
+                Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                    { "data", typeModel },
+                };
+
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
+                GameObject exerciseObject = Instantiate(exercisePrefab, content);
+                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+            }
         }
-        else
-        {
-            typeModel = (ExerciseTypeModel)data;
-            templeteModel.exerciseTemplete.Add(typeModel);
-        }
-
-        Dictionary<string, object> mData = new Dictionary<string, object>
-        {
-            { "data", typeModel },
-        };
-
-        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
-        GameObject exerciseObject = Instantiate(exercisePrefab, content);
-        exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+        else { print("null"); }
     }
 
     private void OnRemoveIndex(object data)

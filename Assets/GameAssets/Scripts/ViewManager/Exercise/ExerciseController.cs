@@ -9,12 +9,14 @@ public class ExerciseController : MonoBehaviour, PageController
 {
     public Transform content;
     public TMP_InputField searchInputField;
+    public Button addExerciseButton;
     public Button alphabetic, byRank, performed;
 
-    private ButtonType currentButton;
+    private SearchButtonType currentButton;
+    public List<ExerciseDataItem> selectedExercises = new List<ExerciseDataItem>();
     private List<GameObject> alphabetLabels = new List<GameObject>();
     private List<GameObject> exerciseItems = new List<GameObject>();
-    private Action<ExerciseDataItem> callback;
+    private Action<List<ExerciseDataItem>> callback;
 
     public HistoryModel testHistory = new HistoryModel();
 
@@ -27,13 +29,13 @@ public class ExerciseController : MonoBehaviour, PageController
     void Start()
     {
         SaveTestHistory();
-        AddAlphabeticLabels();
 
         LoadExercises();
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
         alphabetic.onClick.AddListener(() => LoadExercises());
         byRank.onClick.AddListener(() => ByRankExercises(""));
         performed.onClick.AddListener(() => PerformedExercises(""));
+        addExerciseButton.onClick.AddListener(()=>AddExerciseToWorkoutLog());
     }
     void AddAlphabeticLabels()
     {
@@ -74,7 +76,7 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void PerformedExercises(string filter)
     {
-        currentButton = ButtonType.Performed;
+        currentButton = SearchButtonType.Performed;
         SetSelectedButton();
 
         if (alphabetLabels != null)
@@ -135,29 +137,51 @@ public class ExerciseController : MonoBehaviour, PageController
             {
                 button.onClick.AddListener(() =>
                 {
-                    callback?.Invoke(exercise);
-                    OnClose();
+                    //callback?.Invoke(exercise);
+                    SelectAndDeselectExercise(newExerciseObject, exercise);
+                    //OnClose();
                 });
             }
 
             exerciseItems.Add(newExerciseObject);
         }
     }
+    void SelectAndDeselectExercise(GameObject obj, ExerciseDataItem exercise)
+    {
+        if (selectedExercises.Contains(exercise))
+        {
+            selectedExercises.Remove(exercise);
+            obj.GetComponent<Outline>().enabled= false;
+            if(selectedExercises.Count <= 0)
+            {
+                addExerciseButton.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            selectedExercises.Add(exercise);
+            obj.GetComponent<Outline>().enabled = true;
+            if (selectedExercises.Count > 0)
+            {
+                addExerciseButton.gameObject.SetActive(true);
+            }
+        }
+    }
     void SetSelectedButton()
     {
-        if (currentButton == ButtonType.Alphabetic)
+        if (currentButton == SearchButtonType.Alphabetic)
         {
             alphabetic.gameObject.GetComponent<Image>().color = Color.blue;
             byRank.gameObject.GetComponent<Image>().color = Color.white;
             performed.gameObject.GetComponent<Image>().color = Color.white;
         }
-        else if(currentButton == ButtonType.ByRank)
+        else if(currentButton == SearchButtonType.ByRank)
         {
             alphabetic.gameObject.GetComponent<Image>().color = Color.white;
             byRank.gameObject.GetComponent<Image>().color = Color.blue;
             performed.gameObject.GetComponent<Image>().color = Color.white;
         }
-        else if (currentButton == ButtonType.Performed)
+        else if (currentButton == SearchButtonType.Performed)
         {
             alphabetic.gameObject.GetComponent<Image>().color = Color.white;
             byRank.gameObject.GetComponent<Image>().color = Color.white;
@@ -166,7 +190,7 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void LoadExercises(string filter = "")
     {
-        currentButton = ButtonType.Alphabetic;
+        currentButton = SearchButtonType.Alphabetic;
         SetSelectedButton();
         foreach (GameObject item in exerciseItems)
         {
@@ -174,6 +198,17 @@ public class ExerciseController : MonoBehaviour, PageController
         }
         exerciseItems.Clear();
 
+        if (alphabetLabels != null)
+        {
+            foreach (GameObject label in alphabetLabels)
+            {
+                if (label != null)
+                {
+                    Destroy(label);
+                }
+            }
+            alphabetLabels.Clear();
+        }
         AddAlphabeticLabels();
 
         ExerciseData exerciseData = DataManager.Instance.getExerciseData();
@@ -214,8 +249,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 {
                     button.onClick.AddListener(() =>
                     {
-                        callback?.Invoke(exercise);
-                        OnClose();
+                        //callback?.Invoke(exercise);
+                        SelectAndDeselectExercise(newExerciseObject, exercise);
+                        //OnClose();
                     });
                 }
 
@@ -226,7 +262,7 @@ public class ExerciseController : MonoBehaviour, PageController
 
     void ByRankExercises(string filter)
     {
-        currentButton = ButtonType.ByRank;
+        currentButton = SearchButtonType.ByRank;
         SetSelectedButton();
 
         if (alphabetLabels != null)
@@ -284,8 +320,9 @@ public class ExerciseController : MonoBehaviour, PageController
             {
                 button.onClick.AddListener(() =>
                 {
-                    callback?.Invoke(exercise);
-                    OnClose();
+                    //callback?.Invoke(exercise);
+                    SelectAndDeselectExercise(newExerciseObject, exercise);
+                    //OnClose();
                 });
             }
 
@@ -296,13 +333,13 @@ public class ExerciseController : MonoBehaviour, PageController
     {
         switch (currentButton)
         {
-            case ButtonType.Alphabetic:
+            case SearchButtonType.Alphabetic:
                 LoadExercises(searchQuery);
                 break;
-            case ButtonType.ByRank:
+            case SearchButtonType.ByRank:
                 ByRankExercises(searchQuery);
                 break;
-            case ButtonType.Performed:
+            case SearchButtonType.Performed:
                 PerformedExercises(searchQuery);
                 break;
         }
@@ -313,7 +350,20 @@ public class ExerciseController : MonoBehaviour, PageController
     {
         StateManager.Instance.HandleBackAction(gameObject);
     }
-   
+    public void AddNewExercise()
+    {
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "addNewExerciseScreen", null,true,OnAddExercise);
+    }
+    void OnAddExercise(object data)
+    {
+        OnSearchChanged("");
+    }
+
+    public void AddExerciseToWorkoutLog()
+    {
+        callback?.Invoke(selectedExercises);
+        OnClose();
+    }
     public void SaveTestHistory()
     {
         // test code for history
