@@ -11,6 +11,8 @@ public class ExerciseController : MonoBehaviour, PageController
     public TMP_InputField searchInputField;
     public Button addExerciseButton;
     public Button alphabetic, byRank, performed;
+    public Color buttonUnselectColor;
+    public Color exerciseUnselectColor;
 
     private SearchButtonType currentButton;
     public List<ExerciseDataItem> selectedExercises = new List<ExerciseDataItem>();
@@ -47,7 +49,7 @@ public class ExerciseController : MonoBehaviour, PageController
             TextMeshProUGUI textMeshPro = textLabelObject.AddComponent<TextMeshProUGUI>();
             textMeshPro.text = letter.ToString();
             textMeshPro.fontSize = 17;
-            textMeshPro.color = Color.black;
+            textMeshPro.color = Color.white;
             textMeshPro.fontStyle = FontStyles.Bold;
             textMeshPro.alignment = TextAlignmentOptions.Left;
             textMeshPro.margin = new Vector4(20, 0, 0, 0);
@@ -151,7 +153,7 @@ public class ExerciseController : MonoBehaviour, PageController
         if (selectedExercises.Contains(exercise))
         {
             selectedExercises.Remove(exercise);
-            obj.GetComponent<Outline>().enabled= false;
+            obj.GetComponent<Image>().color= exerciseUnselectColor;
             if(selectedExercises.Count <= 0)
             {
                 addExerciseButton.gameObject.SetActive(false);
@@ -160,7 +162,7 @@ public class ExerciseController : MonoBehaviour, PageController
         else
         {
             selectedExercises.Add(exercise);
-            obj.GetComponent<Outline>().enabled = true;
+            obj.GetComponent<Image>().color = Color.blue;
             if (selectedExercises.Count > 0)
             {
                 addExerciseButton.gameObject.SetActive(true);
@@ -172,19 +174,19 @@ public class ExerciseController : MonoBehaviour, PageController
         if (currentButton == SearchButtonType.Alphabetic)
         {
             alphabetic.gameObject.GetComponent<Image>().color = Color.blue;
-            byRank.gameObject.GetComponent<Image>().color = Color.white;
-            performed.gameObject.GetComponent<Image>().color = Color.white;
+            byRank.gameObject.GetComponent<Image>().color = buttonUnselectColor;
+            performed.gameObject.GetComponent<Image>().color = buttonUnselectColor;
         }
         else if(currentButton == SearchButtonType.ByRank)
         {
-            alphabetic.gameObject.GetComponent<Image>().color = Color.white;
+            alphabetic.gameObject.GetComponent<Image>().color = buttonUnselectColor;
             byRank.gameObject.GetComponent<Image>().color = Color.blue;
-            performed.gameObject.GetComponent<Image>().color = Color.white;
+            performed.gameObject.GetComponent<Image>().color = buttonUnselectColor;
         }
         else if (currentButton == SearchButtonType.Performed)
         {
-            alphabetic.gameObject.GetComponent<Image>().color = Color.white;
-            byRank.gameObject.GetComponent<Image>().color = Color.white;
+            alphabetic.gameObject.GetComponent<Image>().color = buttonUnselectColor;
+            byRank.gameObject.GetComponent<Image>().color = buttonUnselectColor;
             performed.gameObject.GetComponent<Image>().color = Color.blue;
         }
     }

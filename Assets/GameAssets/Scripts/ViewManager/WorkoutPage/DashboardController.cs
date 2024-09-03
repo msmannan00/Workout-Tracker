@@ -54,16 +54,17 @@ public class DashboardController : MonoBehaviour, PageController
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
-            DashboardItemController itemController = exercisePrefab.GetComponent<DashboardItemController>();
-            itemController.onInit(mData);
-
             GameObject exerciseObject = Instantiate(exercisePrefab, content);
 
-            Button button = exerciseObject.GetComponentInChildren<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() => StartEmptyWorkoutWithTemplate(exercise));
-            }
+            DashboardItemController itemController = exerciseObject.GetComponent<DashboardItemController>();
+            itemController.onInit(mData);
+
+
+            //Button button = exerciseObject.GetComponentInChildren<Button>();
+            //if (button != null)
+            //{
+            //    button.onClick.AddListener(() => StartEmptyWorkoutWithTemplate(exercise));
+            //}
         }
     }
 

@@ -51,14 +51,22 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
     public void CreateRandomDefaultEntry()
     {
-        ExerciseTypeModel defaultExerciseType = new ExerciseTypeModel
+        ExerciseTypeModel defaultExerciseType1 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Default Exercise",
+            name = "Biecp Curl",
+            isWeigtExercise = true,
+            exerciseModel = new List<ExerciseModel>()
+        };
+        ExerciseTypeModel defaultExerciseType2 = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Jump Rope",
+            isWeigtExercise = false,
             exerciseModel = new List<ExerciseModel>()
         };
 
-        ExerciseModel defaultExerciseModel = new ExerciseModel
+        ExerciseModel defaultExerciseModel1 = new ExerciseModel
         {
             setID = 1,
             previous = "-",
@@ -67,16 +75,22 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             reps = 6
         };
 
-        defaultExerciseType.exerciseModel.Add(defaultExerciseModel);
+        defaultExerciseType1.exerciseModel.Add(defaultExerciseModel1);
 
         DefaultTempleteModel defaultTemplate = new DefaultTempleteModel
         {
-            templeteName = "Default Workout",
-            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType }
+            templeteName = "Default Workout1",
+            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType1, defaultExerciseType2 }
+        };
+        DefaultTempleteModel defaultTemplate2 = new DefaultTempleteModel
+        {
+            templeteName = "Default Workout2",
+            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType1, defaultExerciseType2 }
         };
 
         excerciseData.exerciseTemplete.Clear();
         excerciseData.exerciseTemplete.Add(defaultTemplate);
+        excerciseData.exerciseTemplete.Add(defaultTemplate2);
 
         SaveExcerciseData();
     }
