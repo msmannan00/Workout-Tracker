@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 [RequireComponent(typeof(Image))]
 [RequireComponent(typeof(Mask))]
@@ -27,6 +28,8 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     public Sprite selectedPage;
     [Tooltip("Container with page images (optional)")]
     public Transform pageSelectionIcons;
+    [Tooltip("Text to show which page number is selected")]
+    public TextMeshProUGUI selectedPageText;
 
     // fast swipes should be fast and short. If too long, then it is not fast swipe
     private int _fastSwipeThresholdMaxLimit;
@@ -36,8 +39,9 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     private RectTransform _container;
 
     private bool _horizontal;
-    
+
     // number of pages in container
+    [SerializeField]
     private int _pageCount;
     [SerializeField]
     private int _currentPage;
@@ -84,6 +88,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         SetPage(startingPage);
         InitPageSelection();
         SetPageSelection(startingPage);
+        SetSelectedNumberText();
 
         // prev and next buttons
         if (nextButton)
@@ -177,6 +182,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         _lerpTo = _pagePositions[aPageIndex];
         _lerp = true;
         _currentPage = aPageIndex;
+        SetSelectedNumberText();
     }
 
     //------------------------------------------------------------------------
@@ -251,6 +257,18 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         }
 
         return nearestPage;
+    }
+
+    //------------------------------------------------------------------------
+    private void SetSelectedNumberText()
+    {
+        selectedPageText.text = $"{_currentPage+1} / {_pageCount}";
+        //if (!_container.GetChild(_currentPage).gameObject.GetComponent<DashboardItemController>().isCreator)
+        //{
+            userSessionManager.Instance.selectedTemplete = _container.GetChild(_currentPage).gameObject.GetComponent<DashboardItemController>().defaultTempleteModel;
+        //}
+        //else
+        //    userSessionManager.Instance.selectedTemplete = null;
     }
 
     //------------------------------------------------------------------------

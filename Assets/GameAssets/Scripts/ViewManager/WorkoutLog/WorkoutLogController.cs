@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,12 +32,14 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (data.ContainsKey("dataTemplate"))
         {
             DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
+            List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
-                List<object>  list = new List<object>();
                 list.Add(exerciseType);
-                OnExerciseAdd(list);
+                print(exerciseType.name);
             }
+            OnExerciseAdd(list);
+            workoutNameText.text = dataTemplate.templeteName;
         }
     }
 
@@ -102,13 +105,16 @@ public class WorkoutLogController : MonoBehaviour, PageController
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
     }
 
+    
+
     public void OnExerciseAdd(object data)
     {
         //List<object> dataList = data as List<object>;
-        if(data == null)
+        if (data == null)
         {
             print("data null");
         }
+
         if (data is List<ExerciseDataItem> dataList)
         {
             foreach (object item in dataList)
@@ -144,9 +150,27 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
             }
         }
+        else if (data is List<ExerciseTypeModel> dataList2)
+        {
+            foreach (object item in dataList2)
+            {
+                ExerciseTypeModel typeModel;
+
+                typeModel = (ExerciseTypeModel)item;
+                templeteModel.exerciseTemplete.Add(typeModel);
+
+                Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                    { "data", typeModel },
+                };
+
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
+                GameObject exerciseObject = Instantiate(exercisePrefab, content);
+                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+            }
+        }
         else { print("null"); }
     }
-
     private void OnRemoveIndex(object data)
     {
         if (isTemplateCreator)

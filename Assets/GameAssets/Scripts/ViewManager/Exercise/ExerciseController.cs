@@ -78,6 +78,8 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void PerformedExercises(string filter)
     {
+        addExerciseButton.gameObject.SetActive(false);
+        selectedExercises.Clear();
         currentButton = SearchButtonType.Performed;
         SetSelectedButton();
 
@@ -192,6 +194,8 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void LoadExercises(string filter = "")
     {
+        addExerciseButton.gameObject.SetActive(false);
+        selectedExercises.Clear();
         currentButton = SearchButtonType.Alphabetic;
         SetSelectedButton();
         foreach (GameObject item in exerciseItems)
@@ -264,6 +268,8 @@ public class ExerciseController : MonoBehaviour, PageController
 
     void ByRankExercises(string filter)
     {
+        addExerciseButton.gameObject.SetActive(false);
+        selectedExercises.Clear();
         currentButton = SearchButtonType.ByRank;
         SetSelectedButton();
 
@@ -351,6 +357,7 @@ public class ExerciseController : MonoBehaviour, PageController
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+        print("close");
     }
     public void AddNewExercise()
     {

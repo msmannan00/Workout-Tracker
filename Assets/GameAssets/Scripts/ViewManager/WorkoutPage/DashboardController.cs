@@ -10,6 +10,10 @@ public class DashboardController : MonoBehaviour, PageController
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
+        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardCreateModel");
+        GameObject exerciseObject = Instantiate(exercisePrefab, content);
+        exerciseObject.GetComponent<DashboardItemController>().createButton.onClick.AddListener(CreateNewWorkout);
+
     }
 
     private void Awake()
@@ -18,6 +22,8 @@ public class DashboardController : MonoBehaviour, PageController
 
     void Start()
     {
+        
+        print("start");
     }
 
     public void EditTemplete()
@@ -26,8 +32,15 @@ public class DashboardController : MonoBehaviour, PageController
 
     public void Play()
     {
+        if (userSessionManager.Instance.selectedTemplete != null)
+        {
+            StartEmptyWorkoutWithTemplate(userSessionManager.Instance.selectedTemplete);
+        }
     }
-
+    public void CreateNewWorkout()
+    {
+        StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "createNewWorkoutScreen", null, true, null);
+    }
     public void StartEmptyWorkout()
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
@@ -55,6 +68,7 @@ public class DashboardController : MonoBehaviour, PageController
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
             GameObject exerciseObject = Instantiate(exercisePrefab, content);
+            print("Oninit");
 
             DashboardItemController itemController = exerciseObject.GetComponent<DashboardItemController>();
             itemController.onInit(mData);

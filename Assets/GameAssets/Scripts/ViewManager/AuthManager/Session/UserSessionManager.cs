@@ -6,6 +6,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string mProfileUsername;
     public string mProfileID;
     public bool mSidebar = false;
+    public DefaultTempleteModel selectedTemplete;
     public ExcerciseData excerciseData = new ExcerciseData();
     public HistoryModel historyData = new HistoryModel();
 
