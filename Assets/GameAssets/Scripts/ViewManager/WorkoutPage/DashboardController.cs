@@ -10,9 +10,7 @@ public class DashboardController : MonoBehaviour, PageController
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
-        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardCreateModel");
-        GameObject exerciseObject = Instantiate(exercisePrefab, content);
-        exerciseObject.GetComponent<DashboardItemController>().createButton.onClick.AddListener(CreateNewWorkout);
+        
 
     }
 
@@ -20,11 +18,7 @@ public class DashboardController : MonoBehaviour, PageController
     {
     }
 
-    void Start()
-    {
-        
-        print("start");
-    }
+   
 
     public void EditTemplete()
     {
@@ -39,7 +33,11 @@ public class DashboardController : MonoBehaviour, PageController
     }
     public void CreateNewWorkout()
     {
-        StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "createNewWorkoutScreen", null, true, null);
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+                { "workoutName", "Preset " + content.childCount }
+            };
+        StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData);
     }
     public void StartEmptyWorkout()
     {
@@ -58,7 +56,6 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-
         foreach (var exercise in userSessionManager.Instance.excerciseData.exerciseTemplete)
         {
             Dictionary<string, object> mData = new Dictionary<string, object>
@@ -80,6 +77,10 @@ public class DashboardController : MonoBehaviour, PageController
             //    button.onClick.AddListener(() => StartEmptyWorkoutWithTemplate(exercise));
             //}
         }
+
+        GameObject exerciseCreatePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardCreateModel");
+        GameObject exerciseCreateObject = Instantiate(exerciseCreatePrefab, content);
+        exerciseCreateObject.GetComponent<DashboardItemController>().createButton.onClick.AddListener(CreateNewWorkout);
     }
 
     private void StartEmptyWorkoutWithTemplate(object exercise)

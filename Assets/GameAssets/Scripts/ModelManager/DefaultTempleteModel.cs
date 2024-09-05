@@ -11,6 +11,7 @@ public class ExcerciseData
 public class DefaultTempleteModel
 {
     public string templeteName = "Workout";
+    public string templeteNotes;
     public List<ExerciseTypeModel> exerciseTemplete = new List<ExerciseTypeModel>();
 }
 
@@ -32,4 +33,5 @@ public class ExerciseModel
     public int lbs = 0;
     public int reps = 0;
     public bool toggle;
+    public int time;
 }

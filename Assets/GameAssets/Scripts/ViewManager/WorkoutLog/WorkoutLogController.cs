@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,22 +9,21 @@ using UnityEngine.UI;
 public class WorkoutLogController : MonoBehaviour, PageController
 {
     public InputField workoutNameText;
-    public Text timerText;
+    public TextMeshProUGUI timerText;
     public Transform content;
 
     private int exerciseCounter = 0;
     public List<ExerciseInformationModel> exercises = new List<ExerciseInformationModel>();
     private List<ExerciseDataItem> exerciseDataItems = new List<ExerciseDataItem>();
-    private DefaultTempleteModel templeteModel = new DefaultTempleteModel();
+    public DefaultTempleteModel templeteModel = new DefaultTempleteModel();
 
     private bool isTemplateCreator;
     private bool isTimerRunning = false;
     private float elapsedTime = 0f;
     private Coroutine timerCoroutine;
-    private Color enabledColor = Color.black;
+    private Color enabledColor = Color.white;
     private Color disabledColor = Color.gray;
     Action<object> callback;
-
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
@@ -32,6 +32,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (data.ContainsKey("dataTemplate"))
         {
             DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
+            templeteModel.templeteName= dataTemplate.templeteName;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
@@ -39,8 +40,11 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 print(exerciseType.name);
             }
             OnExerciseAdd(list);
-            workoutNameText.text = dataTemplate.templeteName;
+            if(workoutNameText!=null)
+                workoutNameText.text = dataTemplate.templeteName;
+            print("name: " + dataTemplate.templeteName);
         }
+        OnToggleWorkout();
     }
 
     private void Start()
@@ -89,7 +93,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             elapsedTime += Time.deltaTime;
             int minutes = Mathf.FloorToInt(elapsedTime / 60);
             int seconds = Mathf.FloorToInt(elapsedTime % 60);
-            timerText.text = "Timer: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+            timerText.text = /*"Timer: " +*/ string.Format("{0:00}:{1:00}", minutes, seconds);
             yield return null;
         }
     }
@@ -101,7 +105,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void AddExerciseButton()
     {
-        Dictionary<string, object> mData = new Dictionary<string, object>();
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "isWorkoutLog", true }
+        };
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
     }
 
@@ -142,11 +149,13 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "data", typeModel },
+                    { "data", typeModel }, { "isWorkoutLog", true }
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
+                int childCount = content.childCount;
+                exerciseObject.transform.SetSiblingIndex(childCount - 2);
                 exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
             }
         }
@@ -162,6 +171,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
                     { "data", typeModel },
+                    { "isWorkoutLog", true }
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -190,6 +200,47 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void Finish()
     {
+        isTimerRunning = false;
+        var historyTemplate = new HistoryTempleteModel
+        {
+            templeteName = templeteModel.templeteName,
+            dateTime = DateTime.Now,
+            completedTime = (int)elapsedTime,
+            totalWeight = CalculateTotalWeight(templeteModel),
+            prs = 0 // Assuming PRs are not tracked here. Adjust as needed.
+        };
+
+        // Populate HistoryExerciseTypeModel list
+        foreach (var exerciseType in templeteModel.exerciseTemplete)
+        {
+            var historyExerciseType = new HistoryExerciseTypeModel
+            {
+                exerciseName = exerciseType.name,
+                index = exerciseType.index,
+                isWeightExercise = exerciseType.isWeigtExercise,
+                exerciseModel = new List<HistoryExerciseModel>()
+            };
+
+            // Populate HistoryExerciseModel list
+            foreach (var exercise in exerciseType.exerciseModel)
+            {
+                var historyExercise = new HistoryExerciseModel
+                {
+                    weight = exercise.weight,
+                    reps = exercise.reps,
+                    time = exercise.time
+                };
+
+                historyExerciseType.exerciseModel.Add(historyExercise);
+            }
+
+            historyTemplate.exerciseTypeModel.Add(historyExerciseType);
+        }
+        userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
+        userSessionManager.Instance.SaveHistory();
+        //return historyTemplate;
+
+
         foreach (var exerciseType in templeteModel.exerciseTemplete)
         {
             foreach (var exercise in exerciseType.exerciseModel)
@@ -202,18 +253,42 @@ public class WorkoutLogController : MonoBehaviour, PageController
             }
         }
 
-        if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
-        {
-            userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
+        //if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
+        //{
+        //userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
+        int index = GetIndexByTempleteName(templeteModel.templeteName);
+        userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
+        userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
             StateManager.Instance.HandleBackAction(gameObject);
             this.callback.Invoke(null);
             userSessionManager.Instance.SaveExcerciseData();
-        }
+        //}
         OnBack();
     }
 
     public void OnBack()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+    }
+    private int CalculateTotalWeight(DefaultTempleteModel defaultTemplate)
+    {
+        int totalWeight = 0;
+
+        foreach (var exerciseType in defaultTemplate.exerciseTemplete)
+        {
+            if (exerciseType.isWeigtExercise)
+            {
+                foreach (var exercise in exerciseType.exerciseModel)
+                {
+                    totalWeight += exercise.weight * exercise.reps;
+                }
+            }
+        }
+
+        return totalWeight;
+    }
+    public int GetIndexByTempleteName(string name)
+    {
+        return userSessionManager.Instance.excerciseData.exerciseTemplete.FindIndex(t => t.templeteName == name);
     }
 }

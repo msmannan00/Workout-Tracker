@@ -19,12 +19,22 @@ public class ExerciseController : MonoBehaviour, PageController
     private List<GameObject> alphabetLabels = new List<GameObject>();
     private List<GameObject> exerciseItems = new List<GameObject>();
     private Action<List<ExerciseDataItem>> callback;
+    private bool isWorkoutLog;
 
     public HistoryModel testHistory = new HistoryModel();
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
+        isWorkoutLog = (bool)data["isWorkoutLog"];
+        if(isWorkoutLog)
+        {
+            addExerciseButton.onClick.AddListener(() => AddExerciseToWorkoutLog());
+        }
+        else
+        {
+            addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
+        }
     }
 
 
@@ -37,7 +47,6 @@ public class ExerciseController : MonoBehaviour, PageController
         alphabetic.onClick.AddListener(() => LoadExercises());
         byRank.onClick.AddListener(() => ByRankExercises(""));
         performed.onClick.AddListener(() => PerformedExercises(""));
-        addExerciseButton.onClick.AddListener(()=>AddExerciseToWorkoutLog());
     }
     void AddAlphabeticLabels()
     {
@@ -369,6 +378,11 @@ public class ExerciseController : MonoBehaviour, PageController
     }
 
     public void AddExerciseToWorkoutLog()
+    {
+        callback?.Invoke(selectedExercises);
+        OnClose();
+    }
+    public void AddExerciseToCreateWorkout()
     {
         callback?.Invoke(selectedExercises);
         OnClose();

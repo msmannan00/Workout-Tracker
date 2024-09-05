@@ -8,48 +8,74 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 {
     public TMP_Text sets;
     public TMP_Text previous;
+    public TMP_InputField timer;
     public TMP_InputField weight;
     public TMP_InputField lbs;
     public TMP_Dropdown reps;
     public Toggle isComplete;
+    public bool isWeight;
 
     public ExerciseModel exerciseModel;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
         exerciseModel = (ExerciseModel)data["data"];
-
+        isWeight=(bool)data["isWeight"];
+        HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
-
-        if (exerciseModel.weight != 0)
+        if(isWeight)
         {
-            weight.text = exerciseModel.weight.ToString();
+            timer.gameObject.SetActive(false);
+            weight.gameObject.SetActive(true);
+            lbs.gameObject.SetActive(true);
+            reps.gameObject.SetActive(true);
+            if(exerciseHistory!=null)
+                previous.text = exerciseHistory.weight.ToString() + "kg " + exerciseHistory.reps.ToString();
         }
         else
         {
-            weight.text = "";
-        }
+            timer.gameObject.SetActive(true);
+            weight.gameObject.SetActive(false);
+            lbs.gameObject.SetActive(false);
+            reps.gameObject.SetActive(false);
+            if (exerciseHistory != null)
+            {
+                int minutes = exerciseHistory.time / 60;
+                int seconds = exerciseHistory.time % 60;
 
-        if (exerciseModel.lbs != 0)
-        {
-            lbs.text = exerciseModel.lbs.ToString();
+                previous.text = $"{minutes:D2}:{seconds:D2}";
+            }
         }
-        else
-        {
-            lbs.text = "";
-        }
+        //if (exerciseModel.weight != 0)
+        //{
+        //    weight.text = exerciseModel.weight.ToString();
+        //}
+        //else
+        //{
+        //    weight.text = "";
+        //}
+
+        //if (exerciseModel.lbs != 0)
+        //{
+        //    lbs.text = exerciseModel.lbs.ToString();
+        //}
+        //else
+        //{
+        //    lbs.text = "";
+        //}
+
+
+        //if (exerciseModel.reps > 0)
+        //{
+        //    reps.value = exerciseModel.reps - 1;
+        //}
+        //else
+        //{
+        //    reps.value = 0;
+        //}
 
         InitializeRepsDropdown();
-
-        if (exerciseModel.reps > 0)
-        {
-            reps.value = exerciseModel.reps - 1;
-        }
-        else
-        {
-            reps.value = 0;
-        }
 
         weight.onEndEdit.AddListener(OnWeightChanged);
         lbs.onEndEdit.AddListener(OnLbsChanged);
@@ -109,6 +135,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void UpdateToggleInteractableState()
     {
-        isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+        if(isWeight)
+            isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
     }
 }

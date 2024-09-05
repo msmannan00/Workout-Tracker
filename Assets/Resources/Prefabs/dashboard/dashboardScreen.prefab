@@ -1172,6 +1172,7 @@ MonoBehaviour:
   selectedPage: {fileID: 0}
   pageSelectionIcons: {fileID: 0}
   selectedPageText: {fileID: 1646191182684976160}
+  _pageCount: 0
   _currentPage: 0
 --- !u!1 &3366833322307143719
 GameObject:
@@ -3038,7 +3039,7 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 4755202493420379394}
           m_TargetAssemblyTypeName: DashboardController, Assembly-CSharp
-          m_MethodName: StartEmptyWorkout
+          m_MethodName: CreateNewWorkout
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
