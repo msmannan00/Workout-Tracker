@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class WorkoutLogController : MonoBehaviour, PageController
 {
     public InputField workoutNameText;
+    public TMP_InputField workoutNotes;
     public TextMeshProUGUI timerText;
     public Transform content;
 
@@ -33,6 +35,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         {
             DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
             templeteModel.templeteName= dataTemplate.templeteName;
+            workoutNotes.text = dataTemplate.templeteNotes;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
@@ -42,7 +45,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             OnExerciseAdd(list);
             if(workoutNameText!=null)
                 workoutNameText.text = dataTemplate.templeteName;
-            print("name: " + dataTemplate.templeteName);
+            workoutNotes.onValueChanged.AddListener(OnNotesChange);
         }
         OnToggleWorkout();
     }
@@ -112,7 +115,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
     }
 
-    
+    private void OnNotesChange(string input)
+    {
+        templeteModel.templeteNotes = input;
+    }
 
     public void OnExerciseAdd(object data)
     {
@@ -221,20 +227,27 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 exerciseModel = new List<HistoryExerciseModel>()
             };
 
-            // Populate HistoryExerciseModel list
+            // Populate HistoryExerciseModel list but only add exercises where toggle is true
             foreach (var exercise in exerciseType.exerciseModel)
             {
-                var historyExercise = new HistoryExerciseModel
+                if (exercise.toggle) // Only add exercise if toggle is true
                 {
-                    weight = exercise.weight,
-                    reps = exercise.reps,
-                    time = exercise.time
-                };
+                    var historyExercise = new HistoryExerciseModel
+                    {
+                        weight = exercise.weight,
+                        reps = exercise.reps,
+                        time = exercise.time
+                    };
 
-                historyExerciseType.exerciseModel.Add(historyExercise);
+                    historyExerciseType.exerciseModel.Add(historyExercise);
+                }
             }
 
-            historyTemplate.exerciseTypeModel.Add(historyExerciseType);
+            // Only add the exerciseType if it has any exercises with toggle true
+            if (historyExerciseType.exerciseModel.Count > 0)
+            {
+                historyTemplate.exerciseTypeModel.Add(historyExerciseType);
+            }
         }
         userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
         userSessionManager.Instance.SaveHistory();

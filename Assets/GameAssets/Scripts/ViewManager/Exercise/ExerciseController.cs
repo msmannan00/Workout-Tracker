@@ -40,7 +40,7 @@ public class ExerciseController : MonoBehaviour, PageController
 
     void Start()
     {
-        SaveTestHistory();
+        //SaveTestHistory();
 
         LoadExercises();
         searchInputField.onValueChanged.AddListener(OnSearchChanged);

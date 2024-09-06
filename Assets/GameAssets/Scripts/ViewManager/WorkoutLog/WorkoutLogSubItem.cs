@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,7 +9,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 {
     public TMP_Text sets;
     public TMP_Text previous;
-    public TMP_InputField timer;
+    public TMP_InputField timerText;
     public TMP_InputField weight;
     public TMP_InputField lbs;
     public TMP_Dropdown reps;
@@ -16,6 +17,13 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     public bool isWeight;
 
     public ExerciseModel exerciseModel;
+
+    //public bool timerReached; 
+    private int currentTimeInSeconds; 
+    private int userEnteredTimeInSeconds; 
+    private float timer;
+    private bool timerRunning = false;
+    private Coroutine timerCoroutine;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
@@ -26,7 +34,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         previous.text = exerciseModel.previous;
         if(isWeight)
         {
-            timer.gameObject.SetActive(false);
+            timerText.gameObject.SetActive(false);
             weight.gameObject.SetActive(true);
             lbs.gameObject.SetActive(true);
             reps.gameObject.SetActive(true);
@@ -35,7 +43,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         }
         else
         {
-            timer.gameObject.SetActive(true);
+            timerText.gameObject.SetActive(true);
             weight.gameObject.SetActive(false);
             lbs.gameObject.SetActive(false);
             reps.gameObject.SetActive(false);
@@ -81,6 +89,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         lbs.onEndEdit.AddListener(OnLbsChanged);
         reps.onValueChanged.AddListener(OnRepsChanged);
         isComplete.onValueChanged.AddListener(OnToggleValueChange);
+        timerText.onValueChanged.AddListener(OnTimerInput);
         UpdateToggleInteractableState();
         OnRepsChanged(0);
     }
@@ -126,6 +135,70 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         exerciseModel.reps = newRepsIndex + 1;
         UpdateToggleInteractableState();
     }
+    private void OnTimerInput(string input)
+    {
+        // Remove non-numeric characters
+        input = input.Replace(":", "").Trim();
+
+        if (input.Length > 4) input = input.Substring(0, 4);
+
+        // Format the input to "00:00"
+        string formattedInput = input.PadLeft(4, '0');
+        formattedInput = formattedInput.Insert(2, ":");
+
+        timerText.text = formattedInput;
+
+        // Convert formatted time to seconds
+        string[] timeParts = formattedInput.Split(':');
+        int minutes = int.Parse(timeParts[0]);
+        int seconds = int.Parse(timeParts[1]);
+        int enteredTimeInSeconds = (minutes * 60) + seconds;
+
+        if (enteredTimeInSeconds > userEnteredTimeInSeconds)
+        {
+            // If user enters a greater time, restart the timer
+            currentTimeInSeconds = enteredTimeInSeconds;
+            userEnteredTimeInSeconds = enteredTimeInSeconds;
+            isComplete.isOn = false;
+
+            // Stop the previous coroutine if it's running
+            if (timerCoroutine != null)
+            {
+                StopCoroutine(timerCoroutine);
+            }
+
+            // Start the timer coroutine again
+            timerCoroutine = StartCoroutine(StartTimer());
+        }
+        else if (enteredTimeInSeconds == userEnteredTimeInSeconds)
+        {
+            // If the same time is re-entered, do nothing
+            return;
+        }
+        else if (enteredTimeInSeconds < userEnteredTimeInSeconds)
+        {
+            // If a lesser time is entered, the bool stays the same
+            userEnteredTimeInSeconds = enteredTimeInSeconds;
+        }
+        else if (enteredTimeInSeconds == 0)
+        {
+            isComplete.isOn = false;
+        }
+    }
+    private IEnumerator StartTimer()
+    {
+        float timer = 0;
+
+        while (timer < userEnteredTimeInSeconds)
+        {
+            yield return new WaitForSeconds(1); // Wait for 1 second each loop
+            timer++;
+        }
+
+        // When the timer reaches the user-entered time
+        isComplete.isOn = true;
+    }
+
     public void OnToggleValueChange(bool value)
     {
         if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
@@ -137,5 +210,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         if(isWeight)
             isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+        else
+            isComplete.interactable = false;
     }
 }
