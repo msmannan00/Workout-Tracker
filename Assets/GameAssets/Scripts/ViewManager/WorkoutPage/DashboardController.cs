@@ -52,6 +52,7 @@ public class DashboardController : MonoBehaviour, PageController
 
     public void onReloadData(object data)
     {
+        print("run run");
         foreach (Transform child in content)
         {
             Destroy(child.gameObject);
@@ -98,5 +99,9 @@ public class DashboardController : MonoBehaviour, PageController
 
     public void SelectWorkout(GameObject obj)
     {
+    }
+    public void OnHistory()
+    {
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "historyScreen", null, true, null);
     }
 }

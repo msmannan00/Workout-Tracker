@@ -2269,6 +2269,7 @@ GameObject:
   - component: {fileID: 159950143312792483}
   - component: {fileID: 6013695207490031988}
   - component: {fileID: 2675008670362349221}
+  - component: {fileID: 4037562165248088756}
   m_Layer: 5
   m_Name: dumbbell icon
   m_TagString: Untagged
@@ -2348,6 +2349,35 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &4037562165248088756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6552689319901587429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4755202493420379394}
+          m_TargetAssemblyTypeName: DashboardController, Assembly-CSharp
+          m_MethodName: OnHistory
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &7057834276200929022
 GameObject:
   m_ObjectHideFlags: 0

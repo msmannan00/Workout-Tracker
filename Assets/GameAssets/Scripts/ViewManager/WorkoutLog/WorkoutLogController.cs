@@ -249,8 +249,11 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 historyTemplate.exerciseTypeModel.Add(historyExerciseType);
             }
         }
-        userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
-        userSessionManager.Instance.SaveHistory();
+        if (historyTemplate.exerciseTypeModel.Count > 0)
+        {
+            userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
+            userSessionManager.Instance.SaveHistory();
+        }
         //return historyTemplate;
 
 

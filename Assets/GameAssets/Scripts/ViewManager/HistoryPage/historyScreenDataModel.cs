@@ -25,6 +25,8 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
         {
             timeText.text=completeTime.ToString()+"s";
         }
+        if(historyWorkout.totalWeight > 0) { WeightText.text = historyWorkout.totalWeight.ToString() + " kg"; }
+        else { WeightText.text = "-"; }
         if (historyWorkout.exerciseTypeModel.Count > 0)
         {
             foreach (var exerciseModel in historyWorkout.exerciseTypeModel)
@@ -42,18 +44,16 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
         newSubItem.transform.SetSiblingIndex(childCount - 2);
         HistorySubItem newSubItemScript = newSubItem.GetComponent<HistorySubItem>();
 
-        HistoryExerciseModel history = null;
+        //HistoryExerciseModel history = null;
         //if (exerciseHistory.Count > 0)
         //{
         //    history = exerciseHistory[0];
         //    exerciseHistory.RemoveAt(0);
         //}
-        //Dictionary<string, object> initData = new Dictionary<string, object>
-        //{
-        //    {  "data", exerciseModel   },
-        //    {"isWeight", exerciseTypeModel.isWeigtExercise  },
-        //    {"exerciseHistory",history}
-        //};
-        //newSubItemScript.onInit(initData);
+        Dictionary<string, object> initData = new Dictionary<string, object>
+        {
+            {  "data", exerciseModel   }
+        };
+        newSubItemScript.onInit(initData,null);
     }
 }

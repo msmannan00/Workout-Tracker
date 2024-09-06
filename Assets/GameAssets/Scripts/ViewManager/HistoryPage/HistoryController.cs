@@ -19,6 +19,7 @@ public class HistoryController : MonoBehaviour, PageController
         {
             list.Add(workouts);
         }
+        OnExerciseAdd(list);
     }
 
     public void OnExerciseAdd(object data)
@@ -59,5 +60,9 @@ public class HistoryController : MonoBehaviour, PageController
                 exerciseObject.GetComponent<historyScreenDataModel>().onInit(mData, null);
             }
         }
+    }
+    public void OnClose()
+    {
+        StateManager.Instance.HandleBackAction(gameObject);
     }
 }

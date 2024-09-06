@@ -88,7 +88,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         weight.onEndEdit.AddListener(OnWeightChanged);
         lbs.onEndEdit.AddListener(OnLbsChanged);
         reps.onValueChanged.AddListener(OnRepsChanged);
-        isComplete.onValueChanged.AddListener(OnToggleValueChange);
+        if(isComplete!=null)
+            isComplete.onValueChanged.AddListener(OnToggleValueChange);
         timerText.onValueChanged.AddListener(OnTimerInput);
         UpdateToggleInteractableState();
         OnRepsChanged(0);
@@ -159,7 +160,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             // If user enters a greater time, restart the timer
             currentTimeInSeconds = enteredTimeInSeconds;
             userEnteredTimeInSeconds = enteredTimeInSeconds;
-            isComplete.isOn = false;
+            if (isComplete != null)
+                isComplete.isOn = false;
 
             // Stop the previous coroutine if it's running
             if (timerCoroutine != null)
@@ -182,7 +184,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         }
         else if (enteredTimeInSeconds == 0)
         {
-            isComplete.isOn = false;
+            if (isComplete != null)
+                isComplete.isOn = false;
         }
     }
     private IEnumerator StartTimer()
@@ -196,7 +199,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         }
 
         // When the timer reaches the user-entered time
-        isComplete.isOn = true;
+        if(isComplete!=null)
+            isComplete.isOn = true;
     }
 
     public void OnToggleValueChange(bool value)
@@ -208,9 +212,12 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void UpdateToggleInteractableState()
     {
-        if(isWeight)
-            isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
-        else
-            isComplete.interactable = false;
+        if (isComplete != null)
+        {
+            if (isWeight)
+                isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+            else
+                isComplete.interactable = false;
+        }
     }
 }
