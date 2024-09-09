@@ -154,14 +154,17 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         int minutes = int.Parse(timeParts[0]);
         int seconds = int.Parse(timeParts[1]);
         int enteredTimeInSeconds = (minutes * 60) + seconds;
-
+        exerciseModel.time = enteredTimeInSeconds;
         if (enteredTimeInSeconds > userEnteredTimeInSeconds)
         {
             // If user enters a greater time, restart the timer
             currentTimeInSeconds = enteredTimeInSeconds;
             userEnteredTimeInSeconds = enteredTimeInSeconds;
             if (isComplete != null)
+            {
                 isComplete.isOn = false;
+                exerciseModel.toggle = false;
+            }
 
             // Stop the previous coroutine if it's running
             if (timerCoroutine != null)
@@ -185,7 +188,10 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         else if (enteredTimeInSeconds == 0)
         {
             if (isComplete != null)
+            {
                 isComplete.isOn = false;
+                exerciseModel.toggle = false;
+            }
         }
     }
     private IEnumerator StartTimer()
@@ -199,8 +205,11 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         }
 
         // When the timer reaches the user-entered time
-        if(isComplete!=null)
+        if (isComplete != null)
+        {
             isComplete.isOn = true;
+            exerciseModel.toggle = true;
+        }
     }
 
     public void OnToggleValueChange(bool value)

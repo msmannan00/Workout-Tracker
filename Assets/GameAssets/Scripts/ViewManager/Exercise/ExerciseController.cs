@@ -47,6 +47,9 @@ public class ExerciseController : MonoBehaviour, PageController
         alphabetic.onClick.AddListener(() => LoadExercises());
         byRank.onClick.AddListener(() => ByRankExercises(""));
         performed.onClick.AddListener(() => PerformedExercises(""));
+        alphabetic.onClick.AddListener(() =>ClearSearchBar());
+        byRank.onClick.AddListener(() => ClearSearchBar());
+        performed.onClick.AddListener(() => ClearSearchBar());
     }
     void AddAlphabeticLabels()
     {
@@ -113,7 +116,10 @@ public class ExerciseController : MonoBehaviour, PageController
         ExerciseData exerciseData = DataManager.Instance.getExerciseData();
         HistoryModel historyData = userSessionManager.Instance.historyData;
         List<string> filterExercises = GetUniqueExercises(historyData);
-
+        foreach(string name in filterExercises)
+        {
+            print(name);
+        }
         string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
 
         foreach (ExerciseDataItem exercise in exerciseData.exercises)
@@ -125,7 +131,6 @@ public class ExerciseController : MonoBehaviour, PageController
             {
                 continue;
             }
-
             // Check if the exercise name is in the list of filterExercises
             if (filterExercises != null && !filterExercises.Contains(exercise.exerciseName))
             {
@@ -134,7 +139,6 @@ public class ExerciseController : MonoBehaviour, PageController
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
             GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-
 
             ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
@@ -386,6 +390,11 @@ public class ExerciseController : MonoBehaviour, PageController
     {
         callback?.Invoke(selectedExercises);
         OnClose();
+    }
+
+    void ClearSearchBar()
+    {
+        searchInputField.text = "";
     }
     public void SaveTestHistory()
     {

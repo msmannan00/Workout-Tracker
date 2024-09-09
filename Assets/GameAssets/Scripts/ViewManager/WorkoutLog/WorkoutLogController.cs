@@ -226,10 +226,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 isWeightExercise = exerciseType.isWeigtExercise,
                 exerciseModel = new List<HistoryExerciseModel>()
             };
-
             // Populate HistoryExerciseModel list but only add exercises where toggle is true
             foreach (var exercise in exerciseType.exerciseModel)
             {
+                print("bool "+exercise.toggle);
                 if (exercise.toggle) // Only add exercise if toggle is true
                 {
                     var historyExercise = new HistoryExerciseModel

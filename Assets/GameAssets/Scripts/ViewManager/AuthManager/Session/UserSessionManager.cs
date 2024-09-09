@@ -55,7 +55,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         ExerciseTypeModel defaultExerciseType1 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Biecp Curl",
+            name = "Bicep Curl",
             isWeigtExercise = true,
             exerciseModel = new List<ExerciseModel>()
         };

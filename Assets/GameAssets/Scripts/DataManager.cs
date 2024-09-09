@@ -4,7 +4,7 @@ using UnityEngine.Purchasing.MiniJSON;
 
 public class DataManager : GenericSingletonClass<DataManager>
 {
-    private ExerciseData exerciseData = new ExerciseData();
+    public ExerciseData exerciseData = new ExerciseData();
     
     public void loadData()
     {

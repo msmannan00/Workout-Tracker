@@ -52,7 +52,6 @@ public class DashboardController : MonoBehaviour, PageController
 
     public void onReloadData(object data)
     {
-        print("run run");
         foreach (Transform child in content)
         {
             Destroy(child.gameObject);
@@ -66,7 +65,6 @@ public class DashboardController : MonoBehaviour, PageController
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
             GameObject exerciseObject = Instantiate(exercisePrefab, content);
-            print("Oninit");
 
             DashboardItemController itemController = exerciseObject.GetComponent<DashboardItemController>();
             itemController.onInit(mData);
