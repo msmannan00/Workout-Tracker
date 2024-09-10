@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,9 +8,9 @@ using UnityEngine.UI;
 public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
 {
     [SerializeField]
-    private Text exerciseNameText;
+    private TextMeshProUGUI exerciseNameText;
     [SerializeField]
-    private Text categoryNameText;
+    private TextMeshProUGUI categoryNameText;
     [SerializeField]
     private Image exerciseImage;
 
@@ -29,6 +30,21 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
         {
             exerciseNameText.text = exerciseData.exerciseName;
             categoryNameText.text = exerciseData.category;
+            switch (userSessionManager.Instance.gameTheme)
+            {
+                case Theme.Light:
+                    exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;
+                    categoryNameText.font=userSessionManager.Instance.lightTextFont;
+                    exerciseNameText.color = userSessionManager.Instance.lightHeadingColor;
+                    categoryNameText.color=userSessionManager.Instance.lightTextColor;
+                    break;
+                case Theme.Dark:
+                    exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;
+                    categoryNameText.font = userSessionManager.Instance.darkTextFont;
+                    exerciseNameText.color = Color.white;
+                    categoryNameText.color = new Color32(255, 255, 255, 153);
+                    break;
+            }
         }
     }
 

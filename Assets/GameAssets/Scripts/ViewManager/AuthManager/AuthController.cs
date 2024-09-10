@@ -256,8 +256,8 @@ public class AuthController : MonoBehaviour, PageController
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
             aTriggerButton.text = "Log In";
-            aPageToggleText1.text = "I Don't have an account? ";
-            aPageToggleText2.text = "Signup";
+            aPageToggleText1.text = "New user?";
+            aPageToggleText2.text = "Create an account.";
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {

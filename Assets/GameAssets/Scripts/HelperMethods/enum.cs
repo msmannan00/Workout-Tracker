@@ -5,3 +5,8 @@ public enum SearchButtonType
     ByRank=2,
     Performed=3
 }
+public enum Theme
+{
+    Light=1,
+    Dark=2
+}

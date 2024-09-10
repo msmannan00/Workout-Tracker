@@ -8,13 +8,17 @@ using System.Linq;
 public class ExerciseController : MonoBehaviour, PageController
 {
     public Transform content;
+    public TextMeshProUGUI labelText;
     public TMP_InputField searchInputField;
     public Button addExerciseButton;
     public Button alphabetic, byRank, performed;
     public Color buttonUnselectColor;
     public Color exerciseUnselectColor;
 
+    public List<Image> themeColorItems;
+    public Image searchIcon1, searchIcon2;
     private SearchButtonType currentButton;
+    public List<string> selectedBodyParts=new List<string>();
     public List<ExerciseDataItem> selectedExercises = new List<ExerciseDataItem>();
     private List<GameObject> alphabetLabels = new List<GameObject>();
     private List<GameObject> exerciseItems = new List<GameObject>();
@@ -35,6 +39,38 @@ public class ExerciseController : MonoBehaviour, PageController
         {
             addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
         }
+
+        switch (userSessionManager.Instance.gameTheme)
+        {
+            case Theme.Light:
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
+                searchInputField.gameObject.GetComponent<Image>().color = Color.white;
+                searchInputField.placeholder.color = userSessionManager.Instance.lightTextColor;
+                searchInputField.textComponent.color= userSessionManager.Instance.lightTextColor;
+                labelText.color = userSessionManager.Instance.lightHeadingColor;
+                labelText.font = userSessionManager.Instance.lightHeadingFont;
+                foreach (Image image in themeColorItems)
+                {
+                    image.color = userSessionManager.Instance.lightButtonColor;
+                }
+                searchIcon1.color= userSessionManager.Instance.lightTextColor;
+                searchIcon2.color= userSessionManager.Instance.lightTextColor;
+                break;
+            case Theme.Dark:
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+                searchInputField.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
+                searchInputField.placeholder.color = userSessionManager.Instance.darkSearchIconColor;
+                searchInputField.textComponent.color = userSessionManager.Instance.darkSearchIconColor;
+                labelText.color = Color.white;
+                labelText.font = userSessionManager.Instance.darkHeadingFont;
+                foreach (Image image in themeColorItems)
+                {
+                    image.color = Color.white;
+                }
+                searchIcon1.color = userSessionManager.Instance.darkSearchIconColor;
+                searchIcon2.color = userSessionManager.Instance.darkSearchIconColor;
+                break;
+        }
     }
 
 
@@ -51,22 +87,38 @@ public class ExerciseController : MonoBehaviour, PageController
         byRank.onClick.AddListener(() => ClearSearchBar());
         performed.onClick.AddListener(() => ClearSearchBar());
     }
+
+    public void SortBodyParts()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+                { "controller", this.GetComponent<ExerciseController>() }
+            };
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "bodyPartsScreen", mData, true, null);
+    }
     void AddAlphabeticLabels()
     {
         for (char letter = 'A'; letter <= 'Z'; letter++)
         {
-            GameObject textLabelObject = new GameObject($"Label_{letter}");
-            textLabelObject.transform.SetParent(content, false);
-
-            TextMeshProUGUI textMeshPro = textLabelObject.AddComponent<TextMeshProUGUI>();
+            GameObject labelPrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseLabel");
+            GameObject textLabelObject = Instantiate(labelPrefab, content);
+            TextMeshProUGUI textMeshPro = textLabelObject.GetComponentInChildren<TextMeshProUGUI>();
+            textLabelObject.name = $"Label_{letter}";
             textMeshPro.text = letter.ToString();
-            textMeshPro.fontSize = 17;
-            textMeshPro.color = Color.white;
-            textMeshPro.fontStyle = FontStyles.Bold;
-            textMeshPro.alignment = TextAlignmentOptions.Left;
-            textMeshPro.margin = new Vector4(20, 0, 0, 0);
-
-            alphabetLabels.Add(textLabelObject);
+            switch (userSessionManager.Instance.gameTheme)
+            {
+                case Theme.Light:
+                    textMeshPro.font = userSessionManager.Instance.lightHeadingFont;
+                    textMeshPro.color = userSessionManager.Instance.lightHeadingColor;
+                    textLabelObject.GetComponentInChildren<Image>().color = userSessionManager.Instance.lightButtonColor;
+                    break;
+                case Theme.Dark:
+                    textMeshPro.font = userSessionManager.Instance.darkHeadingFont;
+                    textMeshPro.color = Color.white;
+                    textLabelObject.GetComponentInChildren<Image>().color = Color.white;
+                    break;
+            }
+            alphabetLabels.Add(textLabelObject.gameObject);
         }
     }
     public static List<string> GetUniqueExercises(HistoryModel historyData)
@@ -88,6 +140,8 @@ public class ExerciseController : MonoBehaviour, PageController
         // Convert HashSet to List and return it
         return uniqueExercises.ToList();
     }
+
+    
     void PerformedExercises(string filter)
     {
         addExerciseButton.gameObject.SetActive(false);
@@ -216,7 +270,6 @@ public class ExerciseController : MonoBehaviour, PageController
             Destroy(item);
         }
         exerciseItems.Clear();
-
         if (alphabetLabels != null)
         {
             foreach (GameObject label in alphabetLabels)
@@ -228,15 +281,20 @@ public class ExerciseController : MonoBehaviour, PageController
             }
             alphabetLabels.Clear();
         }
+
         AddAlphabeticLabels();
 
         ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+
+        List<GameObject> relevantLabels = new List<GameObject>();
+
+        bool showAll = string.IsNullOrEmpty(filter);
 
         foreach (ExerciseDataItem exercise in exerciseData.exercises)
         {
             string lowerFilter = filter.ToLower();
 
-            if (!string.IsNullOrEmpty(lowerFilter) &&
+            if (!showAll &&
                 !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
                   exercise.category.ToLower().Contains(lowerFilter)))
             {
@@ -248,6 +306,11 @@ public class ExerciseController : MonoBehaviour, PageController
 
             if (targetLabel != null)
             {
+                if (!relevantLabels.Contains(targetLabel))
+                {
+                    relevantLabels.Add(targetLabel);
+                }
+
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
                 GameObject newExerciseObject = Instantiate(exercisePrefab, content);
 
@@ -257,9 +320,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
                 Dictionary<string, object> initData = new Dictionary<string, object>
-                {
+            {
                 { "data", exercise },
-                };
+            };
 
                 newExerciseItem.onInit(initData);
 
@@ -268,13 +331,113 @@ public class ExerciseController : MonoBehaviour, PageController
                 {
                     button.onClick.AddListener(() =>
                     {
-                        //callback?.Invoke(exercise);
                         SelectAndDeselectExercise(newExerciseObject, exercise);
-                        //OnClose();
                     });
                 }
 
                 exerciseItems.Add(newExerciseObject);
+            }
+        }
+        foreach (GameObject label in alphabetLabels)
+        {
+            if (showAll)
+            {
+                label.SetActive(true);
+            }
+            else if (relevantLabels.Contains(label))
+            {
+                label.SetActive(true);
+            }
+            else
+            {
+                label.SetActive(false);
+            }
+        }
+    }
+
+    public void LoadExercisesByBodyParts()
+    { 
+        addExerciseButton.gameObject.SetActive(false);
+        selectedExercises.Clear();
+        currentButton = SearchButtonType.Alphabetic;
+        SetSelectedButton();
+        foreach (GameObject item in exerciseItems)
+        {
+            Destroy(item);
+        }
+        exerciseItems.Clear();
+        if (alphabetLabels != null)
+        {
+            foreach (GameObject label in alphabetLabels)
+            {
+                if (label != null)
+                {
+                    Destroy(label);
+                }
+            }
+            alphabetLabels.Clear();
+        }
+
+        AddAlphabeticLabels();
+
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+
+        List<GameObject> relevantLabels = new List<GameObject>();
+
+        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        {
+            // Check if the exercise category is in the provided list
+            if (!selectedBodyParts.Contains(exercise.category))
+            {
+                continue;
+            }
+
+            char firstLetter = char.ToUpper(exercise.exerciseName[0]);
+            GameObject targetLabel = alphabetLabels.Find(label => label.name == $"Label_{firstLetter}");
+
+            if (targetLabel != null)
+            {
+                if (!relevantLabels.Contains(targetLabel))
+                {
+                    relevantLabels.Add(targetLabel);
+                }
+
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+                GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+                int labelIndex = targetLabel.transform.GetSiblingIndex();
+                newExerciseObject.transform.SetSiblingIndex(labelIndex + 1);
+
+                ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+                Dictionary<string, object> initData = new Dictionary<string, object>
+        {
+            { "data", exercise },
+        };
+
+                newExerciseItem.onInit(initData);
+
+                Button button = newExerciseObject.GetComponent<Button>();
+                if (button != null)
+                {
+                    button.onClick.AddListener(() =>
+                    {
+                        SelectAndDeselectExercise(newExerciseObject, exercise);
+                    });
+                }
+
+                exerciseItems.Add(newExerciseObject);
+            }
+        }
+        foreach (GameObject label in alphabetLabels)
+        {
+            if (relevantLabels.Contains(label))
+            {
+                label.SetActive(true);
+            }
+            else
+            {
+                label.SetActive(false);
             }
         }
     }
