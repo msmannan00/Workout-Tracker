@@ -8,9 +8,10 @@ using UnityEngine.UI;
 
 public class SelectBodyParts : MonoBehaviour,PageController
 {
-    public TextMeshProUGUI label;
+    public TextMeshProUGUI label,bodyPartLabel;
     public GameObject prefab;
     public RectTransform content;
+    public Image backButton;
     public float maxRowWidth = 350f; // Maximum width for one row
     public float verticalSpacing = 20f; // Spacing between rows
     public float horizontalSpacing = 10f;
@@ -22,85 +23,71 @@ public class SelectBodyParts : MonoBehaviour,PageController
         float currentX = 0;
         float currentY = 0;
         List<string> bodyParts = GetUniqueBodyParts(DataManager.Instance.exerciseData);
+        TMP_FontAsset headingFont = null;
+        TMP_FontAsset itemFont = null;
+        Color itemColor= Color.white;
+        switch (userSessionManager.Instance.gameTheme)
+        {
+            case Theme.Light:
+                headingFont = userSessionManager.Instance.lightHeadingFont;
+                itemFont = userSessionManager.Instance.lightTextFont;
+                itemColor = userSessionManager.Instance.lightButtonColor;
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
+                label.font = headingFont;
+                bodyPartLabel.font = headingFont;
+                label.color = userSessionManager.Instance.lightHeadingColor;
+                bodyPartLabel.color = userSessionManager.Instance.lightHeadingColor;
+                backButton.color = userSessionManager.Instance.lightButtonColor;
+                break;
+            case Theme.Dark:
+                headingFont = userSessionManager.Instance.darkHeadingFont;
+                itemFont = userSessionManager.Instance.darkTextFont;
+                itemColor = Color.white;
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+                label.font = headingFont;
+                bodyPartLabel.font = headingFont;
+                label.color = Color.white;
+                bodyPartLabel.color = Color.white;
+                backButton.color = Color.white;
+                break;
+        }
         foreach (string text in bodyParts)
         {
             // Instantiate text prefab
             GameObject newTextObj = Instantiate(prefab, content);
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
             textComponent.text = text;
-            newTextObj.GetComponent<Button>().onClick.AddListener(() => SelectAndDeselect(text, newTextObj, controller));
-            // Force a layout rebuild to ensure the preferred width is correct
+            textComponent.font = itemFont;
+            textComponent.color = userSessionManager.Instance.lightButtonColor;
+            newTextObj.GetComponent<Button>().onClick.AddListener(() => SelectAndDeselect(text, newTextObj, controller, itemColor));
+            newTextObj.GetComponent<Image>().color = itemColor;
             LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
-
-            // Get the preferred width of the text
             float textWidth = textComponent.preferredWidth+15;
-
-            // Check if the text fits in the current row
             if (currentX + textWidth > maxRowWidth)
             {
-                // Move to the next row
                 currentX = 0;
                 currentY -= textComponent.preferredHeight + verticalSpacing;
             }
-
-            // Set the position of the text
             RectTransform textRect = newTextObj.GetComponent<RectTransform>();
-            textRect.pivot = new Vector2(0, 1); // Align to top-left corner
+            textRect.pivot = new Vector2(0, 1);
             textRect.anchorMin = new Vector2(0, 1);
             textRect.anchorMax = new Vector2(0, 1);
-
-            // Adjust the width of the RectTransform to fit the text length
             textRect.sizeDelta = new Vector2(textWidth, textRect.sizeDelta.y);
-
-            // Set the anchored position starting from the left
             textRect.anchoredPosition = new Vector2(currentX, currentY);
-
-            // Move the current X position for the next text (add horizontalSpacing)
             currentX += textWidth + horizontalSpacing;
         }
-
-        // Optional: Adjust content area height based on the number of rows
         float contentHeight = Mathf.Abs(currentY) + verticalSpacing;
         content.sizeDelta = new Vector2(content.sizeDelta.x, contentHeight);
 
-
-        //foreach (string text in bodyParts)
-        //{
-        //// Instantiate text prefab
-        //GameObject newTextObj = Instantiate(prefab, content);
-        //    TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
-        //    textComponent.text = text;
-        //    newTextObj.GetComponent<Button>().onClick.AddListener(() => SelectAndDeselect(text, newTextObj, controller));
-        //    // Get the preferred width of the text
-        //    float textWidth = textComponent.preferredWidth+10;
-
-        //    // Check if the text fits in the current row
-        //    if (currentX + textWidth > maxRowWidth)
-        //    {
-        //        // Move to the next row
-        //        currentX = 0;
-        //        currentY -= textComponent.preferredHeight + verticalSpacing;
-        //    }
-
-        //    // Set the position of the text
-        //    RectTransform textRect = newTextObj.GetComponent<RectTransform>();
-        //    textRect.anchoredPosition = new Vector2(currentX, currentY);
-
-        //    // Adjust the width of the RectTransform to fit the text length
-        //    textRect.sizeDelta = new Vector2(textWidth, textRect.sizeDelta.y);
-
-        //    // Move the current X position for the next text (add horizontalSpacing to ensure gap)
-        //    currentX += textWidth + horizontalSpacing;
-        //}
     }
-    public void SelectAndDeselect(string text, GameObject obj, ExerciseController controller)
+    public void SelectAndDeselect(string text, GameObject obj, ExerciseController controller,Color col)
     {
         if (controller.selectedBodyParts.Contains(text))
         {
             int matchingCount = GetMatchingCategoryCount(DataManager.Instance.exerciseData, text);
             globalCounter -= matchingCount;
             controller.selectedBodyParts.Remove(text);
-            obj.GetComponent<Image>().color = userSessionManager.Instance.lightHeadingColor;
+            obj.GetComponent<Image>().color = col;
             label.text = "Filter(" + globalCounter.ToString() + ")";
         }
         else
@@ -118,7 +105,6 @@ public class SelectBodyParts : MonoBehaviour,PageController
         if (controller.selectedBodyParts.Count != 0)
         {
             controller.LoadExercisesByBodyParts();
-            print("Plat");
         }
     }
     public List<string> GetUniqueBodyParts(ExerciseData excerciseData)
