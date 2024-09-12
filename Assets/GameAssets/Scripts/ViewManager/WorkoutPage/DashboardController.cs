@@ -26,7 +26,7 @@ public class DashboardController : MonoBehaviour, PageController
         switch (userSessionManager.Instance.gameTheme)
         {
             case Theme.Dark:
-                this.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+               // this.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
                 headingColorText.color = Color.white;
                 topButtonBar.color = new Color32(51, 23, 23, 255);
                 searchIcon1.color = userSessionManager.Instance.darkSearchIconColor;
@@ -55,7 +55,7 @@ public class DashboardController : MonoBehaviour, PageController
                 break;
             case Theme.Light:
                 topButtonBar.color = Color.white;
-                this.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
+              //  this.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
                 headingColorText.color = userSessionManager.Instance.lightHeadingColor;
                 searchIcon1.color = userSessionManager.Instance.lightTextColor;
                 searchIcon2.color = userSessionManager.Instance.lightTextColor;

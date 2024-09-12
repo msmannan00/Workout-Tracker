@@ -56,7 +56,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         switch (userSessionManager.Instance.gameTheme)
         {
             case Theme.Dark:
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+               // this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
                 workoutNameText.font=userSessionManager.Instance.darkHeadingFont;
                 workoutNameText.color = Color.white;
                 timerText.color = Color.white;
@@ -74,7 +74,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = userSessionManager.Instance.darkBgColor;
                 break;
             case Theme.Light:
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
+               // this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
                 workoutNameText.font = userSessionManager.Instance.lightHeadingFont;
                 workoutNameText.color = userSessionManager.Instance.lightHeadingColor;
                 timerText.color = userSessionManager.Instance.lightHeadingColor;

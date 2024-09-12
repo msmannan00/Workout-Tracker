@@ -43,8 +43,7 @@ public class ExerciseController : MonoBehaviour, PageController
         switch (userSessionManager.Instance.gameTheme)
         {
             case Theme.Light:
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                searchInputField.gameObject.GetComponent<Image>().color = Color.white;
+               // searchInputField.gameObject.GetComponent<Image>().color = Color.white;
                 searchInputField.placeholder.color = userSessionManager.Instance.lightTextColor;
                 searchInputField.textComponent.color= userSessionManager.Instance.lightTextColor;
                 labelText.color = userSessionManager.Instance.lightHeadingColor;
@@ -57,7 +56,7 @@ public class ExerciseController : MonoBehaviour, PageController
                 searchIcon2.color= userSessionManager.Instance.lightTextColor;
                 break;
             case Theme.Dark:
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+              //  this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
                 searchInputField.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
                 searchInputField.placeholder.color = userSessionManager.Instance.darkSearchIconColor;
                 searchInputField.textComponent.color = userSessionManager.Instance.darkSearchIconColor;
