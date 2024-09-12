@@ -9,9 +9,10 @@ using UnityEngine.UI;
 
 public class WorkoutLogController : MonoBehaviour, PageController
 {
-    public InputField workoutNameText;
+    public TextMeshProUGUI workoutNameText;
     public TMP_InputField workoutNotes;
     public TextMeshProUGUI timerText;
+    public Image back, watch, watchpins, addExercise1, addExercise2, line, save, cancle;
     public Transform content;
 
     private int exerciseCounter = 0;
@@ -50,14 +51,56 @@ public class WorkoutLogController : MonoBehaviour, PageController
         OnToggleWorkout();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        timerText.color = disabledColor;
-        if (workoutNameText != null)
+        switch (userSessionManager.Instance.gameTheme)
         {
-            workoutNameText.onEndEdit.AddListener(OnNameChanged);
+            case Theme.Dark:
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+                workoutNameText.font=userSessionManager.Instance.darkHeadingFont;
+                workoutNameText.color = Color.white;
+                timerText.color = Color.white;
+                back.color = Color.white;
+                watch.color = Color.white;
+                watchpins.color = userSessionManager.Instance.darkBgColor;
+                addExercise1.color = Color.white;
+                addExercise2.color = Color.white;
+                line.color = Color.white;
+                save.color = Color.white;
+                cancle.color = Color.white;
+                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.darkHeadingFont;
+                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = userSessionManager.Instance.darkBgColor;
+                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.darkHeadingFont;
+                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = userSessionManager.Instance.darkBgColor;
+                break;
+            case Theme.Light:
+                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
+                workoutNameText.font = userSessionManager.Instance.lightHeadingFont;
+                workoutNameText.color = userSessionManager.Instance.lightHeadingColor;
+                timerText.color = userSessionManager.Instance.lightHeadingColor;
+                back.color = userSessionManager.Instance.lightButtonColor;
+                watch.color = userSessionManager.Instance.lightButtonColor;
+                watchpins.color = Color.white;
+                addExercise1.color = userSessionManager.Instance.lightButtonColor;
+                addExercise2.color = userSessionManager.Instance.lightButtonColor;
+                line.color = new Color32(218,52,52,150);
+                save.color = userSessionManager.Instance.lightButtonColor;
+                cancle.color = userSessionManager.Instance.lightButtonColor;
+                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
+                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
+                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+                break;
         }
     }
+    //private void Start()
+    //{
+    //    timerText.color = disabledColor;
+    //    if (workoutNameText != null)
+    //    {
+    //        workoutNameText.onEndEdit.AddListener(OnNameChanged);
+    //    }
+    //}
 
     public void OnToggleWorkout()
     {

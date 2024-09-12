@@ -11,6 +11,7 @@ public class DashboardController : MonoBehaviour, PageController
     public TextMeshProUGUI headingColorText;
     public List<Image> footerButtonImages;
     public List<Image> headerButtonImages;
+    public GameObject bottomMiddelObject;
     public TMP_InputField searchInputField;
     public Image searchIcon1, searchIcon2, topButtonBar;
     public Transform content;
@@ -46,6 +47,7 @@ public class DashboardController : MonoBehaviour, PageController
                             child.GetComponent<Image>().color = Color.white;
                     }
                 }
+                BottomButtonSelectionSeter(bottomMiddelObject);
                 foreach (Image image in headerButtonImages)
                 {
                     image.color = Color.white;
@@ -73,6 +75,7 @@ public class DashboardController : MonoBehaviour, PageController
                             child.GetComponent<Image>().color = Color.red;
                     }
                 }
+                BottomButtonSelectionSeter(bottomMiddelObject);
                 foreach (Image image in headerButtonImages)
                 {
                     image.color = userSessionManager.Instance.lightButtonColor;
@@ -191,5 +194,40 @@ public class DashboardController : MonoBehaviour, PageController
     public void OnHistory()
     {
         StateManager.Instance.OpenStaticScreen("history", gameObject, "historyScreen", null, true, null);
+    }
+    public void BottomButtonSelectionSeter(GameObject clickedObject)
+    {
+        switch (userSessionManager.Instance.gameTheme)
+        {
+            case Theme.Dark:
+                foreach(Image img in footerButtonImages)
+                {
+                    if (img.gameObject == clickedObject)
+                        img.enabled = true;
+                    else
+                        img.enabled = false;
+                }
+                break;
+            case Theme.Light:
+                foreach (Image img in footerButtonImages)
+                {
+                    if (img.gameObject == clickedObject)
+                    {
+                        foreach(Transform child in img.gameObject.transform)
+                        {
+                            child.GetComponent<Image>().color = Color.red;
+                        }
+                    }
+                        
+                    else
+                    {
+                        foreach (Transform child in img.gameObject.transform)
+                        {
+                            child.GetComponent<Image>().color = Color.white;
+                        }
+                    }
+                }       
+                break;
+        }
     }
 }

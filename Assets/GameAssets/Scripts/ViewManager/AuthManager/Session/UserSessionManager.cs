@@ -30,7 +30,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         lightBgColor = new Color32(250, 249, 240, 255);
         lightHeadingColor = new Color32(150, 0, 0, 255);
         lightButtonColor = new Color32(218, 52, 52, 255);
-        lightTextColor = new Color32(92, 59, 28, 153);
+        lightTextColor = new Color32(92, 59, 28, 255);
     }
 
     public void OnInitialize(string pProfileUsername, string pProfileID)

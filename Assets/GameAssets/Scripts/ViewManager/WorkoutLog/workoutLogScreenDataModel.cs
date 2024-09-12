@@ -9,7 +9,11 @@ using UnityEngine.UI;
 public class workoutLogScreenDataModel : MonoBehaviour, ItemController
 {
     public TextMeshProUGUI exerciseNameText;
-    public GameObject timer, weight, lbs, reps;
+    public TMP_InputField exerciseNotes;
+    public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
+    public Image addSet, line;
+
+    public GameObject timer, weight, reps,rir;
     ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
@@ -26,14 +30,14 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             timer.gameObject.SetActive(false);
             weight.gameObject.SetActive(true);
-            lbs.gameObject.SetActive(true);
+            rir.gameObject.SetActive(true);
             reps.gameObject.SetActive(true);
         }
         else
         {
             timer.gameObject.SetActive(true);
             weight.gameObject.SetActive(false);
-            lbs.gameObject.SetActive(false);
+            rir.gameObject.SetActive(false);
             reps.gameObject.SetActive(false);
         }
         if (exerciseTypeModel.exerciseModel.Count > 0)
@@ -48,7 +52,52 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             OnAddSet();
         }
     }
-
+    private void OnEnable()
+    {
+        switch (userSessionManager.Instance.gameTheme)
+        {
+            case Theme.Dark:
+                exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;
+                exerciseNameText.color = Color.white;
+                exerciseNotes.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
+                TextMeshProUGUI placeholde= exerciseNotes.placeholder as TextMeshProUGUI;
+                TextMeshProUGUI text = exerciseNotes.textComponent as TextMeshProUGUI;
+                placeholde.color= new Color32(255,255,255,150);
+                placeholde.font = userSessionManager.Instance.darkTextFont;
+                text.font = userSessionManager.Instance.darkTextFont;
+                text.color = Color.white;
+                foreach(TextMeshProUGUI _text in labelText)
+                {
+                    _text.font=userSessionManager.Instance.darkHeadingFont;
+                    _text.color= Color.white;
+                }
+                line.color = Color.white;
+                addSet.color = Color.white;
+                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font=userSessionManager.Instance.darkHeadingFont;
+                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color=userSessionManager.Instance.darkBgColor;
+                break;
+            case Theme.Light:
+                exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;
+                exerciseNameText.color = userSessionManager.Instance.lightHeadingColor;
+                exerciseNotes.gameObject.GetComponent<Image>().color = new Color32(246, 236, 220, 255);
+                TextMeshProUGUI _placeholde_ = exerciseNotes.placeholder as TextMeshProUGUI;
+                TextMeshProUGUI _text_ = exerciseNotes.textComponent as TextMeshProUGUI;
+                _placeholde_.color = new Color32(92, 59, 28, 150);
+                _placeholde_.font = userSessionManager.Instance.lightTextFont;
+                _text_.font = userSessionManager.Instance.lightTextFont;
+                _text_.color = userSessionManager.Instance.lightTextColor;
+                foreach (TextMeshProUGUI _text in labelText)
+                {
+                    _text.font = userSessionManager.Instance.lightHeadingFont;
+                    _text.color = userSessionManager.Instance.darkBgColor;
+                }
+                line.color = new Color32(218,52,52,150);
+                addSet.color = userSessionManager.Instance.lightButtonColor;
+                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
+                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+                break;
+        }
+    }
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
         GameObject prefab;
@@ -58,7 +107,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             prefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewSubItems");
         GameObject newSubItem = Instantiate(prefab, transform);
         int childCount = transform.childCount;
-        newSubItem.transform.SetSiblingIndex(childCount - 2);
+        newSubItem.transform.SetSiblingIndex(childCount - 3);
         WorkoutLogSubItem newSubItemScript = newSubItem.GetComponent<WorkoutLogSubItem>();
 
         HistoryExerciseModel history = null;
