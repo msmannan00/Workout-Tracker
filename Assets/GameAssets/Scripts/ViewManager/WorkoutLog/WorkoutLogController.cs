@@ -250,15 +250,15 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public void Finish()
     {
         isTimerRunning = false;
+        DateTime currentDateTime = DateTime.Now;
         var historyTemplate = new HistoryTempleteModel
         {
             templeteName = templeteModel.templeteName,
-            dateTime = DateTime.Now,
+            dateTime = currentDateTime.ToString("MMM dd, yyyy"),
             completedTime = (int)elapsedTime,
             totalWeight = CalculateTotalWeight(templeteModel),
             prs = 0 // Assuming PRs are not tracked here. Adjust as needed.
         };
-
         // Populate HistoryExerciseTypeModel list
         foreach (var exerciseType in templeteModel.exerciseTemplete)
         {
@@ -309,18 +309,22 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 exercise.weight = 0;
                 exercise.lbs = 0;
                 exercise.reps = 0;
+                exercise.time = 0;
+                exercise.toggle = false;
             }
         }
 
         //if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
         //{
         //userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
+
+
         int index = GetIndexByTempleteName(templeteModel.templeteName);
         userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
         userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
-            StateManager.Instance.HandleBackAction(gameObject);
-            this.callback.Invoke(null);
-            userSessionManager.Instance.SaveExcerciseData();
+        StateManager.Instance.HandleBackAction(gameObject);
+        this.callback.Invoke(null);
+        userSessionManager.Instance.SaveExcerciseData();
         //}
         OnBack();
     }

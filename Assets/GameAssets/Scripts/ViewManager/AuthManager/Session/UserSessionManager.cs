@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -85,14 +86,35 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
     public void CreateRandomDefaultEntry()
     {
-        ExerciseTypeModel defaultExerciseType1 = new ExerciseTypeModel
+        ExerciseTypeModel back1 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Bicep Curl",
+            name = "Deadlift (Barbell)",
             isWeigtExercise = true,
             exerciseModel = new List<ExerciseModel>()
         };
-        ExerciseTypeModel defaultExerciseType2 = new ExerciseTypeModel
+        ExerciseTypeModel back2 = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Seated Row (Cable)",
+            isWeigtExercise = true,
+            exerciseModel = new List<ExerciseModel>()
+        }; 
+        ExerciseTypeModel chest = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Bench Press (Barbell)",
+            isWeigtExercise = true,
+            exerciseModel = new List<ExerciseModel>()
+        };
+        ExerciseTypeModel running = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Running",
+            isWeigtExercise = false,
+            exerciseModel = new List<ExerciseModel>()
+        };
+        ExerciseTypeModel jumpRope = new ExerciseTypeModel
         {
             index = 0,
             name = "Jump Rope",
@@ -104,27 +126,36 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             setID = 1,
             previous = "-",
-            weight = 20,
-            lbs = 45,
-            reps = 6
+            weight = 0,
+            lbs = 0,
+            reps = 0
         };
+        back1.exerciseModel.Add(defaultExerciseModel1);
+        back1.exerciseModel.Add(defaultExerciseModel1);
+        back1.exerciseModel.Add(defaultExerciseModel1);
+        back2.exerciseModel.Add(defaultExerciseModel1);
+        chest.exerciseModel.Add(defaultExerciseModel1);
+        running.exerciseModel.Add(defaultExerciseModel1);
+        running.exerciseModel.Add(defaultExerciseModel1);
+        jumpRope.exerciseModel.Add(defaultExerciseModel1);
+        jumpRope.exerciseModel.Add(defaultExerciseModel1);
+        jumpRope.exerciseModel.Add(defaultExerciseModel1);
 
-        defaultExerciseType1.exerciseModel.Add(defaultExerciseModel1);
 
-        DefaultTempleteModel defaultTemplate = new DefaultTempleteModel
+        DefaultTempleteModel chestAndBack = new DefaultTempleteModel
         {
-            templeteName = "Default Workout1",
-            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType1, defaultExerciseType2 }
+            templeteName = "Chest And Back",
+            exerciseTemplete = new List<ExerciseTypeModel> { back1, back2, chest }
         };
-        DefaultTempleteModel defaultTemplate2 = new DefaultTempleteModel
+        DefaultTempleteModel runingAndJumpRope = new DefaultTempleteModel
         {
-            templeteName = "Default Workout2",
-            exerciseTemplete = new List<ExerciseTypeModel> { defaultExerciseType1, defaultExerciseType2 }
+            templeteName = "Runing And Jump Rope",
+            exerciseTemplete = new List<ExerciseTypeModel> { running, jumpRope }
         };
 
         excerciseData.exerciseTemplete.Clear();
-        excerciseData.exerciseTemplete.Add(defaultTemplate);
-        excerciseData.exerciseTemplete.Add(defaultTemplate2);
+        excerciseData.exerciseTemplete.Add(chestAndBack);
+        excerciseData.exerciseTemplete.Add(runingAndJumpRope);
 
         SaveExcerciseData();
     }
@@ -142,6 +173,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             string json = PreferenceManager.Instance.GetString("historyData");
             historyData = JsonUtility.FromJson<HistoryModel>(json);
+            
             print(json);
         }
         else

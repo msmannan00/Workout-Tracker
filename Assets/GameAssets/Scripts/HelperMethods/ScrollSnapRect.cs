@@ -264,7 +264,8 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     //------------------------------------------------------------------------
     private void SetSelectedNumberText()
     {
-        selectedPageText.text = $"{_currentPage+1} / {_pageCount}";
+        if(selectedPageText != null) { 
+        selectedPageText.text = $"{_currentPage+1} / {_pageCount}";}
         //if (!_container.GetChild(_currentPage).gameObject.GetComponent<DashboardItemController>().isCreator)
         //{
        

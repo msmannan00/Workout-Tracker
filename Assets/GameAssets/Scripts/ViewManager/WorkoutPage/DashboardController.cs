@@ -121,9 +121,10 @@ public class DashboardController : MonoBehaviour, PageController
         }
         foreach (var exercise in userSessionManager.Instance.excerciseData.exerciseTemplete)
         {
+            DefaultTempleteModel templeteData = exercise;
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "data", exercise }
+                { "data", templeteData }
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");

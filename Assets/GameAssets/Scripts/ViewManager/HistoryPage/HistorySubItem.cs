@@ -8,13 +8,13 @@ using UnityEngine;
 public class HistorySubItem : MonoBehaviour,ItemController
 {
     public TextMeshProUGUI exerciseNameText;
-    public TextMeshProUGUI bestSetText;
+    //public TextMeshProUGUI bestSetText;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         HistoryExerciseTypeModel history= (HistoryExerciseTypeModel)data["data"];
-        exerciseNameText.text = history.exerciseModel.Count.ToString() + " x " + history.exerciseName;
-        bestSetText.text=GetBestSet(history.exerciseModel,history.isWeightExercise);
+        exerciseNameText.text = history.exerciseName + " x " + history.exerciseModel.Count.ToString();
+        //bestSetText.text=GetBestSet(history.exerciseModel,history.isWeightExercise);
     }
     public string GetBestSet(List<HistoryExerciseModel> exerciseModel, bool isWeight)
     {

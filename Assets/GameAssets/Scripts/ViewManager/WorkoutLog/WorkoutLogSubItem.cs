@@ -39,7 +39,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             rir.transform.parent.gameObject.SetActive(true);
             reps.transform.parent.gameObject.SetActive(true);
             if(exerciseHistory!=null)
-                previous.text = exerciseHistory.weight.ToString() + "kg " + exerciseHistory.reps.ToString();
+                previous.text = exerciseHistory.weight.ToString() + "kg " +"x "+ exerciseHistory.reps.ToString();
         }
         else
         {
@@ -229,6 +229,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 isComplete.isOn = false;
                 exerciseModel.toggle = false;
+                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
 
             // Stop the previous coroutine if it's running
@@ -256,6 +257,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 isComplete.isOn = false;
                 exerciseModel.toggle = false;
+                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
         }
     }
@@ -274,6 +276,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         {
             isComplete.isOn = true;
             exerciseModel.toggle = true;
+            isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
+
         }
     }
 
@@ -282,6 +286,15 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
         {
             exerciseModel.toggle=value;
+            if (value)
+            {
+                isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
+            }
+            else
+            {
+                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+            }
+            print("toggle");
         }
     }
     private void UpdateToggleInteractableState()

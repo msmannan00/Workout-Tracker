@@ -2,6 +2,7 @@ using PlayFab.EconomyModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -22,8 +23,25 @@ public class HistoryController : MonoBehaviour, PageController
         OnExerciseAdd(list);
     }
 
+    public void Completed()
+    {
+        List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
+        foreach (var workouts in userSessionManager.Instance.historyData.exerciseTempleteModel)
+        {
+            list.Add(workouts);
+        }
+        OnExerciseAdd(list);
+    }
+    public void Exercise()
+    {
+        PerformedExercises();
+    }
     public void OnExerciseAdd(object data)
     {
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
         //List<object> dataList = data as List<object>;
         if (data == null)
         {
@@ -42,6 +60,7 @@ public class HistoryController : MonoBehaviour, PageController
                     {
                         templeteName = dataItem.templeteName,
                         completedTime = dataItem.completedTime,
+                        dateTime= dataItem.dateTime,
                         totalWeight= dataItem.totalWeight,
                         exerciseTypeModel=dataItem.exerciseTypeModel
                         //index = exerciseCounter++
@@ -60,6 +79,58 @@ public class HistoryController : MonoBehaviour, PageController
                 exerciseObject.GetComponent<historyScreenDataModel>().onInit(mData, null);
             }
         }
+    }
+    void PerformedExercises()
+    {
+        foreach(Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        HistoryModel historyData = userSessionManager.Instance.historyData;
+        List<string> filterExercises = GetUniqueExercises(historyData);
+        //string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
+
+        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        {
+            // Check if the exercise name is in the list of filterExercises
+            if (filterExercises != null && !filterExercises.Contains(exercise.exerciseName))
+            {
+                continue;
+            }
+
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+            Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", exercise },
+            };
+
+            newExerciseItem.onInit(initData);
+
+        }
+    }
+    public static List<string> GetUniqueExercises(HistoryModel historyData)
+    {
+        // Create a HashSet to store unique exercise names
+        HashSet<string> uniqueExercises = new HashSet<string>();
+
+        // Iterate over each HistoryTempleteModel in the historyData
+        foreach (var template in historyData.exerciseTempleteModel)
+        {
+            // Iterate over each HistoryExerciseTypeModel in the current HistoryTempleteModel
+            foreach (var exerciseType in template.exerciseTypeModel)
+            {
+                // Add each exercise name to the HashSet
+                uniqueExercises.Add(exerciseType.exerciseName);
+            }
+        }
+
+        // Convert HashSet to List and return it
+        return uniqueExercises.ToList();
     }
     public void OnClose()
     {

@@ -25,7 +25,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     {
         this.callback = callback;
         defaultTempleteModel = (DefaultTempleteModel)data["data"];
-        templateName.text = defaultTempleteModel.templeteName;
+        templateName.text = defaultTempleteModel.templeteName.ToUpper();
         playButton.onClick.AddListener(PlayButton);
         
         

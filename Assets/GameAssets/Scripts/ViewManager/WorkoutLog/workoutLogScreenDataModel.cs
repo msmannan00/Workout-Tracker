@@ -24,7 +24,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.callback = callback;
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
-        exerciseNameText.text = exerciseTypeModel.name;
+        exerciseNameText.text = exerciseTypeModel.name.ToUpper();
         exerciseHistory=GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.isWeigtExercise);
         if (exerciseTypeModel.isWeigtExercise)
         {

@@ -10,7 +10,7 @@ public class HistoryModel
 public class HistoryTempleteModel
 {
     public string templeteName;
-    public DateTime dateTime;
+    public string dateTime;
     public int completedTime;
     public int totalWeight;
     public int prs;

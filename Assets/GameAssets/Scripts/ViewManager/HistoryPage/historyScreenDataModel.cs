@@ -8,14 +8,14 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
 {
     public TextMeshProUGUI workoutNameText;
     public TextMeshProUGUI timeText;
-    public TextMeshProUGUI WeightText;
+    public TextMeshProUGUI dateText;
 
     public HistoryTempleteModel historyWorkout;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.historyWorkout = (HistoryTempleteModel)data["data"];
-        workoutNameText.text = historyWorkout.templeteName;
+        workoutNameText.text = historyWorkout.templeteName.ToUpper();
         int completeTime = historyWorkout.completedTime;
         if(completeTime > 60) 
         { 
@@ -25,8 +25,11 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
         {
             timeText.text=completeTime.ToString()+"s";
         }
-        if(historyWorkout.totalWeight > 0) { WeightText.text = historyWorkout.totalWeight.ToString() + " kg"; }
-        else { WeightText.text = "-"; }
+        DateTime parsedDateTime = DateTime.Parse(historyWorkout.dateTime);
+        string formattedDate = parsedDateTime.ToString("MMM dd, yyyy");
+        dateText.text = formattedDate;
+        //if (historyWorkout.totalWeight > 0) { dateText.text = historyWorkout.totalWeight.ToString() + " kg"; }
+        //else { dateText.text = "-"; }
         if (historyWorkout.exerciseTypeModel.Count > 0)
         {
             foreach (var exerciseModel in historyWorkout.exerciseTypeModel)
@@ -41,7 +44,7 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
 
         GameObject newSubItem = Instantiate(prefab, transform);
         int childCount = transform.childCount;
-        newSubItem.transform.SetSiblingIndex(childCount - 2);
+        //newSubItem.transform.SetSiblingIndex(childCount - 2);
         HistorySubItem newSubItemScript = newSubItem.GetComponent<HistorySubItem>();
 
         //HistoryExerciseModel history = null;
