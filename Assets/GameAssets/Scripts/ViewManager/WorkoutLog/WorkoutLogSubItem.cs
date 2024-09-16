@@ -9,12 +9,13 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 {
     public TMP_Text sets;
     public TMP_Text previous;
+    public TMP_InputField mile;
     public TMP_InputField timerText;
     public TMP_InputField weight;
     public TMP_InputField reps;
     public TMP_Dropdown rir;
     public Toggle isComplete;
-    public bool isWeight;
+    public ExerciseType exerciseType;
     public Image previousImage,dropDownArrow;
     public ExerciseModel exerciseModel;
 
@@ -28,33 +29,40 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
         exerciseModel = (ExerciseModel)data["data"];
-        isWeight=(bool)data["isWeight"];
+        exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
-        if(isWeight)
+        switch (exerciseType)
         {
-            timerText.transform.parent.gameObject.SetActive(false);
-            weight.transform.parent.gameObject.SetActive(true);
-            rir.transform.parent.gameObject.SetActive(true);
-            reps.transform.parent.gameObject.SetActive(true);
-            if(exerciseHistory!=null)
-                previous.text = exerciseHistory.weight.ToString() + "kg " +"x "+ exerciseHistory.reps.ToString();
-        }
-        else
-        {
-            timerText.transform.parent.gameObject.SetActive(true);
-            weight.transform.parent.gameObject.SetActive(false);
-            rir.transform.parent.gameObject.SetActive(false);
-            reps.transform.parent.gameObject.SetActive(false);
-            if (exerciseHistory != null)
-            {
-                int minutes = exerciseHistory.time / 60;
-                int seconds = exerciseHistory.time % 60;
+            case ExerciseType.RepsOnly:
+                reps.transform.parent.gameObject.SetActive(true);
+                break;
+            case ExerciseType.TimeBased:
+                timerText.transform.parent.gameObject.SetActive(true);
+                if (exerciseHistory != null)
+                {
+                    int minutes = exerciseHistory.time / 60;
+                    int seconds = exerciseHistory.time % 60;
 
-                previous.text = $"{minutes:D2}:{seconds:D2}";
-            }
-        }
+                    previous.text = $"{minutes:D2}:{seconds:D2}";
+                }
+                break;
+            case ExerciseType.TimeAndMiles:
+                timerText.transform.parent.gameObject.SetActive(true);
+                mile.transform.parent.gameObject.SetActive(true);
+                print("Need to implement Time and Miles");
+                break;
+            case ExerciseType.WeightAndReps:
+                timerText.transform.parent.gameObject.SetActive(false);
+                weight.transform.parent.gameObject.SetActive(true);
+                rir.transform.parent.gameObject.SetActive(true);
+                reps.transform.parent.gameObject.SetActive(true);
+                if (exerciseHistory != null)
+                    previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
+                break;
+        } 
+        
         //if (exerciseModel.weight != 0)
         //{
         //    weight.text = exerciseModel.weight.ToString();
@@ -97,54 +105,54 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 
     private void OnEnable()
     {
-        TMP_FontAsset textFont = null;
-        Color color = Color.white;
-        switch (userSessionManager.Instance.gameTheme)
-        {
-            case Theme.Dark:
-                textFont = userSessionManager.Instance.darkTextFont;
-                color = userSessionManager.Instance.darkBgColor;
-                sets.font = textFont;
-                sets.color = Color.white;
-                previous.color = Color.white;
-                previous.font = textFont;
-                ChangeInputFieldFount_Color(timerText, textFont, Color.white);
-                ChangeInputFieldFount_Color(weight, textFont, Color.white);
-                ChangeInputFieldFount_Color(reps, textFont, Color.white);
-                ChangeImageColorAndOutlineColor(timerText.gameObject, color, Color.white);
-                ChangeImageColorAndOutlineColor(previousImage.gameObject, color, Color.white);
-                ChangeImageColorAndOutlineColor(weight.gameObject, color, Color.white);
-                ChangeImageColorAndOutlineColor(reps.gameObject, color, Color.white);
-                ChangeImageColorAndOutlineColor(rir.gameObject, color, Color.white);
-                ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, color, Color.white);
-                rir.captionText.color= Color.white;
-                dropDownArrow.color= Color.white;
-                //rir.itemText.color= Color.white;
-                isComplete.graphic.color = Color.white;
-                break;
-            case Theme.Light:
-                textFont = userSessionManager.Instance.lightTextFont;
-                color = userSessionManager.Instance.darkBgColor;
-                sets.font = textFont;
-                sets.color = color;
-                previous.color = color;
-                previous.font = textFont;
-                ChangeInputFieldFount_Color(timerText, textFont, color);
-                ChangeInputFieldFount_Color(weight, textFont, color);
-                ChangeInputFieldFount_Color(reps, textFont, color);
-                Color outLine = userSessionManager.Instance.lightButtonColor;
-                ChangeImageColorAndOutlineColor(timerText.gameObject, new Color32(246, 236, 220, 255), outLine);
-                ChangeImageColorAndOutlineColor(previousImage.gameObject, new Color32(246, 236, 220, 255), outLine);
-                ChangeImageColorAndOutlineColor(weight.gameObject, new Color32(246, 236, 220, 255), outLine);
-                ChangeImageColorAndOutlineColor(reps.gameObject, new Color32(246, 236, 220, 255), outLine);
-                ChangeImageColorAndOutlineColor(rir.gameObject, new Color32(246, 236, 220, 255), outLine);
-                ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, new Color32(246, 236, 220, 255), outLine);
-                rir.captionText.color = color;
-                rir.itemText.color = color;
-                dropDownArrow.color= color;
-                isComplete.graphic.color = outLine;
-                break;
-        }
+        //TMP_FontAsset textFont = null;
+        //Color color = Color.white;
+        //switch (userSessionManager.Instance.gameTheme)
+        //{
+        //    case Theme.Dark:
+        //        textFont = userSessionManager.Instance.darkTextFont;
+        //        color = userSessionManager.Instance.darkBgColor;
+        //        sets.font = textFont;
+        //        sets.color = Color.white;
+        //        previous.color = Color.white;
+        //        previous.font = textFont;
+        //        ChangeInputFieldFount_Color(timerText, textFont, Color.white);
+        //        ChangeInputFieldFount_Color(weight, textFont, Color.white);
+        //        ChangeInputFieldFount_Color(reps, textFont, Color.white);
+        //        ChangeImageColorAndOutlineColor(timerText.gameObject, color, Color.white);
+        //        ChangeImageColorAndOutlineColor(previousImage.gameObject, color, Color.white);
+        //        ChangeImageColorAndOutlineColor(weight.gameObject, color, Color.white);
+        //        ChangeImageColorAndOutlineColor(reps.gameObject, color, Color.white);
+        //        ChangeImageColorAndOutlineColor(rir.gameObject, color, Color.white);
+        //        ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, color, Color.white);
+        //        rir.captionText.color= Color.white;
+        //        dropDownArrow.color= Color.white;
+        //        //rir.itemText.color= Color.white;
+        //        isComplete.graphic.color = Color.white;
+        //        break;
+        //    case Theme.Light:
+        //        textFont = userSessionManager.Instance.lightTextFont;
+        //        color = userSessionManager.Instance.darkBgColor;
+        //        sets.font = textFont;
+        //        sets.color = color;
+        //        previous.color = color;
+        //        previous.font = textFont;
+        //        ChangeInputFieldFount_Color(timerText, textFont, color);
+        //        ChangeInputFieldFount_Color(weight, textFont, color);
+        //        ChangeInputFieldFount_Color(reps, textFont, color);
+        //        Color outLine = userSessionManager.Instance.lightButtonColor;
+        //        ChangeImageColorAndOutlineColor(timerText.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        ChangeImageColorAndOutlineColor(previousImage.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        ChangeImageColorAndOutlineColor(weight.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        ChangeImageColorAndOutlineColor(reps.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        ChangeImageColorAndOutlineColor(rir.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, new Color32(246, 236, 220, 255), outLine);
+        //        rir.captionText.color = color;
+        //        rir.itemText.color = color;
+        //        dropDownArrow.color= color;
+        //        isComplete.graphic.color = outLine;
+        //        break;
+        //}
     }
     void ChangeInputFieldFount_Color(TMP_InputField inputField,TMP_FontAsset fontAsset,Color color)
     {
@@ -301,10 +309,25 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         if (isComplete != null)
         {
-            if (isWeight)
-                isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
-            else
-                isComplete.interactable = false;
+            switch (exerciseType)
+            {
+                case ExerciseType.RepsOnly:
+                    isComplete.interactable = (exerciseModel.reps > 0);
+                    break;
+                case ExerciseType.TimeBased:
+                    isComplete.interactable = (exerciseModel.time > 0);
+                    break;
+                case ExerciseType.TimeAndMiles:
+                    print("need to implement");
+                    break;
+                case ExerciseType.WeightAndReps:
+                    isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+                    break;
+            }
+            //if (exerciseType == ExerciseType.WeightAndReps)
+            //    isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+            //else
+            //    isComplete.interactable = false;
         }
     }
 }

@@ -98,7 +98,7 @@ public class DashboardController : MonoBehaviour, PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "workoutName", "Preset " + content.childCount }
+                { "workoutName", "Workout " + content.childCount }
             };
         StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData);
     }

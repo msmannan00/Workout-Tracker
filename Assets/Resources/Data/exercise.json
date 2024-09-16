@@ -1,102 +1,1166 @@
 {
     "exercises": [
         {
-            "exerciseName": "Push-up",
-            "category": "Strength",
+            "exerciseName": "Arnold Press (dumbbell)",
+            "category": "Shoulders",
+            "secondaryCategories": [],
             "icon": "sprites/push_up.png",
-            "rank": 1,
-            "isWeightExercise": false
+            "exerciseType": 3
         },
         {
-            "exerciseName": "Squat",
-            "category": "Strength",
-            "icon": "sprites/squat.png",
-            "rank": 2,
-            "isWeightExercise": false
+            "exerciseName": "Ab roller",
+            "category": "Abs",
+            "secondaryCategories": [],
+            "icon": "sprites/push_up.png",
+            "exerciseType": 4
         },
         {
-            "exerciseName": "Running",
+            "exerciseName": "Air bike",
             "category": "Cardio",
-            "icon": "sprites/running.png",
-            "rank": 3,
-            "isWeightExercise": false
+            "secondaryCategories": [],
+            "icon": "sprites/push_up.png",
+            "exerciseType": 1
         },
         {
-            "exerciseName": "Plank",
-            "category": "Core",
-            "icon": "sprites/plank.png",
-            "rank": 4,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "PlankPlank",
-            "category": "Full Body",
-            "icon": "sprites/burpee.png",
-            "rank": 5,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Jump Rope",
-            "category": "Cardio",
-            "icon": "sprites/jump_rope.png",
-            "rank": 6,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Lunges",
-            "category": "Strength",
-            "icon": "sprites/lunges.png",
-            "rank": 7,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Bicep Curl",
-            "category": "Strength",
-            "icon": "sprites/bicep_curl.png",
-            "rank": 8,
-            "isWeightExercise": true
-        },
-        {
-            "exerciseName": "Cycling",
-            "category": "Cardio",
-            "icon": "sprites/cycling.png",
-            "rank": 9,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Yoga",
-            "category": "Flexibility",
-            "icon": "sprites/yoga.png",
-            "rank": 10,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Leg",
-            "category": "Leg",
-            "icon": "",
-            "rank": 12,
-            "isWeightExercise": false
-        },
-        {
-            "exerciseName": "Bench Press (Barbell)",
-            "category": "Chest",
-            "icon": "",
-            "rank": 13,
-            "isWeightExercise": true
-        },
-        {
-            "exerciseName": "Deadlift (Barbell)",
-            "category": "Back",
-            "icon": "",
-            "rank": 14,
-            "isWeightExercise": true
-        },
-        {
-            "exerciseName": "Seated Row (Cable)",
-            "category": "Back",
-            "icon": "",
-            "rank": 15,
-            "isWeightExercise": true
-        }
+        "exerciseName": "Bench press (Barbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/bench_press_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bench press - close grip (Barbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/bench_press_close_grip_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bench press (Smith Machine)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/bench_press_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bench press - pause (Barbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/bench_press_pause_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bent over row (barbell)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats", "Lower Back"],
+        "icon": "sprites/bent_over_row_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bent over row (dumbbell)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats", "Lower Back"],
+        "icon": "sprites/bent_over_row_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bent over row - unilateral (dumbbell)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats", "Lower Back"],
+        "icon": "sprites/bent_over_row_unilateral_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bicep curl (barbell)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/bicep_curl_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bicep curl (dumbbell)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/bicep_curl_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bicep curl (cable)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/bicep_curl_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bicep curl (machine)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/bicep_curl_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bulgarian split squats",
+        "category": "Glutes/Quads",
+        "secondaryCategories": [],
+        "icon": "sprites/bulgarian_split_squats.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Back extension (machine)",
+        "category": "Lower Back",
+        "secondaryCategories": [],
+        "icon": "sprites/back_extension_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Back extension (dumbbell)",
+        "category": "Lower Back",
+        "secondaryCategories": [],
+        "icon": "sprites/back_extension_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Bicycle crunch",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/bicycle_crunch.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Box Squat (barbell)",
+        "category": "Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/box_squat_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Burpee",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/burpee.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Box jump",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/box_jump.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Crunch (cable)",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/crunch_cable.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Crunch",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/crunch.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Calf press (machine)",
+        "category": "Calves",
+        "secondaryCategories": [],
+        "icon": "sprites/calf_press_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Calf raise (machine)",
+        "category": "Calves",
+        "secondaryCategories": [],
+        "icon": "sprites/calf_raise_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Calf raise",
+        "category": "Calves",
+        "secondaryCategories": [],
+        "icon": "sprites/calf_raise.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest fly (cable)",
+        "category": "Chest",
+        "secondaryCategories": [],
+        "icon": "sprites/chest_fly_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest fly (dumbbell)",
+        "category": "Chest",
+        "secondaryCategories": [],
+        "icon": "sprites/chest_fly_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest fly (machine)",
+        "category": "Chest",
+        "secondaryCategories": [],
+        "icon": "sprites/chest_fly_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest press (machine)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/chest_press_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest press (dumbbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/chest_press_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest press (cable)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/chest_press_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest-supported row wide grip (machine)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/chest_supported_row_wide_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chest-supported neutral grip (machine)",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/chest_supported_neutral_grip_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Chin Up",
+        "category": "Lats/Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/chin_up.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Chin Up (machine)",
+        "category": "Lats/Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/chin_up_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Clean",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/clean.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Clean and jerk",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/clean_and_jerk.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Concentration curl",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/concentration_curl.png",
+        "exerciseType": 3
+    	},
+	{
+    	"exerciseName": "Cycling",
+    	"category": "Cardio",
+    	"secondaryCategories": [],
+    	"icon": "sprites/cycling.png",
+    	"exerciseType": 1
+	},
+	{
+        "exerciseName": "Deadlifts (barbell)",
+        "category": "Glutes/Hamstrings",
+        "secondaryCategories": ["Upper Back", "Lower Back"],
+        "icon": "sprites/deadlifts_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Deadlifts (dumbbell)",
+        "category": "Glutes/Hamstrings",
+        "secondaryCategories": ["Upper Back", "Lower Back"],
+        "icon": "sprites/deadlifts_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Decline bench press (barbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/decline_bench_press_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Decline bench press (smith machine)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/decline_bench_press_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Decline bench press (dumbbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/decline_bench_press_dumbbell.png",
+        "exerciseType": "WeightAndReps"
+    	},
+    	{
+        "exerciseName": "Drop jump",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/drop_jump.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Depth jump",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/depth_jump.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Dips (machine)",
+        "category": "Triceps",
+        "secondaryCategories": ["Chest"],
+        "icon": "sprites/dips_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Dips",
+        "category": "Triceps",
+        "secondaryCategories": ["Chest"],
+        "icon": "sprites/dips.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Dips - leaned",
+        "category": "Triceps/Chest",
+        "secondaryCategories": ["Shoulders"],
+        "icon": "sprites/dips_leaned.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Dips - leaned (machine)",
+        "category": "Triceps/Chest",
+        "secondaryCategories": ["Shoulders"],
+        "icon": "sprites/dips_leaned_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Elliptical",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/elliptical.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Face pull",
+        "category": "Upper Back",
+        "secondaryCategories": [],
+        "icon": "sprites/face_pull.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Floor press",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/floor_press.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Front raise (dumbbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/front_raise_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Front raise (barbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/front_raise_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Front raise (cable)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/front_raise_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Front Squat (barbell)",
+        "category": "Quad",
+        "secondaryCategories": ["Glutes"],
+        "icon": "sprites/front_squat_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Front Squat (smith machine)",
+        "category": "Quad",
+        "secondaryCategories": ["Glutes"],
+        "icon": "sprites/front_squat_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Goblet squat",
+        "category": "Glutes/Quads",
+        "secondaryCategories": [],
+        "icon": "sprites/goblet_squat.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Good morning",
+        "category": "Hamstrings",
+        "secondaryCategories": ["Glutes", "Lower Back"],
+        "icon": "sprites/good_morning.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Glute-ham-raise",
+        "category": "Glutes/Hamstrings",
+        "secondaryCategories": [],
+        "icon": "sprites/glute_ham_raise.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hack Squat",
+        "category": "Quads/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/hack_squat.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hammer curl (dumbbell)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/hammer_curl_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hammer curl (cable)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/hammer_curl_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hanging leg raise",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/hanging_leg_raise.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Hip Abductor",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/hip_abductor.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Hip Adductor",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/hip_adductor.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Hip Thrust (barbell)",
+        "category": "Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/hip_thrust_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hip Thrust (dumbbell)",
+        "category": "Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/hip_thrust_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Hip Thrust (machine)",
+        "category": "Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/hip_thrust_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "High to low fly",
+        "category": "Chest",
+        "secondaryCategories": [],
+        "icon": "sprites/high_to_low_fly.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline bench press (barbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_bench_press_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline bench press (smith machine)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_bench_press_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline chest press (dumbbell)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_chest_press_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline chest press (cable)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_chest_press_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline chest press (machine)",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_chest_press_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline bicep curl",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/incline_bicep_curl.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Incline pushups",
+        "category": "Chest",
+        "secondaryCategories": ["Triceps", "Shoulders"],
+        "icon": "sprites/incline_pushups.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "JM press (smith machine)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/jm_press_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "JM press (barbell)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/jm_press_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Jump rope",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/jump_rope.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Jumping jack",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/jumping_jack.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Kettlebell swing",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/kettlebell_swing.png",
+        "exerciseType": 2
+    	},
+	{
+        "exerciseName": "Lat pulldown - wide",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/lat_pulldown_wide.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lat pulldown",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/lat_pulldown.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lat pulldown - underhand",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back", "Biceps"],
+        "icon": "sprites/lat_pulldown_underhand.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lat pulldown - single hand",
+        "category": "Lats",
+        "secondaryCategories": [],
+        "icon": "sprites/lat_pulldown_single_hand.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lat pulldown - V grip",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/lat_pulldown_v_grip.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lying leg curl",
+        "category": "Hamstrings",
+        "secondaryCategories": [],
+        "icon": "sprites/lying_leg_curl.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lunge",
+        "category": "Quads/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/lunge.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lateral raise (dumbbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/lateral_raise_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lateral raise (cable)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/lateral_raise_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lateral raise (machine)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/lateral_raise_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lateral raise - single arm (dumbbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/lateral_raise_single_arm_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Lateral raise - single arm (cable)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/lateral_raise_single_arm_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Leg extension",
+        "category": "Quads",
+        "secondaryCategories": [],
+        "icon": "sprites/leg_extension.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Leg raise",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/leg_raise.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Military press",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/military_press.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Muscle ups",
+        "category": "Other",
+        "secondaryCategories": [],
+        "icon": "sprites/muscle_ups.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Nordic hamstring curl",
+        "category": "Hamstrings",
+        "secondaryCategories": [],
+        "icon": "sprites/nordic_hamstring_curl.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Overhead tricep extension (dumbbell)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/overhead_tricep_extension_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Overhead press (barbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/overhead_press_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Overhead tricep extension (cable)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/overhead_tricep_extension_cable.png",
+        "exerciseType": 3
+    	},
+   	{
+        "exerciseName": "Overhead press (smith machine)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/overhead_press_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Oblique crunch",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/oblique_crunch.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Preacher curls (machine)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/preacher_curls_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Preacher curls (dumbbell)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/preacher_curls_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Preacher curls (barbell)",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/preacher_curls_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Pendlay row",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/pendlay_row.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Plank",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/plank.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Pec deck",
+        "category": "Chest",
+        "secondaryCategories": [],
+        "icon": "sprites/pec_deck.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Push up",
+        "category": "Chest",
+        "secondaryCategories": ["Shoulders", "Triceps"],
+        "icon": "sprites/push_up.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Pull up (machine)",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back", "Biceps"],
+        "icon": "sprites/pull_up_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Pull up",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back", "Biceps"],
+        "icon": "sprites/pull_up.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Rear delt fly (cable)",
+        "category": "Rear Shoulder",
+        "secondaryCategories": [],
+        "icon": "sprites/rear_delt_fly_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Rear delt row (dumbbell)",
+        "category": "Rear Shoulder",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/rear_delt_row_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Rear delt row (machine)",
+        "category": "Rear Shoulder",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/rear_delt_row_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Reverse curl (dumbbell)",
+        "category": "Biceps/Forearm",
+        "secondaryCategories": [],
+        "icon": "sprites/reverse_curl_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Reverse curl (barbell)",
+        "category": "Biceps/Forearm",
+        "secondaryCategories": [],
+        "icon": "sprites/reverse_curl_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Reverse curl (cable)",
+        "category": "Biceps/Forearm",
+        "secondaryCategories": [],
+        "icon": "sprites/reverse_curl_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Reverse pec deck",
+        "category": "Rear Shoulder",
+        "secondaryCategories": [],
+        "icon": "sprites/reverse_pec_deck.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Romanian deadlift (dumbbell)",
+        "category": "Hamstrings/Glutes",
+        "secondaryCategories": ["Lower Back"],
+        "icon": "sprites/romanian_deadlift_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Romanian deadlift (barbell)",
+        "category": "Hamstrings/Glutes",
+        "secondaryCategories": ["Lower Back"],
+        "icon": "sprites/romanian_deadlift_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Romanian deadlift (machine)",
+        "category": "Hamstrings/Glutes",
+        "secondaryCategories": ["Lower Back"],
+        "icon": "sprites/romanian_deadlift_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Rowing",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/rowing.png",
+        "exerciseType": 1
+    	},
+   	{
+        "exerciseName": "Running (treadmill)",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/running_treadmill.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Running",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/running.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Ring dip",
+        "category": "Chest/Triceps",
+        "secondaryCategories": ["Shoulders"],
+        "icon": "sprites/ring_dip.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Reverse wrist curl",
+        "category": "Forearm",
+        "secondaryCategories": [],
+        "icon": "sprites/reverse_wrist_curl.png",
+        "exerciseType": 3
+    	},
+	{
+        "exerciseName": "Squat (barbell)",
+        "category": "Quads/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/squat_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Squat (smith machine)",
+        "category": "Quads/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/squat_smith_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Seated wide grip row (machine)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/seated_wide_grip_row_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Seated narrow grip row (machine)",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/seated_narrow_grip_row_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Seated wide grip row (cable)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/seated_wide_grip_row_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Seated narrow grip row (cable)",
+        "category": "Lats",
+        "secondaryCategories": ["Upper Back"],
+        "icon": "sprites/seated_narrow_grip_row_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Shoulder press (dumbbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/shoulder_press_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Shoulder press (machine)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/shoulder_press_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Skull crushers (barbell)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/skull_crushers_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Skull crushers (dumbbell)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/skull_crushers_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Sit up",
+        "category": "Abs",
+        "secondaryCategories": [],
+        "icon": "sprites/sit_up.png",
+        "exerciseType": 4
+    	},
+    	{
+        "exerciseName": "Seated leg curl",
+        "category": "Hamstrings",
+        "secondaryCategories": [],
+        "icon": "sprites/seated_leg_curl.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Spider curls",
+        "category": "Biceps",
+        "secondaryCategories": [],
+        "icon": "sprites/spider_curls.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Shrugs (machine)",
+        "category": "Upper Back",
+        "secondaryCategories": [],
+        "icon": "sprites/shrugs_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Shrugs (dumbbell)",
+        "category": "Upper Back",
+        "secondaryCategories": [],
+        "icon": "sprites/shrugs_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Shrugs (barbell)",
+        "category": "Upper Back",
+        "secondaryCategories": [],
+        "icon": "sprites/shrugs_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Seated calf raise",
+        "category": "Calves",
+        "secondaryCategories": [],
+        "icon": "sprites/seated_calf_raise.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Stiff leg deadlift (barbell)",
+        "category": "Hamstrings/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/stiff_leg_deadlift_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Stiff leg deadlift (dumbbell)",
+        "category": "Hamstrings/Glutes",
+        "secondaryCategories": [],
+        "icon": "sprites/stiff_leg_deadlift_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Swimming",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/swimming.png",
+        "exerciseType": 2
+    	},
+    	{
+        "exerciseName": "Tricep pushdown - straight bar",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_pushdown_straight_bar.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Tricep pushdown - v-bar",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_pushdown_v_bar.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Tricep extension - rope",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_extension_rope.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Tricep extension (dumbbell)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_extension_dumbbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Tricep extension (machine)",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_extension_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Tricep kick back",
+        "category": "Triceps",
+        "secondaryCategories": [],
+        "icon": "sprites/tricep_kick_back.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "T-bar row (machine)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/t_bar_row_machine.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "T-bar row (cable)",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/t_bar_row_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Upright row (cable)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/upright_row_cable.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Upright row (barbell)",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/upright_row_barbell.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "V-squat",
+        "category": "Glutes",
+        "secondaryCategories": ["Quads"],
+        "icon": "sprites/v_squat.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Walking lunge",
+        "category": "Glutes",
+        "secondaryCategories": ["Quads"],
+        "icon": "sprites/walking_lunge.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Walking",
+        "category": "Cardio",
+        "secondaryCategories": [],
+        "icon": "sprites/walking.png",
+        "exerciseType": 1
+    	},
+    	{
+        "exerciseName": "Yates row",
+        "category": "Upper Back",
+        "secondaryCategories": ["Lats"],
+        "icon": "sprites/yates_row.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Y-raise",
+        "category": "Shoulders",
+        "secondaryCategories": [],
+        "icon": "sprites/y_raise.png",
+        "exerciseType": 3
+    	},
+    	{
+        "exerciseName": "Zercher Squat",
+        "category": "Quads",
+        "secondaryCategories": ["Glutes"],
+        "icon": "sprites/zercher_squat.png",
+        "exerciseType": 3
+    	}
     ]
 }

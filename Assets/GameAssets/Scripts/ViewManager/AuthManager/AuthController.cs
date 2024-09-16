@@ -173,11 +173,13 @@ public class AuthController : MonoBehaviour, PageController
             };
 
             StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
         }
         else
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { };
             StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
         }
     }
 

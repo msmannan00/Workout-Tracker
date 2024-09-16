@@ -49,7 +49,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                     {
                         name = dataItem.exerciseName,
                         exerciseModel = new List<ExerciseModel>(),
-                        index = exerciseCounter++
+                        index = exerciseCounter++,
+                        exerciseType=dataItem.exerciseType
                     };
 
                     templeteModel.exerciseTemplete.Add(typeModel);
@@ -68,7 +69,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                     { "isWorkoutLog", false }
                 };
 
-                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewWorkoutDataModel");
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
+                //GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewWorkoutDataModel");
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
                 exerciseObject.transform.SetSiblingIndex(content.childCount-2);
                 exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);

@@ -266,7 +266,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             {
                 exerciseName = exerciseType.name,
                 index = exerciseType.index,
-                isWeightExercise = exerciseType.isWeigtExercise,
+                exerciseType = exerciseType.exerciseType,
                 exerciseModel = new List<HistoryExerciseModel>()
             };
             // Populate HistoryExerciseModel list but only add exercises where toggle is true
@@ -339,7 +339,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
         foreach (var exerciseType in defaultTemplate.exerciseTemplete)
         {
-            if (exerciseType.isWeigtExercise)
+            if (exerciseType.exerciseType == ExerciseType.WeightAndReps)
             {
                 foreach (var exercise in exerciseType.exerciseModel)
                 {

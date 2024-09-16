@@ -90,35 +90,35 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Deadlift (Barbell)",
-            isWeigtExercise = true,
+            exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
         ExerciseTypeModel back2 = new ExerciseTypeModel
         {
             index = 0,
             name = "Seated Row (Cable)",
-            isWeigtExercise = true,
+            exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         }; 
         ExerciseTypeModel chest = new ExerciseTypeModel
         {
             index = 0,
             name = "Bench Press (Barbell)",
-            isWeigtExercise = true,
+            exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
         ExerciseTypeModel running = new ExerciseTypeModel
         {
             index = 0,
             name = "Running",
-            isWeigtExercise = false,
+            exerciseType = ExerciseType.TimeAndMiles,
             exerciseModel = new List<ExerciseModel>()
         };
         ExerciseTypeModel jumpRope = new ExerciseTypeModel
         {
             index = 0,
             name = "Jump Rope",
-            isWeigtExercise = false,
+            exerciseType = ExerciseType.RepsOnly,
             exerciseModel = new List<ExerciseModel>()
         };
 

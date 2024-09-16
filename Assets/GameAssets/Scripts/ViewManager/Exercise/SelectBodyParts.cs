@@ -95,7 +95,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
             controller.selectedBodyParts.Add(text);
             int matchingCount = GetMatchingCategoryCount(DataManager.Instance.exerciseData, text);
             globalCounter += matchingCount;
-            obj.GetComponent<Image>().color = Color.blue;
+            obj.GetComponent<Image>().color = new Color32(51, 23, 23,255);
             label.text = "Filter(" + globalCounter.ToString() + ")";
         }
     }
@@ -105,6 +105,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
         if (controller.selectedBodyParts.Count != 0)
         {
             controller.LoadExercisesByBodyParts();
+            controller.CreateBodyPartChecks();
         }
     }
     public List<string> GetUniqueBodyParts(ExerciseData excerciseData)

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StateManager : GenericSingletonClass<StateManager>
 {
-    private List<GameObject> inactivePages = new List<GameObject>();
+    public List<GameObject> inactivePages = new List<GameObject>();
     private bool isProcessing = false;
 
     public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null)
@@ -63,7 +63,17 @@ public class StateManager : GenericSingletonClass<StateManager>
         GlobalAnimator.Instance.openSidebar(prefab);
 
     }
+    public void OpenFooter(string folderPath, GameObject currentPage, string newPage)
+    {
+        var prefabPath = "Prefabs/" + folderPath + "/" + newPage;
+        var prefabResource = Resources.Load<GameObject>(prefabPath);
+        var prefab = Instantiate(prefabResource);
+        var container = GameObject.FindGameObjectWithTag(newPage);
 
+        prefab.transform.SetParent(container.transform, false);
+
+        //GlobalAnimator.Instance.openSidebar(prefab);
+    }
     public void HandleSidebarBackAction(GameObject currentActivePage)
     {
         GlobalAnimator.Instance.closeSidebar(currentActivePage);

@@ -13,8 +13,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
     public Image addSet, line;
 
-    public GameObject timer, weight, reps,rir;
-    ExerciseTypeModel exerciseTypeModel;
+    public GameObject timer, mile, weight, reps, rir;
+    public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
     List<HistoryExerciseModel> exerciseHistory;
@@ -25,20 +25,30 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
-        exerciseHistory=GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.isWeigtExercise);
-        if (exerciseTypeModel.isWeigtExercise)
+        exerciseHistory=GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
+        switch (exerciseTypeModel.exerciseType)
         {
-            timer.gameObject.SetActive(false);
-            weight.gameObject.SetActive(true);
-            rir.gameObject.SetActive(true);
-            reps.gameObject.SetActive(true);
-        }
-        else
-        {
-            timer.gameObject.SetActive(true);
-            weight.gameObject.SetActive(false);
-            rir.gameObject.SetActive(false);
-            reps.gameObject.SetActive(false);
+            case ExerciseType.RepsOnly:
+                reps.gameObject.SetActive(true);
+                print("Need to implement REPS only");
+                break;
+            case ExerciseType.TimeBased:
+                timer.gameObject.SetActive(true);
+                weight.gameObject.SetActive(false);
+                rir.gameObject.SetActive(false);
+                reps.gameObject.SetActive(false);
+                break;
+            case ExerciseType.TimeAndMiles:
+                timer.gameObject.SetActive(true);
+                mile.gameObject.SetActive(true);
+                print("Need to implement Time and Miles");
+                break;
+            case ExerciseType.WeightAndReps:
+                timer.gameObject.SetActive(false);
+                weight.gameObject.SetActive(true);
+                rir.gameObject.SetActive(true);
+                reps.gameObject.SetActive(true);
+                break;
         }
         if (exerciseTypeModel.exerciseModel.Count > 0)
         {
@@ -104,7 +114,10 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         if(isWorkoutLog)
             prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
         else
-            prefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewSubItems");
+        {
+            prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
+            //prefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewSubItems");
+        }
         GameObject newSubItem = Instantiate(prefab, transform);
         int childCount = transform.childCount;
         newSubItem.transform.SetSiblingIndex(childCount - 3);
@@ -119,7 +132,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         Dictionary<string, object> initData = new Dictionary<string, object>
         {
             {  "data", exerciseModel   },
-            {"isWeight", exerciseTypeModel.isWeigtExercise  },
+            {"exerciseType", exerciseTypeModel.exerciseType  },
             {"exerciseHistory",history}
         };
         newSubItemScript.onInit(initData);
@@ -153,7 +166,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         return null;
     }
-    public List<HistoryExerciseModel> GetExerciseData(HistoryModel historyData, string exerciseName, bool isWeight)
+    public List<HistoryExerciseModel> GetExerciseData(HistoryModel historyData, string exerciseName, ExerciseType type)
     {
         List<HistoryExerciseModel> exerciseDataList = new List<HistoryExerciseModel>();
 
@@ -167,17 +180,22 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
                 }
             }
         }
-        if (isWeight)
+        switch (type)
         {
-            exerciseDataList = exerciseDataList
-                .OrderByDescending(e => e.weight * e.reps)
-                .ToList();
-        }
-        else
-        {
-            exerciseDataList = exerciseDataList
+            case ExerciseType.RepsOnly:
+                break;
+            case ExerciseType.TimeBased:
+                exerciseDataList = exerciseDataList
                 .OrderBy(e => e.time)
                 .ToList();
+                break;
+            case ExerciseType.TimeAndMiles:
+                break;
+            case ExerciseType.WeightAndReps:
+                exerciseDataList = exerciseDataList
+                .OrderByDescending(e => e.weight * e.reps)
+                .ToList();
+                break;
         }
         return exerciseDataList;
     }

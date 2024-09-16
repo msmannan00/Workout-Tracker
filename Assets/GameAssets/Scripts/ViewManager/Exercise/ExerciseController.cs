@@ -4,6 +4,8 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using System.Linq;
+using PlayFab.ClientModels;
+using UnityEditor;
 
 public class ExerciseController : MonoBehaviour, PageController
 {
@@ -13,7 +15,8 @@ public class ExerciseController : MonoBehaviour, PageController
     public Button addExerciseButton;
     public Button alphabetic, byRank, performed;
     public Color buttonUnselectColor;
-    public Color exerciseUnselectColor;
+    public GameObject bodyPartPrefab;
+    public Transform bodyPartsContent;
 
     public List<Image> themeColorItems;
     public Image searchIcon1, searchIcon2;
@@ -221,8 +224,11 @@ public class ExerciseController : MonoBehaviour, PageController
         if (selectedExercises.Contains(exercise))
         {
             selectedExercises.Remove(exercise);
-            obj.GetComponent<Image>().color= exerciseUnselectColor;
-            if(selectedExercises.Count <= 0)
+            //Color col = obj.GetComponent<Image>().color;
+            //col.a = 0;
+            //obj.GetComponent<Image>().color = col;
+            obj.GetComponent<ExerciseItem>().selected.SetActive(false);
+            if (selectedExercises.Count <= 0)
             {
                 addExerciseButton.gameObject.SetActive(false);
             }
@@ -230,7 +236,10 @@ public class ExerciseController : MonoBehaviour, PageController
         else
         {
             selectedExercises.Add(exercise);
-            obj.GetComponent<Image>().color = Color.blue;
+            //Color col = obj.GetComponent<Image>().color;
+            //col.a = 1;
+            //obj.GetComponent<Image>().color = col;
+            obj.GetComponent<ExerciseItem>().selected.SetActive(true);
             if (selectedExercises.Count > 0)
             {
                 addExerciseButton.gameObject.SetActive(true);
@@ -319,9 +328,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
                 Dictionary<string, object> initData = new Dictionary<string, object>
-            {
-                { "data", exercise },
-            };
+                {
+                    { "data", exercise },
+                };
 
                 newExerciseItem.onInit(initData);
 
@@ -410,9 +419,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
                 Dictionary<string, object> initData = new Dictionary<string, object>
-        {
-            { "data", exercise },
-        };
+                {
+                    { "data", exercise },
+                };
 
                 newExerciseItem.onInit(initData);
 
@@ -441,6 +450,38 @@ public class ExerciseController : MonoBehaviour, PageController
         }
     }
 
+    public void CreateBodyPartChecks()
+    {
+        foreach (string text in selectedBodyParts)
+        {
+            // Instantiate text prefab
+            GameObject newTextObj = Instantiate(bodyPartPrefab, bodyPartsContent);
+            TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
+            textComponent.text = text;
+            textComponent.color = new Color32(51, 23, 23, 255);
+            newTextObj.GetComponent<Button>().onClick.AddListener(() => UnSelectBodypart(newTextObj,text));
+            //newTextObj.GetComponent<Image>().color = itemColor;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
+            float textWidth = textComponent.preferredWidth + 15;
+            RectTransform textRect = newTextObj.GetComponent<RectTransform>();
+            RectTransform objRect = newTextObj.GetComponent<RectTransform>();
+            textRect.sizeDelta = new Vector2(textWidth, textRect.sizeDelta.y);
+            objRect.sizeDelta = new Vector2(textWidth, objRect.sizeDelta.y);
+        }
+    }
+    public void UnSelectBodypart(GameObject obj,string text)
+    {
+        Destroy(obj);
+        selectedBodyParts.Remove(text);
+        if(selectedBodyParts.Count > 0)
+        {
+            LoadExercisesByBodyParts();
+        }
+        else
+        {
+            LoadExercises();
+        }
+    }
     void ByRankExercises(string filter)
     {
         addExerciseButton.gameObject.SetActive(false);

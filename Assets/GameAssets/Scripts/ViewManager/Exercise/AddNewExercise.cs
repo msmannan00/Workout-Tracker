@@ -106,7 +106,7 @@ public class AddNewExercise : MonoBehaviour, PageController
 
     private void OnIsWeightExerciseChanged(bool value)
     {
-        exerciseDataItem.isWeightExercise = value;
+        //exerciseDataItem.isWeightExercise = value;
     }
 
     public void Save()

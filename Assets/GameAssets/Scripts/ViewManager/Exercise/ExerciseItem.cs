@@ -13,6 +13,8 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     private TextMeshProUGUI categoryNameText;
     [SerializeField]
     private Image exerciseImage;
+    [SerializeField]
+    public GameObject selected;
 
     void Start()
     {
