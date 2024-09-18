@@ -224,9 +224,9 @@ public class ExerciseController : MonoBehaviour, PageController
         if (selectedExercises.Contains(exercise))
         {
             selectedExercises.Remove(exercise);
-            //Color col = obj.GetComponent<Image>().color;
-            //col.a = 0;
-            //obj.GetComponent<Image>().color = col;
+            Color col = obj.GetComponent<Image>().color;
+            col.a = 0;
+            obj.GetComponent<Image>().color = col;
             obj.GetComponent<ExerciseItem>().selected.SetActive(false);
             if (selectedExercises.Count <= 0)
             {
@@ -236,9 +236,9 @@ public class ExerciseController : MonoBehaviour, PageController
         else
         {
             selectedExercises.Add(exercise);
-            //Color col = obj.GetComponent<Image>().color;
-            //col.a = 1;
-            //obj.GetComponent<Image>().color = col;
+            Color col = obj.GetComponent<Image>().color;
+            col.a = 1;
+            obj.GetComponent<Image>().color = col;
             obj.GetComponent<ExerciseItem>().selected.SetActive(true);
             if (selectedExercises.Count > 0)
             {
@@ -456,6 +456,7 @@ public class ExerciseController : MonoBehaviour, PageController
         {
             // Instantiate text prefab
             GameObject newTextObj = Instantiate(bodyPartPrefab, bodyPartsContent);
+            newTextObj.transform.GetChild(1).gameObject.SetActive(true);
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
             textComponent.text = text;
             textComponent.color = new Color32(51, 23, 23, 255);

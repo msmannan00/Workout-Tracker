@@ -96,9 +96,10 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         weight.onEndEdit.AddListener(OnWeightChanged);
         reps.onEndEdit.AddListener(OnREPSChanged);
         rir.onValueChanged.AddListener(OnRIRChanged);
+        timerText.onValueChanged.AddListener(OnTimerInput);
+        mile.onValueChanged.AddListener(OnMileChanges);
         if(isComplete!=null)
             isComplete.onValueChanged.AddListener(OnToggleValueChange);
-        timerText.onValueChanged.AddListener(OnTimerInput);
         UpdateToggleInteractableState();
         OnRIRChanged(0);
     }
@@ -179,6 +180,18 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         rir.AddOptions(options);
     }
 
+    private void OnMileChanges(string newMile)
+    {
+        if (float.TryParse(newMile, out float mileValue))
+        {
+            exerciseModel.mile = mileValue;
+        }
+        else
+        {
+            exerciseModel.weight = 0;
+        }
+        UpdateToggleInteractableState();
+    }
     private void OnWeightChanged(string newWeight)
     {
         if (int.TryParse(newWeight, out int weightValue))
@@ -318,6 +331,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                     isComplete.interactable = (exerciseModel.time > 0);
                     break;
                 case ExerciseType.TimeAndMiles:
+                    isComplete.interactable = (exerciseModel.time > 0 && exerciseModel.mile > 0);
                     print("need to implement");
                     break;
                 case ExerciseType.WeightAndReps:

@@ -106,7 +106,7 @@ public class DashboardController : MonoBehaviour, PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isTemplateCreator", true }
+            { "isTemplateCreator", true },{"templeteName","Workout "+content.childCount}
         };
         Action<object> callback = onReloadData;
 

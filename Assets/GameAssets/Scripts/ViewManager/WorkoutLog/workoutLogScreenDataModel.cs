@@ -25,12 +25,11 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
-        exerciseHistory=GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
+        exerciseHistory = GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
         {
             case ExerciseType.RepsOnly:
                 reps.gameObject.SetActive(true);
-                print("Need to implement REPS only");
                 break;
             case ExerciseType.TimeBased:
                 timer.gameObject.SetActive(true);
@@ -41,7 +40,6 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             case ExerciseType.TimeAndMiles:
                 timer.gameObject.SetActive(true);
                 mile.gameObject.SetActive(true);
-                print("Need to implement Time and Miles");
                 break;
             case ExerciseType.WeightAndReps:
                 timer.gameObject.SetActive(false);
@@ -183,6 +181,9 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         switch (type)
         {
             case ExerciseType.RepsOnly:
+                exerciseDataList = exerciseDataList
+                .OrderBy(e => e.reps)
+                .ToList();
                 break;
             case ExerciseType.TimeBased:
                 exerciseDataList = exerciseDataList

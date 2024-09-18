@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HistoryController : MonoBehaviour, PageController
 {
@@ -30,10 +31,16 @@ public class HistoryController : MonoBehaviour, PageController
         {
             list.Add(workouts);
         }
+        VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
+        vlg.childControlHeight = true;
+        vlg.spacing = 30;
         OnExerciseAdd(list);
     }
     public void Exercise()
     {
+        VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
+        vlg.childControlHeight = false;
+        vlg.spacing = 5;
         PerformedExercises();
     }
     public void OnExerciseAdd(object data)

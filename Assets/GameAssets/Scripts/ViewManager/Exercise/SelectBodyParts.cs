@@ -56,6 +56,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
             // Instantiate text prefab
             GameObject newTextObj = Instantiate(prefab, content);
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
+            newTextObj.transform.GetChild(1).gameObject.SetActive(false);
             textComponent.text = text;
             textComponent.font = itemFont;
             textComponent.color = userSessionManager.Instance.lightButtonColor;

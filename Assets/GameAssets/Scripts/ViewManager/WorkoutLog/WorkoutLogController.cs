@@ -11,7 +11,9 @@ public class WorkoutLogController : MonoBehaviour, PageController
 {
     public TextMeshProUGUI workoutNameText;
     public TMP_InputField workoutNotes;
+    public TMP_InputField editWorkoutName;
     public TextMeshProUGUI timerText;
+    public Button editWorkoutButton;
     public Image back, watch, watchpins, addExercise1, addExercise2, line, save, cancle;
     public Transform content;
 
@@ -44,10 +46,25 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 print(exerciseType.name);
             }
             OnExerciseAdd(list);
-            if(workoutNameText!=null)
+            if (workoutNameText != null)
+            {
                 workoutNameText.text = dataTemplate.templeteName;
+                editWorkoutName.textComponent.text = dataTemplate.templeteNotes; 
+                float textWidth = workoutNameText.preferredWidth;
+                workoutNameText.transform.GetComponent<RectTransform>().sizeDelta=new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+            }
             workoutNotes.onValueChanged.AddListener(OnNotesChange);
         }
+        else
+        {
+            workoutNameText.text = (string)data["templeteName"];
+            editWorkoutName.text = (string)data["templeteName"];
+            float textWidth = workoutNameText.preferredWidth;
+            workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+
+        }
+        editWorkoutName.onEndEdit.AddListener(OnNameChanged);
+        editWorkoutButton.onClick.AddListener(EditWorkoutName);
         OnToggleWorkout();
     }
 
@@ -102,6 +119,12 @@ public class WorkoutLogController : MonoBehaviour, PageController
     //    }
     //}
 
+    void EditWorkoutName()
+    {
+        workoutNameText.gameObject.SetActive(false);
+        editWorkoutName.gameObject.SetActive(true);
+        editWorkoutName.text=workoutNameText.text;
+    }
     public void OnToggleWorkout()
     {
         if (templeteModel.exerciseTemplete.Count == 0)
@@ -146,7 +169,13 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void OnNameChanged(string name)
     {
-        templeteModel.templeteName = name;
+        templeteModel.templeteName = name.ToUpper();
+        workoutNameText.text= name.ToUpper();
+        float textWidth = workoutNameText.preferredWidth;
+        workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+        workoutNameText.gameObject.SetActive(true);
+        editWorkoutName.gameObject.SetActive(false);
+
     }
 
     public void AddExerciseButton()
@@ -183,7 +212,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
                     {
                         name = dataItem.exerciseName,
                         exerciseModel = new List<ExerciseModel>(),
-                        index = exerciseCounter++
+                        index = exerciseCounter++,
+                        exerciseType=dataItem.exerciseType
                     };
 
                     templeteModel.exerciseTemplete.Add(typeModel);
@@ -319,19 +349,21 @@ public class WorkoutLogController : MonoBehaviour, PageController
         //userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
 
 
-        int index = GetIndexByTempleteName(templeteModel.templeteName);
-        userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
-        userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
+        //int index = GetIndexByTempleteName(templeteModel.templeteName);
+        //userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
+        //userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
         StateManager.Instance.HandleBackAction(gameObject);
         this.callback.Invoke(null);
         userSessionManager.Instance.SaveExcerciseData();
         //}
-        OnBack();
+        //OnBack();
     }
 
     public void OnBack()
     {
-        StateManager.Instance.HandleBackAction(gameObject);
+        //StateManager.Instance.HandleBackAction(gameObject);
+        List<object> initialData = new List<object> { this.gameObject };
+        PopupController.Instance.OpenPopup("workoutLog", "CancelWorkoutPopup", null, initialData);
     }
     private int CalculateTotalWeight(DefaultTempleteModel defaultTemplate)
     {

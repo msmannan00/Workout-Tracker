@@ -121,7 +121,27 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             exerciseType = ExerciseType.RepsOnly,
             exerciseModel = new List<ExerciseModel>()
         };
-
+        ExerciseTypeModel spiderCurls = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Spider Curls",
+            exerciseType = ExerciseType.WeightAndReps,
+            exerciseModel = new List<ExerciseModel>()
+        };
+        ExerciseTypeModel bicepCulDumbbell = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Bicep Curl (Dumbbell)",
+            exerciseType = ExerciseType.WeightAndReps,
+            exerciseModel = new List<ExerciseModel>()
+        };
+        ExerciseTypeModel bicepCurlMachine = new ExerciseTypeModel
+        {
+            index = 0,
+            name = "Bicep Curl (Machine)",
+            exerciseType = ExerciseType.WeightAndReps,
+            exerciseModel = new List<ExerciseModel>()
+        };
         ExerciseModel defaultExerciseModel1 = new ExerciseModel
         {
             setID = 1,
@@ -140,6 +160,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         jumpRope.exerciseModel.Add(defaultExerciseModel1);
         jumpRope.exerciseModel.Add(defaultExerciseModel1);
         jumpRope.exerciseModel.Add(defaultExerciseModel1);
+        spiderCurls.exerciseModel.Add(defaultExerciseModel1);
+        spiderCurls.exerciseModel.Add(defaultExerciseModel1);
+        bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
+        bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
+        bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
+        bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
 
 
         DefaultTempleteModel chestAndBack = new DefaultTempleteModel
@@ -152,11 +178,16 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             templeteName = "Runing And Jump Rope",
             exerciseTemplete = new List<ExerciseTypeModel> { running, jumpRope }
         };
-
+        DefaultTempleteModel bicep = new DefaultTempleteModel
+        {
+            templeteName = "Biceps",
+            exerciseTemplete = new List<ExerciseTypeModel> { bicepCulDumbbell, bicepCulDumbbell, spiderCurls }
+        };
         excerciseData.exerciseTemplete.Clear();
         excerciseData.exerciseTemplete.Add(chestAndBack);
         excerciseData.exerciseTemplete.Add(runingAndJumpRope);
-
+        excerciseData.exerciseTemplete.Add(bicep);
+        
         SaveExcerciseData();
     }
 
