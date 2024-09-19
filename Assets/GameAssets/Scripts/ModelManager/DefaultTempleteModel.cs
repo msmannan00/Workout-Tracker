@@ -30,7 +30,7 @@ public class ExerciseModel
     public int setID = 1;
     public string previous = "-";
     public int weight = 0;
-    public int lbs = 0;
+    public int rir = 0;
     public int reps = 0;
     public bool toggle;
     public int time;

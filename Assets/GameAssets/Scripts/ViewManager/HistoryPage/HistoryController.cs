@@ -41,7 +41,7 @@ public class HistoryController : MonoBehaviour, PageController
         VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
         vlg.childControlHeight = false;
         vlg.spacing = 5;
-        PerformedExercises();
+        AllExercises();
     }
     public void OnExerciseAdd(object data)
     {
@@ -86,6 +86,40 @@ public class HistoryController : MonoBehaviour, PageController
                 exerciseObject.GetComponent<historyScreenDataModel>().onInit(mData, null);
             }
         }
+    }
+
+    void AllExercises()
+    {
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+
+        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        {
+
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+            newExerciseObject.GetComponent<Button>().onClick.AddListener(()=>ShowExerciseHistory(exercise));
+            Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", exercise },
+            };
+
+            newExerciseItem.onInit(initData);
+
+        }
+    }
+    void ShowExerciseHistory(ExerciseDataItem exercise)
+    {
+        Dictionary<string, object> initData = new Dictionary<string, object>
+        {
+                { "data", exercise },
+        };
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "exerciseHistoryScreen", initData);
     }
     void PerformedExercises()
     {

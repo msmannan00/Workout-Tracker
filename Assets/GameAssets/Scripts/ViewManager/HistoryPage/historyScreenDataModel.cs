@@ -59,4 +59,12 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
         };
         newSubItemScript.onInit(initData,null);
     }
+    public void OpenDetails()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+            { "workout",historyWorkout }
+            };
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "completeWorkoutScreen", mData);
+    }
 }

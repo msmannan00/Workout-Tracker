@@ -31,6 +31,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         exerciseModel = (ExerciseModel)data["data"];
         exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
+        ResetModel(exerciseModel);
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
         switch (exerciseType)
@@ -94,8 +95,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         InitializeRepsDropdown();
 
         weight.onEndEdit.AddListener(OnWeightChanged);
-        reps.onEndEdit.AddListener(OnREPSChanged);
         rir.onValueChanged.AddListener(OnRIRChanged);
+        reps.onEndEdit.AddListener(OnREPSChanged);
         timerText.onValueChanged.AddListener(OnTimerInput);
         mile.onValueChanged.AddListener(OnMileChanges);
         if(isComplete!=null)
@@ -103,7 +104,14 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         UpdateToggleInteractableState();
         OnRIRChanged(0);
     }
-
+    void ResetModel(ExerciseModel model)
+    {
+        model.reps = 0;
+        model.weight = 0;
+        model.time = 0;
+        model.mile= 0;
+        model.toggle = false;
+    }
     private void OnEnable()
     {
         //TMP_FontAsset textFont = null;
@@ -209,22 +217,23 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         if (int.TryParse(newLbs, out int lbsValue))
         {
-            exerciseModel.lbs = lbsValue;
+            exerciseModel.reps = lbsValue;
         }
         else
         {
-            exerciseModel.lbs = 0;
+            exerciseModel.reps = 0;
         }
+        UpdateToggleInteractableState();
     }
 
     private void OnRIRChanged(int newRepsIndex)
     {
-        exerciseModel.reps = newRepsIndex + 1;
+        exerciseModel.rir = newRepsIndex;
         UpdateToggleInteractableState();
     }
     private void OnTimerInput(string input)
     {
-        // Remove non-numeric characters
+        print(input);
         input = input.Replace(":", "").Trim();
 
         if (input.Length > 4) input = input.Substring(0, 4);
@@ -235,23 +244,27 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 
         timerText.text = formattedInput;
 
+
+
         // Convert formatted time to seconds
         string[] timeParts = formattedInput.Split(':');
         int minutes = int.Parse(timeParts[0]);
         int seconds = int.Parse(timeParts[1]);
         int enteredTimeInSeconds = (minutes * 60) + seconds;
         exerciseModel.time = enteredTimeInSeconds;
+
+
         if (enteredTimeInSeconds > userEnteredTimeInSeconds)
         {
             // If user enters a greater time, restart the timer
             currentTimeInSeconds = enteredTimeInSeconds;
             userEnteredTimeInSeconds = enteredTimeInSeconds;
-            if (isComplete != null)
-            {
-                isComplete.isOn = false;
-                exerciseModel.toggle = false;
-                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
-            }
+            //if (isComplete != null)
+            //{
+            //    isComplete.isOn = false;
+            //    exerciseModel.toggle = false;
+            //    isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+            //}
 
             // Stop the previous coroutine if it's running
             if (timerCoroutine != null)
@@ -281,6 +294,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                 isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
         }
+        UpdateToggleInteractableState();
     }
     private IEnumerator StartTimer()
     {
@@ -293,19 +307,19 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         }
 
         // When the timer reaches the user-entered time
-        if (isComplete != null)
-        {
-            isComplete.isOn = true;
-            exerciseModel.toggle = true;
-            isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
+        //if (isComplete != null)
+        //{
+        //    isComplete.isOn = true;
+        //    exerciseModel.toggle = true;
+        //    isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
 
-        }
+        //}
     }
 
     public void OnToggleValueChange(bool value)
     {
-        if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
-        {
+        //if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
+        //{
             exerciseModel.toggle=value;
             if (value)
             {
@@ -316,7 +330,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                 isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
             print("toggle");
-        }
+        //}
     }
     private void UpdateToggleInteractableState()
     {
@@ -326,13 +340,13 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 case ExerciseType.RepsOnly:
                     isComplete.interactable = (exerciseModel.reps > 0);
+                    print("reps");
                     break;
                 case ExerciseType.TimeBased:
                     isComplete.interactable = (exerciseModel.time > 0);
                     break;
                 case ExerciseType.TimeAndMiles:
                     isComplete.interactable = (exerciseModel.time > 0 && exerciseModel.mile > 0);
-                    print("need to implement");
                     break;
                 case ExerciseType.WeightAndReps:
                     isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);

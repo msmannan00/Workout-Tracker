@@ -62,7 +62,7 @@ public class FooterController : MonoBehaviour
     }
     public void OnHistory()
     {
-        StateManager.Instance.OpenStaticScreen("history", null, "historyScreen", null);
+        StateManager.Instance.OpenStaticScreen("history", null, "historyScreen", null,true);
     }
     public void OnProfile()
     {

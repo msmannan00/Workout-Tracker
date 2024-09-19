@@ -30,4 +30,6 @@ public class HistoryExerciseModel
     public float weight;
     public int reps;
     public int time;
+    public int rir;
+    public float mile;
 }

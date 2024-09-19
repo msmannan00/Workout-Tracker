@@ -171,7 +171,6 @@ public class AuthController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
-
             StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
             //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
         }

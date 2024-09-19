@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -35,6 +36,7 @@ public class WelcomeController : MonoBehaviour, PageController
             Sprite foodImage = Resources.Load<Sprite>("UIAssets/Welcome/Images/" + mFoodImage[mPageNumber]);
             mFood.GetComponent<Image>().sprite = foodImage;
         }
+        StartCoroutine(StartWait());
     }
 
     public void getStarted()
@@ -67,5 +69,9 @@ public class WelcomeController : MonoBehaviour, PageController
             };
         StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
     }
-
+    IEnumerator StartWait()
+    {
+        yield return new WaitForSeconds(3);
+        OnLogin();
+    }
 }

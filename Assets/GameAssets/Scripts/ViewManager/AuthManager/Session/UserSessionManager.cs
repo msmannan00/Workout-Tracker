@@ -147,7 +147,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             setID = 1,
             previous = "-",
             weight = 0,
-            lbs = 0,
+            rir = 0,
             reps = 0
         };
         back1.exerciseModel.Add(defaultExerciseModel1);

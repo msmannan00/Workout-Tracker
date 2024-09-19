@@ -337,7 +337,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 exercise.setID = 1;
                 exercise.previous = "-";
                 exercise.weight = 0;
-                exercise.lbs = 0;
+                exercise.rir = 0;
                 exercise.reps = 0;
                 exercise.time = 0;
                 exercise.toggle = false;
