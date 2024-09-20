@@ -227,7 +227,7 @@ public class ExerciseController : MonoBehaviour, PageController
             Color col = obj.GetComponent<Image>().color;
             col.a = 0;
             obj.GetComponent<Image>().color = col;
-            obj.GetComponent<ExerciseItem>().selected.SetActive(false);
+            //obj.GetComponent<ExerciseItem>().selected.SetActive(false);
             if (selectedExercises.Count <= 0)
             {
                 addExerciseButton.gameObject.SetActive(false);
@@ -239,7 +239,7 @@ public class ExerciseController : MonoBehaviour, PageController
             Color col = obj.GetComponent<Image>().color;
             col.a = 1;
             obj.GetComponent<Image>().color = col;
-            obj.GetComponent<ExerciseItem>().selected.SetActive(true);
+            //obj.GetComponent<ExerciseItem>().selected.SetActive(true);
             if (selectedExercises.Count > 0)
             {
                 addExerciseButton.gameObject.SetActive(true);

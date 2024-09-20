@@ -65,6 +65,12 @@ public class DynamicHorizontalLayout : MonoBehaviour
                 transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>().fontSize = Mathf.Lerp(
                     transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>().fontSize, 36f, 0.1f);
                 transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>().color = Color.red;
+                int result;
+                bool success = int.TryParse(transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>().text, out result);
+                if (success)
+                {
+                    userSessionManager.Instance.currentWeight = result;
+                }
                 for (int a = 0; a < pos.Length; a++)
                 {
                     if (a == i - 1 || a == i + 1) // Check if it's a neighbor

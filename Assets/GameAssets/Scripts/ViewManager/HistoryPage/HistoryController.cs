@@ -34,6 +34,7 @@ public class HistoryController : MonoBehaviour, PageController
         VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
         vlg.childControlHeight = true;
         vlg.spacing = 30;
+        vlg.childAlignment = TextAnchor.UpperCenter;
         OnExerciseAdd(list);
     }
     public void Exercise()
@@ -41,6 +42,7 @@ public class HistoryController : MonoBehaviour, PageController
         VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
         vlg.childControlHeight = false;
         vlg.spacing = 5;
+        vlg.childAlignment = TextAnchor.UpperLeft;
         AllExercises();
     }
     public void OnExerciseAdd(object data)
