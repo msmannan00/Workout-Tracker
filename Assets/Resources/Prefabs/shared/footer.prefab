@@ -319,12 +319,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d95077c4479caf94690fcb50ad70eaf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  footerButtonImages:
-  - {fileID: 2634784463985837752}
-  - {fileID: 5373604003629401971}
-  - {fileID: 8451593667082687037}
-  - {fileID: 1102196069210341876}
-  - {fileID: 5523097753343068342}
+  selfButtonObject: {fileID: 0}
+  body: {fileID: 2634784463985837752}
+  sharing: {fileID: 5373604003629401971}
+  dashboard: {fileID: 8451593667082687037}
+  history: {fileID: 1102196069210341876}
+  profile: {fileID: 5523097753343068342}
 --- !u!1 &965708482585242086
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +603,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5758581920082661793}
+        m_TargetAssemblyTypeName: FooterController, Assembly-CSharp
+        m_MethodName: OnBody
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2897512282804527824
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,6 +834,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 3396402657634956056}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5758581920082661793}
+        m_TargetAssemblyTypeName: FooterController, Assembly-CSharp
+        m_MethodName: OnProfile
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1677,6 +1701,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 7152349595460959330}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5758581920082661793}
+        m_TargetAssemblyTypeName: FooterController, Assembly-CSharp
+        m_MethodName: OnSocial
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

@@ -9,6 +9,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string mProfileID;
     public bool mSidebar = false;
     public int currentWeight;
+    public GameObject currentScreen;
     [Header("Theme Settings")]
     public Theme gameTheme;
     public TMP_FontAsset darkHeadingFont, darkTextFont;

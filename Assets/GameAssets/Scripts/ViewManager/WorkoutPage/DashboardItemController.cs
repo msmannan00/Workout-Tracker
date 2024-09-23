@@ -98,5 +98,6 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public void PlayButton()
     {
         callback?.Invoke(defaultTempleteModel);
+        StateManager.Instance.CloseFooter();
     }
 }

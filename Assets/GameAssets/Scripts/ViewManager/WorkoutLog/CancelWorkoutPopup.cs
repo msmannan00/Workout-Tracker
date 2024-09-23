@@ -22,6 +22,7 @@ public class CancelWorkoutPopup : MonoBehaviour,IPrefabInitializer
     {
         PopupController.Instance.ClosePopup("CancelWorkoutPopup");
         StateManager.Instance.HandleBackAction(workoutScreen);
+        StateManager.Instance.OpenFooter(null, null, false);
     }
     void Resume()
     {

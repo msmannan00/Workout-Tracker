@@ -176,6 +176,10 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
                 });
         }
     }
+    public void AnimateRectTransformX(RectTransform rectTransform, float targetX, float duration)
+    {
+        rectTransform.DOAnchorPosX(targetX, duration).SetEase(Ease.InOutCubic);
+    }
     public void WobbleObject(GameObject pAppObject)
     {
         float mWobbleDuration = 0.45f;

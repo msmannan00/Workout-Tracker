@@ -1,3 +1,4 @@
+using DG.Tweening;
 using PlayFab.EconomyModels;
 using System;
 using System.Collections;
@@ -10,18 +11,20 @@ using UnityEngine.UI;
 public class HistoryController : MonoBehaviour, PageController
 {
     public Transform content;
+    public RectTransform selectionLine;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
 
     }
     private void Start()
     {
-        List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
-        foreach (var workouts in userSessionManager.Instance.historyData.exerciseTempleteModel)
-        {
-            list.Add(workouts);
-        }
-        OnExerciseAdd(list);
+        //List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
+        //foreach (var workouts in userSessionManager.Instance.historyData.exerciseTempleteModel)
+        //{
+        //    list.Add(workouts);
+        //}
+        Completed();
+        //OnExerciseAdd(list);
     }
 
     public void Completed()
@@ -35,6 +38,7 @@ public class HistoryController : MonoBehaviour, PageController
         vlg.childControlHeight = true;
         vlg.spacing = 30;
         vlg.childAlignment = TextAnchor.UpperCenter;
+        GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -85f, 0.25f);
         OnExerciseAdd(list);
     }
     public void Exercise()
@@ -43,6 +47,7 @@ public class HistoryController : MonoBehaviour, PageController
         vlg.childControlHeight = false;
         vlg.spacing = 5;
         vlg.childAlignment = TextAnchor.UpperLeft;
+        GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
         AllExercises();
     }
     public void OnExerciseAdd(object data)
@@ -121,7 +126,8 @@ public class HistoryController : MonoBehaviour, PageController
         {
                 { "data", exercise },
         };
-        StateManager.Instance.OpenStaticScreen("history", gameObject, "exerciseHistoryScreen", initData);
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "exerciseHistoryScreen", initData,keepState: true);
+        StateManager.Instance.CloseFooter();
     }
     void PerformedExercises()
     {
@@ -179,4 +185,5 @@ public class HistoryController : MonoBehaviour, PageController
     {
         StateManager.Instance.HandleBackAction(gameObject);
     }
+   
 }

@@ -353,6 +353,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         //userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
         //userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
         StateManager.Instance.HandleBackAction(gameObject);
+        StateManager.Instance.OpenFooter(null, null, false);
         this.callback.Invoke(null);
         userSessionManager.Instance.SaveExcerciseData();
         //}

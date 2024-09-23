@@ -17,3 +17,11 @@ public enum ExerciseType
     WeightAndReps=3,
     RepsOnly=4           
 }
+public enum FooterButtons
+{
+    Body=1,
+    Share=2,
+    Dashboard=3,
+    History=4,
+    Profile=5
+}

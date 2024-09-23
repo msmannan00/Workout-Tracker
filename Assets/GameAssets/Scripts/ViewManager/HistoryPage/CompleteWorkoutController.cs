@@ -53,6 +53,7 @@ public class CompleteWorkoutController : MonoBehaviour, PageController
     public void Back()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+        StateManager.Instance.OpenFooter(null, null, false);
     }
     void ShowOnlyReps(HistoryExerciseTypeModel exercise,GameObject parent, GameObject prefab)
     {

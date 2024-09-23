@@ -6,9 +6,10 @@ using UnityEngine;
 public class StateManager : GenericSingletonClass<StateManager>
 {
     public List<GameObject> inactivePages = new List<GameObject>();
+    public GameObject footer;
     private bool isProcessing = false;
 
-    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null)
+    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null,bool isfooter=false)
     {
         if (isProcessing) return;
         isProcessing = true;
@@ -42,13 +43,14 @@ public class StateManager : GenericSingletonClass<StateManager>
                 }
                 isProcessing = false;
             };
-
             GlobalAnimator.Instance.ApplyParallax(currentPage, prefab, callbackSuccess, keepState);
         }
         else
         {
             isProcessing = false;
         }
+        if(isfooter)
+            userSessionManager.Instance.currentScreen = prefab.gameObject;
     }
 
     public void openSidebar(string folderPath, GameObject currentPage, string newPage)
@@ -63,16 +65,28 @@ public class StateManager : GenericSingletonClass<StateManager>
         GlobalAnimator.Instance.openSidebar(prefab);
 
     }
-    public void OpenFooter(string folderPath, GameObject currentPage, string newPage)
+    public void OpenFooter(string folderPath , string newPage,bool create)
     {
-        var prefabPath = "Prefabs/" + folderPath + "/" + newPage;
-        var prefabResource = Resources.Load<GameObject>(prefabPath);
-        var prefab = Instantiate(prefabResource);
-        var container = GameObject.FindGameObjectWithTag(newPage);
+        if (create)
+        {
+            var prefabPath = "Prefabs/" + folderPath + "/" + newPage;
+            var prefabResource = Resources.Load<GameObject>(prefabPath);
+            var prefab = Instantiate(prefabResource);
+            var container = GameObject.FindGameObjectWithTag(newPage);
 
-        prefab.transform.SetParent(container.transform, false);
+            prefab.transform.SetParent(container.transform, false);
+            footer = prefab.gameObject;
+        }
+        else
+        {
+            footer.SetActive(true);
+        }
 
         //GlobalAnimator.Instance.openSidebar(prefab);
+    }
+    public void CloseFooter()
+    {
+        footer.SetActive(false);
     }
     public void HandleSidebarBackAction(GameObject currentActivePage)
     {

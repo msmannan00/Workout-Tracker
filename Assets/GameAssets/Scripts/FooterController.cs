@@ -7,18 +7,22 @@ using UnityEngine.UI;
 public class FooterController : MonoBehaviour
 {
     public GameObject selfButtonObject;
-    public List<Image> footerButtonImages = new List<Image>();
-    private void OnEnable()
+    public Image body, sharing, dashboard, history, profile;
+    //public List<Image> footerButtonImages = new List<Image>();
+
+    private void Start()
     {
-        BottomButtonSelectionSeter(selfButtonObject);
+        BottomButtonSelectionSeter(dashboard.gameObject);
     }
 
     public void BottomButtonSelectionSeter(GameObject clickedObject)
     {
+        List<Image> buttonImages = new List<Image> { body, sharing, dashboard, history, profile };
+        
         switch (userSessionManager.Instance.gameTheme)
         {
             case Theme.Dark:
-                foreach (Image img in footerButtonImages)
+                foreach (Image img in buttonImages)
                 {
                     if (img.gameObject == clickedObject)
                     {
@@ -30,11 +34,17 @@ public class FooterController : MonoBehaviour
                         }
                     }
                     else
+                    {
                         img.enabled = false;
+                        foreach (Transform child in img.gameObject.transform)
+                        {
+                            child.GetComponent<Image>().color = Color.white;
+                        }
+                    }
                 }
                 break;
             case Theme.Light:
-                foreach (Image img in footerButtonImages)
+                foreach (Image img in buttonImages)
                 {
                     if (img.gameObject == clickedObject)
                     {
@@ -42,14 +52,15 @@ public class FooterController : MonoBehaviour
                         {
                             child.GetComponent<Image>().color = Color.red;
                         }
+                        img.enabled = false;
                     }
-
                     else
                     {
                         foreach (Transform child in img.gameObject.transform)
                         {
                             child.GetComponent<Image>().color = Color.white;
                         }
+                        img.enabled = false;
                     }
                 }
                 break;
@@ -58,15 +69,15 @@ public class FooterController : MonoBehaviour
     public void OnDashboard()
     {
         Dictionary<string, object> mData = new Dictionary<string, object> { };
-        StateManager.Instance.OpenStaticScreen("dashboard", null, "dashboardScreen", mData);
+        StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,isfooter:true);
     }
     public void OnHistory()
     {
-        StateManager.Instance.OpenStaticScreen("history", null, "historyScreen", null,true);
+        StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, isfooter: true);
     }
     public void OnProfile()
     {
-
+        StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, isfooter: true);
     }
     public void OnSocial()
     {
@@ -74,6 +85,6 @@ public class FooterController : MonoBehaviour
     }
     public void OnBody()
     {
-
+        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, isfooter: true);
     }
 }
