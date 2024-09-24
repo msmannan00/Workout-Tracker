@@ -68,7 +68,6 @@ public class FooterController : MonoBehaviour
     }
     public void OnDashboard()
     {
-        Dictionary<string, object> mData = new Dictionary<string, object> { };
         StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,isfooter:true);
     }
     public void OnHistory()

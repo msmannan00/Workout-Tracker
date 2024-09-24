@@ -17,10 +17,12 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public Image back, watch, watchpins, addExercise1, addExercise2, line, save, cancle;
     public Transform content;
 
+    public bool addSets;
     private int exerciseCounter = 0;
     public List<ExerciseInformationModel> exercises = new List<ExerciseInformationModel>();
     private List<ExerciseDataItem> exerciseDataItems = new List<ExerciseDataItem>();
     public DefaultTempleteModel templeteModel = new DefaultTempleteModel();
+    public DefaultTempleteModel orignalModel = new DefaultTempleteModel();
 
     private bool isTemplateCreator;
     private bool isTimerRunning = false;
@@ -36,14 +38,15 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
         if (data.ContainsKey("dataTemplate"))
         {
+
             DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
+            orignalModel = DeepCopy(dataTemplate);
             templeteModel.templeteName= dataTemplate.templeteName;
             workoutNotes.text = dataTemplate.templeteNotes;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
                 list.Add(exerciseType);
-                print(exerciseType.name);
             }
             OnExerciseAdd(list);
             if (workoutNameText != null)
@@ -330,20 +333,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
         //return historyTemplate;
 
 
-        foreach (var exerciseType in templeteModel.exerciseTemplete)
-        {
-            foreach (var exercise in exerciseType.exerciseModel)
-            {
-                exercise.setID = 1;
-                exercise.previous = "-";
-                exercise.weight = 0;
-                exercise.rir = 0;
-                exercise.reps = 0;
-                exercise.time = 0;
-                exercise.toggle = false;
-            }
-        }
-
         //if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
         //{
         //userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
@@ -352,10 +341,20 @@ public class WorkoutLogController : MonoBehaviour, PageController
         //int index = GetIndexByTempleteName(templeteModel.templeteName);
         //userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
         //userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
-        StateManager.Instance.HandleBackAction(gameObject);
-        StateManager.Instance.OpenFooter(null, null, false);
-        this.callback.Invoke(null);
-        userSessionManager.Instance.SaveExcerciseData();
+        if (addSets)
+        {
+            List<object> initialData = new List<object> { this.gameObject, orignalModel, this.callback };
+            PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", null, initialData);
+        }
+        else
+        {
+            StateManager.Instance.HandleBackAction(gameObject);
+            StateManager.Instance.OpenFooter(null, null, false);
+            this.callback.Invoke(null);
+        }
+
+        
+        
         //}
         //OnBack();
     }
@@ -386,5 +385,40 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public int GetIndexByTempleteName(string name)
     {
         return userSessionManager.Instance.excerciseData.exerciseTemplete.FindIndex(t => t.templeteName == name);
+    }
+    public DefaultTempleteModel DeepCopy(DefaultTempleteModel original)
+    {
+        DefaultTempleteModel copy = new DefaultTempleteModel();
+        copy.templeteName = original.templeteName;
+        copy.templeteNotes = original.templeteNotes;
+
+        // Copy each exercise template
+        foreach (var exercise in original.exerciseTemplete)
+        {
+            ExerciseTypeModel exerciseCopy = new ExerciseTypeModel();
+            exerciseCopy.index = exercise.index;
+            exerciseCopy.name = exercise.name;
+            exerciseCopy.exerciseType = exercise.exerciseType;
+
+            // Copy each exercise model in the template
+            foreach (var exerciseModel in exercise.exerciseModel)
+            {
+                ExerciseModel exerciseModelCopy = new ExerciseModel();
+                exerciseModelCopy.setID = exerciseModel.setID;
+                exerciseModelCopy.previous = exerciseModel.previous;
+                exerciseModelCopy.weight = exerciseModel.weight;
+                exerciseModelCopy.rir = exerciseModel.rir;
+                exerciseModelCopy.reps = exerciseModel.reps;
+                exerciseModelCopy.toggle = exerciseModel.toggle;
+                exerciseModelCopy.time = exerciseModel.time;
+                exerciseModelCopy.mile = exerciseModel.mile;
+
+                exerciseCopy.exerciseModel.Add(exerciseModelCopy);
+            }
+
+            copy.exerciseTemplete.Add(exerciseCopy);
+        }
+
+        return copy;
     }
 }

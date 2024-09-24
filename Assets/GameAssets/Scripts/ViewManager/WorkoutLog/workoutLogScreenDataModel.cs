@@ -57,7 +57,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         else
         {
-            OnAddSet();
+            OnAddSet(false);
         }
     }
     private void OnEnable()
@@ -136,8 +136,12 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         newSubItemScript.onInit(initData);
     }
 
-    public void OnAddSet()
+    public void OnAddSet(bool addMore)
     {
+        if (isWorkoutLog)
+        {
+            FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
+        }
         ExerciseModel exerciseModel = new ExerciseModel();
         exerciseTypeModel.exerciseModel.Add(exerciseModel);
         AddSetFromModel(exerciseModel);
