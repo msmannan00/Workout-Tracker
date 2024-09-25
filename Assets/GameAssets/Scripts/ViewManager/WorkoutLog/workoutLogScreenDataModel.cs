@@ -17,6 +17,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
+    public bool isTemplateCreator;
     List<HistoryExerciseModel> exerciseHistory;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -24,6 +25,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.callback = callback;
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
+        isTemplateCreator = (bool)data["isTemplateCreator"];
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
         exerciseHistory = GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
@@ -138,7 +140,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
 
     public void OnAddSet(bool addMore)
     {
-        if (isWorkoutLog)
+        if (isWorkoutLog && !isTemplateCreator)
         {
             FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
         }

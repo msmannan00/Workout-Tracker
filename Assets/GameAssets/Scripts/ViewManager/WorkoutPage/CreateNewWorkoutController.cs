@@ -26,6 +26,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+        StateManager.Instance.OpenFooter(null, null, false);
     }
     public void AddExerciseButton()
     {
@@ -33,7 +34,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         {
             { "isWorkoutLog", false }
         };
-        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd,true);
+        StateManager.Instance.CloseFooter();
     }
     public void OnExerciseAdd(object data)
     {
@@ -66,7 +68,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
                     { "data", typeModel },
-                    { "isWorkoutLog", false }
+                    { "isWorkoutLog", false },
+                    { "isTemplateCreator", true }
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -92,11 +95,16 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     }
     public void SaveNewWorkout()
     {
-        templeteModel.templeteName = workoutName.text;
-        userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
-        userSessionManager.Instance.SaveExcerciseData();
-        //callback?.Invoke(null);
+        if (templeteModel.exerciseTemplete.Count > 0)
+        {
+            templeteModel.templeteName = workoutName.text;
+            userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
+            userSessionManager.Instance.SaveExcerciseData();
+        }
         //StateManager.Instance.HandleBackAction(gameObject);
+        //StateManager.Instance.OpenFooter(null, null, false);
+        //callback?.Invoke(null);
         StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null);
+        StateManager.Instance.OpenFooter(null, null, false);
     }
 }

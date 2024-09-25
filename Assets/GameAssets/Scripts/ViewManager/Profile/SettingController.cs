@@ -1,15 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingController : MonoBehaviour, PageController
 {
     public TMP_InputField searchBar;
+    public Button backButton;
     public GameObject[] items;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -18,6 +17,7 @@ public class SettingController : MonoBehaviour, PageController
     void Start()
     {
         searchBar.onValueChanged.AddListener(SearchItems);
+        backButton.onClick.AddListener(Back);
     }
     void SearchItems(string searchTerm)
     {
@@ -51,6 +51,7 @@ public class SettingController : MonoBehaviour, PageController
     }
     public void Back()
     {
+        print("back");
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }

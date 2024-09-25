@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public List<ExerciseInformationModel> exercises = new List<ExerciseInformationModel>();
     private List<ExerciseDataItem> exerciseDataItems = new List<ExerciseDataItem>();
     public DefaultTempleteModel templeteModel = new DefaultTempleteModel();
-    public DefaultTempleteModel orignalModel = new DefaultTempleteModel();
+    //public DefaultTempleteModel orignalModel = new DefaultTempleteModel();
 
     private bool isTemplateCreator;
     private bool isTimerRunning = false;
@@ -39,8 +40,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (data.ContainsKey("dataTemplate"))
         {
 
-            DefaultTempleteModel dataTemplate = (DefaultTempleteModel)data["dataTemplate"];
-            orignalModel = DeepCopy(dataTemplate);
+            DefaultTempleteModel dataTemplate = DeepCopy((DefaultTempleteModel)data["dataTemplate"]);
+            //orignalModel = DeepCopy(dataTemplate);
             templeteModel.templeteName= dataTemplate.templeteName;
             workoutNotes.text = dataTemplate.templeteNotes;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
@@ -58,14 +59,14 @@ public class WorkoutLogController : MonoBehaviour, PageController
             }
             workoutNotes.onValueChanged.AddListener(OnNotesChange);
         }
-        else
-        {
-            workoutNameText.text = (string)data["templeteName"];
-            editWorkoutName.text = (string)data["templeteName"];
-            float textWidth = workoutNameText.preferredWidth;
-            workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+        //else
+        //{
+        //    workoutNameText.text = (string)data["templeteName"];
+        //    editWorkoutName.text = (string)data["templeteName"];
+        //    float textWidth = workoutNameText.preferredWidth;
+        //    workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
 
-        }
+        //}
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         editWorkoutButton.onClick.AddListener(EditWorkoutName);
         OnToggleWorkout();
@@ -231,7 +232,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "data", typeModel }, { "isWorkoutLog", true }
+                    { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator }
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -253,7 +254,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
                     { "data", typeModel },
-                    { "isWorkoutLog", true }
+                    { "isWorkoutLog", true },
+                    {"isTemplateCreator",isTemplateCreator }
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -330,27 +332,29 @@ public class WorkoutLogController : MonoBehaviour, PageController
             userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
             userSessionManager.Instance.SaveHistory();
         }
-        //return historyTemplate;
 
+        if (isTemplateCreator)
+        {
+            if (templeteModel.exerciseTemplete.Count > 0)
+            {
+                userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
+                userSessionManager.Instance.SaveExcerciseData();
+            }
+            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null);
+            StateManager.Instance.OpenFooter(null, null, false);
+            return;
+        }
 
-        //if (isTemplateCreator && templeteModel.exerciseTemplete.Count > 0)
-        //{
-        //userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
-
-
-        //int index = GetIndexByTempleteName(templeteModel.templeteName);
-        //userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
-        //userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, templeteModel);
         if (addSets)
         {
-            List<object> initialData = new List<object> { this.gameObject, orignalModel, this.callback };
+            List<object> initialData = new List<object> { this.gameObject, templeteModel, this.callback };
             PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", null, initialData);
         }
         else
         {
-            StateManager.Instance.HandleBackAction(gameObject);
+            //StateManager.Instance.HandleBackAction(gameObject);
+            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);
-            this.callback.Invoke(null);
         }
 
         

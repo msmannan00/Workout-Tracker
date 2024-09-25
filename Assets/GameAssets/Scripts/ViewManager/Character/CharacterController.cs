@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CharacterController : MonoBehaviour,PageController
 {
     public Button shopButton, emotesButton, achievementButton;
-    public void onInit(Dictionary<string, object> data, Action<object> callback)
+    public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
 
     }

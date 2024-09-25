@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,11 +13,14 @@ public class AddNewExercise : MonoBehaviour, PageController
     public TMP_InputField exerciseName;
     public TMP_InputField categoryName;
     public TMP_InputField rank;
+    public TMP_Dropdown categoryDropdown;
+    public TMP_Dropdown exerciseTypeDropdown;
     public Toggle isWeightExercise;
     public Image backImage, saveImage;
     public TextMeshProUGUI saveText;
+    public GameObject messageObj;
 
-    public ExerciseDataItem exerciseDataItem;
+    public ExerciseDataItem exerciseDataItem = new ExerciseDataItem();
     private Action<ExerciseDataItem> callback;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -69,15 +73,18 @@ public class AddNewExercise : MonoBehaviour, PageController
 
                 break;
         }
+        List<string> categorys = GetUniqueCategorys(DataManager.Instance.exerciseData);
+        InitializeCategoryDropdown(categorys);
+        InitializeExerciseTypeDropdown(new List<string>(Enum.GetNames(typeof(ExerciseType))));
     }
     private void Start()
     {
-        exerciseDataItem = new ExerciseDataItem();
-
         // Subscribe to the onValueChanged events
         exerciseName.onValueChanged.AddListener(OnExerciseNameChanged);
-        categoryName.onValueChanged.AddListener(OnCategoryNameChanged);
+        //categoryName.onValueChanged.AddListener(OnCategoryNameChanged);
+        categoryDropdown.onValueChanged.AddListener(OnCategoryValueChanged);
         rank.onValueChanged.AddListener(OnRankChanged);
+        exerciseTypeDropdown.onValueChanged.AddListener(OnExerciseTypeValueChanged);
         isWeightExercise.onValueChanged.AddListener(OnIsWeightExerciseChanged);
     }
 
@@ -86,11 +93,40 @@ public class AddNewExercise : MonoBehaviour, PageController
         exerciseDataItem.exerciseName = value;
     }
 
-    private void OnCategoryNameChanged(string value)
+    //private void OnCategoryNameChanged(string value)
+    //{
+    //    exerciseDataItem.category = value;
+    //}
+    private void OnCategoryValueChanged(int category)
     {
-        exerciseDataItem.category = value;
+        exerciseDataItem.category = categoryDropdown.options[category].text;
     }
-
+    private void OnExerciseTypeValueChanged(int category)
+    {
+        exerciseDataItem.exerciseType = (ExerciseType)(category + 1);
+    }
+    private void InitializeCategoryDropdown(List<string> categorys)
+    {
+        categoryDropdown.ClearOptions();
+        List<string> options = new List<string>();
+        foreach (string category in categorys)
+        {
+            options.Add(category);
+        }
+        categoryDropdown.AddOptions(options);
+        OnCategoryValueChanged(0);
+    }
+    private void InitializeExerciseTypeDropdown(List<string> exerciseTypes)
+    {
+        exerciseTypeDropdown.ClearOptions();
+        List<string> options = new List<string>();
+        foreach (string type in exerciseTypes)
+        {
+            options.Add(type);
+        }
+        exerciseTypeDropdown.AddOptions(options);
+        OnExerciseTypeValueChanged(0);
+    }
     private void OnRankChanged(string value)
     {
         // Try to parse the rank string to an int
@@ -111,15 +147,51 @@ public class AddNewExercise : MonoBehaviour, PageController
 
     public void Save()
     {
-        if (!string.IsNullOrEmpty(exerciseName.text) && !string.IsNullOrEmpty(categoryName.text))
+        if (!string.IsNullOrEmpty(exerciseDataItem.exerciseName) && !IsExerciseNamePresent(exerciseDataItem.exerciseName))
         {
             DataManager.Instance.SaveData(exerciseDataItem);
             callback.Invoke(exerciseDataItem);
             OnClose();
         }
+        else
+        {
+            messageObj.SetActive(true);
+            Invoke("OffMessageObject", 1.5f);
+        }
+    }
+    void OffMessageObject()
+    {
+        messageObj.SetActive(false);
     }
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+    }
+    public bool IsExerciseNamePresent(string nameToCheck)
+    {
+        // Loop through the exercises and check if any exerciseName matches the input string
+        foreach (var exercise in DataManager.Instance.exerciseData.exercises)
+        {
+            if (exercise.exerciseName.ToLower() == nameToCheck.ToLower())
+            {
+                return true; // Return true if a match is found
+            }
+        }
+
+        return false; // Return false if no match is found
+    }
+    public List<string> GetUniqueCategorys(ExerciseData excerciseData)
+    {
+        // Create a HashSet to store unique exercise names
+        HashSet<string> uniqueExercises = new HashSet<string>();
+
+        // Iterate over each HistoryTempleteModel in the historyData
+        foreach (var template in excerciseData.exercises)
+        {
+            uniqueExercises.Add(template.category);
+        }
+
+        // Convert HashSet to List and return it
+        return uniqueExercises.ToList();
     }
 }

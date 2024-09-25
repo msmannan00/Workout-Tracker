@@ -12,6 +12,8 @@ public class HistoryController : MonoBehaviour, PageController
 {
     public Transform content;
     public RectTransform selectionLine;
+    public List<GameObject> templeteHistory = new List<GameObject>();
+    public List<GameObject> exerciseHistory = new List<GameObject>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
 
@@ -39,7 +41,7 @@ public class HistoryController : MonoBehaviour, PageController
         vlg.spacing = 30;
         vlg.childAlignment = TextAnchor.UpperCenter;
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -85f, 0.25f);
-        OnExerciseAdd(list);
+        Workout(list);
     }
     public void Exercise()
     {
@@ -50,74 +52,98 @@ public class HistoryController : MonoBehaviour, PageController
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
         AllExercises();
     }
-    public void OnExerciseAdd(object data)
+    public void Workout(object data)
     {
-        foreach (Transform child in content)
+        //foreach (Transform child in content)
+        //{
+        //    Destroy(child.gameObject);
+        //}
+        foreach (GameObject obj in exerciseHistory)
         {
-            Destroy(child.gameObject);
-        }
-        //List<object> dataList = data as List<object>;
-        if (data == null)
-        {
-            print("data null");
+           obj.SetActive(false);
         }
 
-        if (data is List<HistoryTempleteModel> dataList)
+        if (templeteHistory.Count == 0)
         {
-            foreach (object item in dataList)
+            if (data is List<HistoryTempleteModel> dataList)
             {
-                HistoryTempleteModel typeModel =null;
-
-                if (item is HistoryTempleteModel dataItem)
+                foreach (object item in dataList)
                 {
-                    typeModel = new HistoryTempleteModel
-                    {
-                        templeteName = dataItem.templeteName,
-                        completedTime = dataItem.completedTime,
-                        dateTime= dataItem.dateTime,
-                        totalWeight= dataItem.totalWeight,
-                        exerciseTypeModel=dataItem.exerciseTypeModel
-                        //index = exerciseCounter++
-                    };
-                }
+                    HistoryTempleteModel typeModel = null;
 
-                Dictionary<string, object> mData = new Dictionary<string, object>
+                    if (item is HistoryTempleteModel dataItem)
+                    {
+                        typeModel = new HistoryTempleteModel
+                        {
+                            templeteName = dataItem.templeteName,
+                            completedTime = dataItem.completedTime,
+                            dateTime = dataItem.dateTime,
+                            totalWeight = dataItem.totalWeight,
+                            exerciseTypeModel = dataItem.exerciseTypeModel
+                            //index = exerciseCounter++
+                        };
+                    }
+
+                    Dictionary<string, object> mData = new Dictionary<string, object>
                 {
                     { "data", typeModel } //, { "isWorkoutLog", true }
                 };
 
-                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/historyScreenDataModel");
-                GameObject exerciseObject = Instantiate(exercisePrefab, content);
-                int childCount = content.childCount;
-                exerciseObject.transform.SetSiblingIndex(childCount - 1);
-                exerciseObject.GetComponent<historyScreenDataModel>().onInit(mData, null);
+                    GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/historyScreenDataModel");
+                    GameObject exerciseObject = Instantiate(exercisePrefab, content);
+                    templeteHistory.Add(exerciseObject);
+                    int childCount = content.childCount;
+                    exerciseObject.transform.SetSiblingIndex(childCount - 1);
+                    exerciseObject.GetComponent<historyScreenDataModel>().onInit(mData, null);
+                }
+            }
+        }
+        else
+        {
+            foreach (GameObject obj in templeteHistory)
+            {
+                obj.SetActive(true);
             }
         }
     }
 
     void AllExercises()
     {
-        foreach (Transform child in content)
+        //foreach (Transform child in content)
+        //{
+        //    Destroy(child.gameObject);
+        //}
+        foreach (GameObject obj in templeteHistory)
         {
-            Destroy(child.gameObject);
+            obj.SetActive(false);
         }
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
-
-        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        if (exerciseHistory.Count == 0)
         {
+            ExerciseData exerciseData = DataManager.Instance.getExerciseData();
 
-            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
-            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-
-            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
-            newExerciseObject.GetComponent<Button>().onClick.AddListener(()=>ShowExerciseHistory(exercise));
-            Dictionary<string, object> initData = new Dictionary<string, object>
+            foreach (ExerciseDataItem exercise in exerciseData.exercises)
             {
-                { "data", exercise },
-            };
 
-            newExerciseItem.onInit(initData);
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+                GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+                exerciseHistory.Add(newExerciseObject);
+                ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+                newExerciseObject.GetComponent<Button>().onClick.AddListener(() => ShowExerciseHistory(exercise));
+                Dictionary<string, object> initData = new Dictionary<string, object>
+                {
+                    { "data", exercise },
+                };
 
+                newExerciseItem.onInit(initData);
+
+            }
+        }
+        else
+        {
+            foreach (GameObject obj in exerciseHistory)
+            {
+                obj.SetActive(true);
+            }
         }
     }
     void ShowExerciseHistory(ExerciseDataItem exercise)

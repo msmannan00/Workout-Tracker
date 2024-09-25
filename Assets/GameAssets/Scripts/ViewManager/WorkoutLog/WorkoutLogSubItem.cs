@@ -62,8 +62,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                 if (exerciseHistory != null)
                     previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
                 break;
-        } 
-        
+        }
+
         //if (exerciseModel.weight != 0)
         //{
         //    weight.text = exerciseModel.weight.ToString();
@@ -92,7 +92,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //    reps.value = 0;
         //}
 
-        InitializeRepsDropdown();
+        InitializeRirDropdown();
 
         weight.onEndEdit.AddListener(OnWeightChanged);
         rir.onValueChanged.AddListener(OnRIRChanged);
@@ -177,7 +177,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         obj.GetComponent<Image>().color = imgColor;
         obj.GetComponent<Outline>().effectColor= outlineColor;
     }
-    private void InitializeRepsDropdown()
+    private void InitializeRirDropdown()
     {
         rir.ClearOptions();
         List<string> options = new List<string>();

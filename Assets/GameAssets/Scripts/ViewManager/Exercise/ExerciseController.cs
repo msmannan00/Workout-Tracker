@@ -574,7 +574,6 @@ public class ExerciseController : MonoBehaviour, PageController
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
-        print("close");
     }
     public void AddNewExercise()
     {

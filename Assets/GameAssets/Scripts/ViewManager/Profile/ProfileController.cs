@@ -17,7 +17,7 @@ public class ProfileController : MonoBehaviour,PageController
     }
     public void Settings()
     {
-        StateManager.Instance.OpenStaticScreen("profile", gameObject, "settingScreen", null);
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "settingScreen", null,true);
         StateManager.Instance.CloseFooter();
     }
 }

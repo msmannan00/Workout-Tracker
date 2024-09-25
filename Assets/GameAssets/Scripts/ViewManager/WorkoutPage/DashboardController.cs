@@ -100,17 +100,21 @@ public class DashboardController : MonoBehaviour, PageController
             {
                 { "workoutName", "Workout " + content.childCount }
             };
-        StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData);
+        StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData,true);
+        StateManager.Instance.CloseFooter();
     }
     public void StartEmptyWorkout()
     {
+        DefaultTempleteModel exercise=new DefaultTempleteModel();
+        exercise.templeteName="Workout " + content.childCount.ToString();
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isTemplateCreator", true },{"templeteName","Workout "+content.childCount}
+            {"dataTemplate", exercise }, { "isTemplateCreator", true }
         };
         Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback, true);
+        StateManager.Instance.CloseFooter();
     }
 
     public void onReloadData(object data)
@@ -143,9 +147,9 @@ public class DashboardController : MonoBehaviour, PageController
             { "dataTemplate", exercise }
         };
 
-        Action<object> callback = onReloadData;
+        //Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData);
     }
 
     void OnSearchChanged(string searchQuery)
