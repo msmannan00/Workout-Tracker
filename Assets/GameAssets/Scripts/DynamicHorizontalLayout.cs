@@ -17,22 +17,12 @@ public class DynamicHorizontalLayout : MonoBehaviour
     public int childCount;
     void Start()
     {
-        //layoutGroup = GetComponent<HorizontalLayoutGroup>();
-        //SetDynamicPadding();
-
-        float basePadding = 188f;  // The original padding value you used for a 1080p screen
-        float baseScreenWidth = 1080f;  // Your base screen resolution width
-        float currentScreenWidth = Screen.width;  // Get current screen width
-        float scalingFactor = currentScreenWidth / baseScreenWidth;  // Calculate scaling factor
-
-        // Dynamically adjust the padding
-        int dynamicPadding = Mathf.RoundToInt(basePadding * scalingFactor);
-
+        layoutGroup = this.GetComponent<HorizontalLayoutGroup>();
+        RectTransform canvas= GameObject.Find("canvas").GetComponent<RectTransform>();
+        int padding = Mathf.RoundToInt((canvas.rect.width - childWidth) / 2);
         // Apply the calculated padding to the Horizontal Layout Group
-        this.gameObject.GetComponent<HorizontalLayoutGroup>().padding.left = dynamicPadding;
-        this.gameObject.GetComponent<HorizontalLayoutGroup>().padding.right = dynamicPadding;
-
-
+        layoutGroup.padding.left = padding;
+        layoutGroup.padding.right = padding;
     }
 
     void Update()
@@ -73,7 +63,7 @@ public class DynamicHorizontalLayout : MonoBehaviour
                 }
                 for (int a = 0; a < pos.Length; a++)
                 {
-                    if (a == i - 1 || a == i + 1) // Check if it's a neighbor
+                    if (a == i - 1 || a == i + 1)
                     {
                         // Set the font size of the neighbors
                         transform.GetChild(a).gameObject.GetComponent<TextMeshProUGUI>().fontSize = Mathf.Lerp(
@@ -89,20 +79,5 @@ public class DynamicHorizontalLayout : MonoBehaviour
                 }
             }
         }
-    }
-    void SetDynamicPadding()
-    {
-        // Calculate the padding based on screen width
-        childCount = transform.childCount;
-
-        // Total width of all children and spacing
-        float totalChildrenWidth = (childWidth * childCount) + (spacing * (childCount - 1));
-
-        // Padding will be half the remaining width after accounting for children and spacing
-        float remainingWidth = Screen.width - totalChildrenWidth;
-        float padding = remainingWidth / 2;
-
-        layoutGroup.padding.left = (int)padding;
-        layoutGroup.padding.right = (int)padding;
     }
 }

@@ -131,10 +131,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
     }
     public void OnToggleWorkout()
     {
-        if (templeteModel.exerciseTemplete.Count == 0)
-        {
-            return;
-        }
+        //if (templeteModel.exerciseTemplete.Count == 0)
+        //{
+        //    return;
+        //}
 
         isTimerRunning = !isTimerRunning;
 

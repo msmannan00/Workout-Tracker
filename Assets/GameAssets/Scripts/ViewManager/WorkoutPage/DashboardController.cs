@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -162,7 +163,6 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject) ;
         }
-
         ExcerciseData exerciseData = userSessionManager.Instance.excerciseData;
 
         bool showAll = string.IsNullOrEmpty(filter);
@@ -192,6 +192,7 @@ public class DashboardController : MonoBehaviour, PageController
             // Initialize the DashboardItemController
             DashboardItemController itemController = newExerciseObject.GetComponent<DashboardItemController>();
             itemController.onInit(initData, StartEmptyWorkoutWithTemplate);
+
 
         }
     }

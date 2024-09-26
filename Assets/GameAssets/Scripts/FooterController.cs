@@ -80,7 +80,7 @@ public class FooterController : MonoBehaviour
     }
     public void OnSocial()
     {
-
+        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, isfooter: true);
     }
     public void OnBody()
     {

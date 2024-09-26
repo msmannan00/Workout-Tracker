@@ -19,17 +19,17 @@ public class CharacterController : MonoBehaviour,PageController
     }
     public void ShopeButtonClick()
     {
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "shopScreen", null);
+        StateManager.Instance.OpenStaticScreen("character", gameObject, "shopScreen", null,true);
         StateManager.Instance.CloseFooter();
     }
     public void EmotesButtonClick()
     {
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "emotesScreen", null);
+        StateManager.Instance.OpenStaticScreen("character", gameObject, "emotesScreen", null, true);
         StateManager.Instance.CloseFooter();
     }
     public void AchievementButtonClick()
     {
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", null);
+        StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", null, true);
         StateManager.Instance.CloseFooter();
     }
 }
