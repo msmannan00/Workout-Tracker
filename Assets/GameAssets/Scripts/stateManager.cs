@@ -23,7 +23,7 @@ public class StateManager : GenericSingletonClass<StateManager>
         var prefabResource = Resources.Load<GameObject>(prefabPath);
         var prefab = Instantiate(prefabResource);
         var container = GameObject.FindGameObjectWithTag(newPage);
-
+        container.transform.SetSiblingIndex(container.transform.parent.childCount - 2);
         prefab.transform.SetParent(container.transform, false);
         var mController = prefab.GetComponent<PageController>();
         mController.onInit(data, callback);

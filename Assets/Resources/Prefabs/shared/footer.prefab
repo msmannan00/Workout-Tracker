@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 3122005990068940087}
   - component: {fileID: 2025129072659637127}
   - component: {fileID: 5758581920082661793}
+  - component: {fileID: 6296125189031558851}
   m_Layer: 5
   m_Name: footer
   m_TagString: Untagged
@@ -325,6 +326,18 @@ MonoBehaviour:
   dashboard: {fileID: 8451593667082687037}
   history: {fileID: 1102196069210341876}
   profile: {fileID: 5523097753343068342}
+--- !u!114 &6296125189031558851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591565916272870990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3234c978a64f2a744855ef22b0501512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &965708482585242086
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,6 +483,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6296125189031558851}
+        m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+        m_MethodName: WobbleObject
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 965708482585242086}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1350653943420400256
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,6 +635,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6296125189031558851}
+        m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+        m_MethodName: WobbleObject
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1350653943420400256}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -846,6 +883,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6296125189031558851}
+        m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+        m_MethodName: WobbleObject
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3396402657634956056}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1466,6 +1515,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6296125189031558851}
+        m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+        m_MethodName: WobbleObject
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6079705940576644833}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6101588091059270458
 GameObject:
   m_ObjectHideFlags: 0
@@ -1713,6 +1774,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6296125189031558851}
+        m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
+        m_MethodName: WobbleObject
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7152349595460959330}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

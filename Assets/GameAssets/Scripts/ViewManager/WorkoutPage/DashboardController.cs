@@ -150,7 +150,7 @@ public class DashboardController : MonoBehaviour, PageController
 
         //Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData,true);
     }
 
     void OnSearchChanged(string searchQuery)

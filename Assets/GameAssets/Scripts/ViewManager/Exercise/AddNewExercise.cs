@@ -147,15 +147,28 @@ public class AddNewExercise : MonoBehaviour, PageController
 
     public void Save()
     {
-        if (!string.IsNullOrEmpty(exerciseDataItem.exerciseName) && !IsExerciseNamePresent(exerciseDataItem.exerciseName))
+        if (!string.IsNullOrEmpty(exerciseDataItem.exerciseName))
         {
-            DataManager.Instance.SaveData(exerciseDataItem);
-            callback.Invoke(exerciseDataItem);
-            OnClose();
+            if (!IsExerciseNamePresent(exerciseDataItem.exerciseName))
+            {
+                DataManager.Instance.SaveData(exerciseDataItem);
+                callback.Invoke(exerciseDataItem);
+                OnClose();
+            }
+            else
+            {
+                messageObj.GetComponent<TextMeshProUGUI>().text = "Exercise already exists.";
+                messageObj.SetActive(true);
+                CancelInvoke("OffMessageObject");
+                Invoke("OffMessageObject", 1.5f);
+            }
+
         }
         else
         {
+            messageObj.GetComponent<TextMeshProUGUI>().text = "Please! enter exercise name.";
             messageObj.SetActive(true);
+            CancelInvoke("OffMessageObject");
             Invoke("OffMessageObject", 1.5f);
         }
     }
