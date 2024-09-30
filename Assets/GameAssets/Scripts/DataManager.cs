@@ -9,6 +9,7 @@ public class DataManager : GenericSingletonClass<DataManager>
     public void loadData()
     {
         TextAsset jsonFile = Resources.Load<TextAsset>("data/exercise");
+        print(jsonFile.text);
         this.exerciseData = JsonUtility.FromJson<ExerciseData>(jsonFile.text);
     }
 

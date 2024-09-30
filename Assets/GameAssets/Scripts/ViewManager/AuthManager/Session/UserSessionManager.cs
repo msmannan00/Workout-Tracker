@@ -77,7 +77,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             string json = PreferenceManager.Instance.GetString("excerciseData");
             excerciseData = JsonUtility.FromJson<ExcerciseData>(json);
-            print(json);
+            //print(json);
         }
         else
         {
@@ -207,7 +207,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             string json = PreferenceManager.Instance.GetString("historyData");
             historyData = JsonUtility.FromJson<HistoryModel>(json);
             
-            print(json);
+           // print(json);
         }
         else
         {
