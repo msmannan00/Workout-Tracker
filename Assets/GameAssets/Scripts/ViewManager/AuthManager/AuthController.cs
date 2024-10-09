@@ -7,11 +7,15 @@ using UnityEngine.UI;
 using Assets.SimpleGoogleSignIn.Scripts;
 using Assets.SimpleFacebookSignIn.Scripts;
 using System.Collections;
+using UnityEditor.PackageManager;
+using Firebase;
+using Firebase.Auth;
 
 public class AuthController : MonoBehaviour, PageController
 {
     [Header("Managers")]
     public PlayfabManager aPlayFabManager;
+    public FirebaseManager aFireBaseManager;
 
     [Header("Utilities")]
     public TMP_Text aError;
@@ -182,74 +186,7 @@ public class AuthController : MonoBehaviour, PageController
         }
     }
 
-    public void FBSignIn()
-    {
-        FacebookAuth.FBSignIn(FBOnSignIn, caching: true);
-    }
 
-    public void FBSignOut()
-    {
-        FacebookAuth.FBSignOut(revokeAccessToken: true);
-    }
-
-    public void FBGetAccessToken()
-    {
-        FacebookAuth.FBGetAccessToken(FBOnGetAccessToken);
-    }
-
-    private void FBOnSignIn(bool success, string error, Assets.SimpleFacebookSignIn.Scripts.UserInfo userInfo)
-    {
-        if (success)
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            onFBSignIn();
-            mAuthType = success ? $"{userInfo.name}!" : error;
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-        }
-    }
-
-    private void FBOnGetAccessToken(bool success, string error, Assets.SimpleFacebookSignIn.Scripts.TokenResponse tokenResponse)
-    {
-        if (!success) return;
-
-        var jwt = new Assets.SimpleFacebookSignIn.Scripts.JWT(tokenResponse.IdToken);
-
-        Debug.Log($"JSON Web Token (JWT) Payload: {jwt.Payload}");
-
-        jwt.ValidateSignature(FacebookAuth.ClientId, OnValidateSignature);
-    }
-
-    private void FBOnValidateSignature(bool success, string error)
-    {
-    }
-
-    public void FBNavigate(string url)
-    {
-        Application.OpenURL(url);
-    }
-
-    public void onFBSignIn()
-    {
-        gameObject.transform.parent.SetSiblingIndex(1);
-
-        bool mFBFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FBFirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
-        if (!mFBFirsTimePlanInitialized)
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            Dictionary<string, object> mData = new Dictionary<string, object>
-            {
-                { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-            };
-
-            StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
-        }
-        else
-        {
-
-            Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
-        }
-    }
 
     public void onInit(Dictionary<string, object> pData, Action<object> callback)
     {
@@ -291,22 +228,47 @@ public class AuthController : MonoBehaviour, PageController
                 userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
             };
-            Action<PlayFabError> callbackFailure = (pError) =>
+            Action<FirebaseException> callbackFailure = (pError) =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
                 GlobalAnimator.Instance.FadeIn(aError.gameObject);
-                aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+                //var errorMessage = pError.InnerException != null
+                //    ? pError.InnerException.Message
+                //    : pError.Message;
+                //aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
+
+                AuthError errorCode = (AuthError)pError.ErrorCode;
+                string message = "Login Failed!";
+                switch (errorCode)
+                {
+                    case AuthError.MissingEmail:
+                        message = "Missing Email";
+                        break;
+                    case AuthError.MissingPassword:
+                        message = "Missing Password";
+                        break;
+                    case AuthError.WrongPassword:
+                        message = "Wrong Password";
+                        break;
+                    case AuthError.InvalidEmail:
+                        message = "Invalid Email";
+                        break;
+                    case AuthError.UserNotFound:
+                        message = "Account does not exist";
+                        break;
+                }
+                aError.text = message;
             };
 
             GlobalAnimator.Instance.FadeInLoader();
-            aPlayFabManager.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
+            print("login");
+            aFireBaseManager.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-
                 GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");
                 GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
                 GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
@@ -316,21 +278,40 @@ public class AuthController : MonoBehaviour, PageController
 
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+                    { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin }
                 };
                 StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
             };
 
-            Action<PlayFabError> callbackFailure = (pError) =>
+            Action<AggregateException> callbackFailure = (pError) =>
             {
+                //GlobalAnimator.Instance.FadeOutLoader();
+                //GlobalAnimator.Instance.FadeIn(aError.gameObject);
+                //aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
                 GlobalAnimator.Instance.FadeOutLoader();
                 GlobalAnimator.Instance.FadeIn(aError.gameObject);
-                aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+                var errorMessage = pError.InnerException != null
+                    ? pError.InnerException.Message
+                    : pError.Message;
+                aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
             };
 
             GlobalAnimator.Instance.FadeInLoader();
-            aPlayFabManager.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
+            aFireBaseManager.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
         }
+    }
+    private void OnSignInSuccess(string userId)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        userSessionManager.Instance.OnInitialize(userId, aUsername.text);
+        onSignIn();
+    }
+
+    private void OnSignInFailure(string error)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        GlobalAnimator.Instance.FadeIn(aError.gameObject);
+        aError.text = error; // You can customize the error message here.
     }
 
     public void OnForgotPassword()
@@ -376,10 +357,6 @@ public class AuthController : MonoBehaviour, PageController
       
     }
 
-    public void FacebookSignIn()
-    {
-        FBSignIn();
-    }
 
     public void OnResetErrors()
     {
