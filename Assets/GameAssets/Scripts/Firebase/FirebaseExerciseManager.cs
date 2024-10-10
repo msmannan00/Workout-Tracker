@@ -2,6 +2,7 @@ using UnityEngine;
 using Firebase.Database;
 using Firebase.Extensions;
 using System.Collections.Generic;
+using Firebase.Auth;
 public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseManager>
 {
     public ExerciseData exerciseData = new ExerciseData();
@@ -17,6 +18,7 @@ public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseMan
             {
                 // Firebase is ready
                 databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+
                 RetrieveExerciseData();
             }
             else

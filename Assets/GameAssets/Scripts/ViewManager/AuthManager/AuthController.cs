@@ -15,7 +15,6 @@ public class AuthController : MonoBehaviour, PageController
 {
     [Header("Managers")]
     public PlayfabManager aPlayFabManager;
-    public FirebaseManager aFireBaseManager;
 
     [Header("Utilities")]
     public TMP_Text aError;
@@ -262,7 +261,7 @@ public class AuthController : MonoBehaviour, PageController
 
             GlobalAnimator.Instance.FadeInLoader();
             print("login");
-            aFireBaseManager.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
+            FirebaseManager.Instance.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
@@ -297,7 +296,7 @@ public class AuthController : MonoBehaviour, PageController
             };
 
             GlobalAnimator.Instance.FadeInLoader();
-            aFireBaseManager.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
+            FirebaseManager.Instance.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
         }
     }
     private void OnSignInSuccess(string userId)

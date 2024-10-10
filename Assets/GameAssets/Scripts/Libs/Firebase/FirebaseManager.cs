@@ -1,17 +1,38 @@
 using System;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Extensions;
 using UnityEngine;
 
 public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
-    private FirebaseAuth auth;
+    public  FirebaseAuth auth;
     private FirebaseUser user;
     public DependencyStatus dependencyStatus;
 
     private void Start()
     {
-        auth = FirebaseAuth.DefaultInstance;
+        //auth = FirebaseAuth.DefaultInstance;
+        Load();
+        //auth = FirebaseAuth.DefaultInstance;
+    }
+
+    public void Load()
+    {
+        // Initialize Firebase
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && task.Result == Firebase.DependencyStatus.Available)
+            {
+                // Firebase is ready
+                auth = FirebaseAuth.DefaultInstance;
+                print(task.Result);
+            }
+            else
+            {
+                Debug.LogError($"Could not resolve all Firebase dependencies: {task.Result}");
+            }
+        });
     }
 
     public void OnSaveUser(string email, string password)
