@@ -27,21 +27,38 @@ public class ExerciseController : MonoBehaviour, PageController
     private List<GameObject> exerciseItems = new List<GameObject>();
     private Action<List<ExerciseDataItem>> callback;
     private bool isWorkoutLog;
+    private ExerciseAddOnPage exerciseAddOnPage;
 
     public HistoryModel testHistory = new HistoryModel();
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
+        exerciseAddOnPage = (ExerciseAddOnPage)data["ExerciseAddOnPage"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
-        if(isWorkoutLog)
+        switch (exerciseAddOnPage)
         {
-            addExerciseButton.onClick.AddListener(() => AddExerciseToWorkoutLog());
+            case ExerciseAddOnPage.WorkoutLogPage:
+                LoadExercises();
+                addExerciseButton.onClick.AddListener(() => AddExerciseToWorkoutLog());
+                break;
+            case ExerciseAddOnPage.CreateWorkoutPage:
+                LoadExercises();
+                addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
+                break;
+            case ExerciseAddOnPage.PersonalBestPage:
+                LoadWeightAndRepsExercises();
+                break;
         }
-        else
-        {
-            addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
-        }
+        searchInputField.onValueChanged.AddListener(OnSearchChanged);
+        //if(isWorkoutLog)
+        //{
+        //    addExerciseButton.onClick.AddListener(() => AddExerciseToWorkoutLog());
+        //}
+        //else
+        //{
+        //    addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
+        //}
 
         switch (userSessionManager.Instance.gameTheme)
         {
@@ -80,14 +97,14 @@ public class ExerciseController : MonoBehaviour, PageController
     {
         //SaveTestHistory();
 
-        LoadExercises();
-        searchInputField.onValueChanged.AddListener(OnSearchChanged);
-        alphabetic.onClick.AddListener(() => LoadExercises());
-        byRank.onClick.AddListener(() => ByRankExercises(""));
-        performed.onClick.AddListener(() => PerformedExercises(""));
-        alphabetic.onClick.AddListener(() =>ClearSearchBar());
-        byRank.onClick.AddListener(() => ClearSearchBar());
-        performed.onClick.AddListener(() => ClearSearchBar());
+        //LoadExercises();
+        //searchInputField.onValueChanged.AddListener(OnSearchChanged);
+        //alphabetic.onClick.AddListener(() => LoadExercises());
+        //byRank.onClick.AddListener(() => ByRankExercises(""));
+        //performed.onClick.AddListener(() => PerformedExercises(""));
+        //alphabetic.onClick.AddListener(() =>ClearSearchBar());
+        //byRank.onClick.AddListener(() => ClearSearchBar());
+        //performed.onClick.AddListener(() => ClearSearchBar());
     }
 
     public void SortBodyParts()
@@ -362,6 +379,112 @@ public class ExerciseController : MonoBehaviour, PageController
             }
         }
     }
+    void LoadWeightAndRepsExercises(string filter = "")
+    {
+        addExerciseButton.gameObject.SetActive(false);
+        selectedExercises.Clear();
+        currentButton = SearchButtonType.Alphabetic;
+        SetSelectedButton();
+
+        // Clear the current exercise items
+        foreach (GameObject item in exerciseItems)
+        {
+            Destroy(item);
+        }
+        exerciseItems.Clear();
+
+        // Clear alphabet labels if they exist
+        if (alphabetLabels != null)
+        {
+            foreach (GameObject label in alphabetLabels)
+            {
+                if (label != null)
+                {
+                    Destroy(label);
+                }
+            }
+            alphabetLabels.Clear();
+        }
+
+        AddAlphabeticLabels();
+
+        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        List<GameObject> relevantLabels = new List<GameObject>();
+        bool showAll = string.IsNullOrEmpty(filter);
+
+        foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        {
+            // Check for WeightAndReps exercise type
+            if (exercise.exerciseType != ExerciseType.WeightAndReps)
+            {
+                continue;
+            }
+
+            string lowerFilter = filter.ToLower();
+
+            // Check if the exercise name or category contains the filter
+            if (!showAll &&
+                !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+                  exercise.category.ToLower().Contains(lowerFilter)))
+            {
+                continue;
+            }
+
+            char firstLetter = char.ToUpper(exercise.exerciseName[0]);
+            GameObject targetLabel = alphabetLabels.Find(label => label.name == $"Label_{firstLetter}");
+
+            if (targetLabel != null)
+            {
+                if (!relevantLabels.Contains(targetLabel))
+                {
+                    relevantLabels.Add(targetLabel);
+                }
+
+                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+                GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+                int labelIndex = targetLabel.transform.GetSiblingIndex();
+                newExerciseObject.transform.SetSiblingIndex(labelIndex + 1);
+
+                ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+                Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", exercise },
+            };
+
+                newExerciseItem.onInit(initData);
+
+                Button button = newExerciseObject.GetComponent<Button>();
+                if (button != null)
+                {
+                    button.onClick.AddListener(() =>
+                    {
+                        SelectAndDeselectExercise(newExerciseObject, exercise);
+                    });
+                }
+
+                exerciseItems.Add(newExerciseObject);
+            }
+        }
+
+        // Handle the visibility of alphabet labels
+        foreach (GameObject label in alphabetLabels)
+        {
+            if (showAll)
+            {
+                label.SetActive(true);
+            }
+            else if (relevantLabels.Contains(label))
+            {
+                label.SetActive(true);
+            }
+            else
+            {
+                label.SetActive(false);
+            }
+        }
+    }
 
     public void LoadExercisesByBodyParts()
     { 
@@ -556,17 +679,23 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void OnSearchChanged(string searchQuery)
     {
-        switch (currentButton)
+        switch (exerciseAddOnPage)
         {
-            case SearchButtonType.Alphabetic:
+            case ExerciseAddOnPage.CreateWorkoutPage:
                 LoadExercises(searchQuery);
                 break;
-            case SearchButtonType.ByRank:
-                ByRankExercises(searchQuery);
+            case ExerciseAddOnPage.WorkoutLogPage:
+                LoadExercises(searchQuery);
                 break;
-            case SearchButtonType.Performed:
-                PerformedExercises(searchQuery);
+            case ExerciseAddOnPage.PersonalBestPage:
+                LoadWeightAndRepsExercises(searchQuery);
                 break;
+                //case SearchButtonType.ByRank:
+                //    ByRankExercises(searchQuery);
+                //    break;
+                //case SearchButtonType.Performed:
+                //    PerformedExercises(searchQuery);
+                //    break;
         }
 
     }

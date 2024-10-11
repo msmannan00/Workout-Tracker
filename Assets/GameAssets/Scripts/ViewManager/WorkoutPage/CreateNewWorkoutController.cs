@@ -32,7 +32,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isWorkoutLog", false }
+            { "isWorkoutLog", false }, {"ExerciseAddOnPage",ExerciseAddOnPage.CreateWorkoutPage}
         };
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd,true);
         StateManager.Instance.CloseFooter();

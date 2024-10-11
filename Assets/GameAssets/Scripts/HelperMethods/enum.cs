@@ -25,3 +25,21 @@ public enum FooterButtons
     History=4,
     Profile=5
 }
+public enum ExerciseAddOnPage
+{
+    WorkoutLogPage=1,
+    CreateWorkoutPage=2,
+    PersonalBestPage=3
+}
+public enum AchievementType
+{
+    BodyweightMultiplier,
+    SBDTotal,
+    Streak,
+    WorkoutCount,
+    LevelUp,
+    ExerciseCount,
+    CardioTime,
+    WeightLifted,
+    Specialist
+}

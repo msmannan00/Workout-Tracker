@@ -20,6 +20,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public DefaultTempleteModel selectedTemplete;
     public ExcerciseData excerciseData = new ExcerciseData();
     public HistoryModel historyData = new HistoryModel();
+    //public PersonalBest
 
     private void Start()
     {

@@ -186,7 +186,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isWorkoutLog", true }
+            { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.WorkoutLogPage}
         };
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, OnExerciseAdd);
     }

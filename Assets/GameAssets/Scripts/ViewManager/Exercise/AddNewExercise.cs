@@ -151,7 +151,7 @@ public class AddNewExercise : MonoBehaviour, PageController
         {
             if (!IsExerciseNamePresent(exerciseDataItem.exerciseName))
             {
-                DataManager.Instance.SaveData(exerciseDataItem);
+                DataManager.Instance.SaveExerciseData(exerciseDataItem);
                 callback.Invoke(exerciseDataItem);
                 OnClose();
             }
