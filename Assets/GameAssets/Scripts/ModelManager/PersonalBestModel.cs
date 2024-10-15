@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class PersonalBestDataItem
 {
     public string exerciseName;
-    public string category;
     public int weight;
 }
 

@@ -48,6 +48,7 @@ public class ExerciseController : MonoBehaviour, PageController
                 break;
             case ExerciseAddOnPage.PersonalBestPage:
                 LoadWeightAndRepsExercises();
+                addExerciseButton.onClick.AddListener(() => AddExerciseToPersonalBest());
                 break;
         }
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
@@ -606,77 +607,7 @@ public class ExerciseController : MonoBehaviour, PageController
             LoadExercises();
         }
     }
-    void ByRankExercises(string filter)
-    {
-        addExerciseButton.gameObject.SetActive(false);
-        selectedExercises.Clear();
-        currentButton = SearchButtonType.ByRank;
-        SetSelectedButton();
-
-        if (alphabetLabels != null)
-        {
-            foreach (GameObject label in alphabetLabels)
-            {
-                if (label != null)
-                {
-                    Destroy(label);
-                }
-            }
-            alphabetLabels.Clear();
-        }
-
-        foreach (GameObject item in exerciseItems)
-        {
-            Destroy(item);
-        }
-        exerciseItems.Clear();
-
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
-
-        string lowerFilter = filter.ToLower();
-
-        var filteredAndSortedExercises = exerciseData.exercises
-            .Where(exercise =>
-                string.IsNullOrEmpty(lowerFilter) ||
-                exercise.exerciseName.ToLower().Contains(lowerFilter) ||
-                exercise.category.ToLower().Contains(lowerFilter))
-            .OrderByDescending(exercise => exercise.rank)
-            .ToList();
-
-        foreach (ExerciseDataItem exercise in filteredAndSortedExercises)
-        {
-            
-            char firstLetter = char.ToUpper(exercise.exerciseName[0]);
-
-           
-
-            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
-            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-
-
-            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
-
-            Dictionary<string, object> initData = new Dictionary<string, object>
-            {
-                { "data", exercise },
-            };
-
-            newExerciseItem.onInit(initData);
-
-            Button button = newExerciseObject.GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() =>
-                {
-                    //callback?.Invoke(exercise);
-                    SelectAndDeselectExercise(newExerciseObject, exercise);
-                    //OnClose();
-                });
-            }
-
-            exerciseItems.Add(newExerciseObject);
-        }
-    }
+    
     void OnSearchChanged(string searchQuery)
     {
         switch (exerciseAddOnPage)
@@ -719,6 +650,11 @@ public class ExerciseController : MonoBehaviour, PageController
         OnClose();
     }
     public void AddExerciseToCreateWorkout()
+    {
+        callback?.Invoke(selectedExercises);
+        OnClose();
+    }
+    public void AddExerciseToPersonalBest()
     {
         callback?.Invoke(selectedExercises);
         OnClose();

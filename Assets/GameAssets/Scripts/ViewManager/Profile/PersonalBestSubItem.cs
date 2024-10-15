@@ -8,20 +8,25 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
 {
     public TextMeshProUGUI exerciseName;
     public TMP_InputField weight;
+    PersonalBestDataItem _data;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        
+        _data = (PersonalBestDataItem)data["data"];
+        exerciseName.text = _data.exerciseName;
+        weight.text = _data.weight.ToString() + " kg";
+        weight.onEndEdit.AddListener(WeightValueChange);
     }
-
-    // Start is called before the first frame update
-    void Start()
+    void WeightValueChange(string value)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (int.TryParse(value, out int parsedWeight))
+        {
+            weight.text = weight.text + " kg";
+            _data.weight = parsedWeight; // Update weight only if parsing succeeds
+        }
+        else
+        {
+            // Optional: Handle invalid input case, like clearing or showing a warning
+            Debug.Log("Invalid input: Please enter a valid integer.");
+        }
     }
 }

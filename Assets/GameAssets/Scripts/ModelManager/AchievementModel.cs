@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 
 [System.Serializable]
-public class AchievementDataItem
+public class AchievementTemplateDataItem
 {
     public string description;
     public bool isCompleted;
-    public List<string> category_exercise;
 
     public int value;
 
@@ -17,7 +16,8 @@ public class AchievementTemplate
 {
     public string title;
     public AchievementType type;
-    public List<AchievementDataItem> achievementData = new List<AchievementDataItem>();
+    public List<string> category_exercise;
+    public List<AchievementTemplateDataItem> achievementData = new List<AchievementTemplateDataItem>();
 }
 
 [System.Serializable]

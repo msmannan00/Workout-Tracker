@@ -20,6 +20,7 @@ public class ExerciseTypeModel
 {
     public int index = 0;
     public string name;
+    public string categoryName;
     public ExerciseType exerciseType;
     public List<ExerciseModel> exerciseModel = new List<ExerciseModel>();
 }

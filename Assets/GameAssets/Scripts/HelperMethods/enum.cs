@@ -33,13 +33,13 @@ public enum ExerciseAddOnPage
 }
 public enum AchievementType
 {
-    BodyweightMultiplier,
-    SBDTotal,
-    Streak,
-    WorkoutCount,
-    LevelUp,
-    ExerciseCount,
-    CardioTime,
-    WeightLifted,
-    Specialist
+    BodyweightMultiplier = 1,
+    SBDTotal = 2,
+    Streak = 3,
+    WorkoutCount = 4,
+    LevelUp = 5,
+    ExerciseCount = 6,
+    CardioTime = 7,
+    WeightLifted = 8,
+    Specialist = 9
 }

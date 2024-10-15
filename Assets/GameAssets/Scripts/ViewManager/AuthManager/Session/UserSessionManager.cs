@@ -93,13 +93,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Deadlift (Barbell)",
+            categoryName = "Glutes",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
         ExerciseTypeModel back2 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Seated Row (Cable)",
+            name = "Seated narrow grip row (cable)",
+            categoryName ="Lats",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         }; 
@@ -107,6 +109,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Bench Press (Barbell)",
+            categoryName ="Chest",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
@@ -114,6 +117,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Running",
+            categoryName="Cardio",
             exerciseType = ExerciseType.TimeAndMiles,
             exerciseModel = new List<ExerciseModel>()
         };
@@ -121,6 +125,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Jump Rope",
+            categoryName = "Cardio",
             exerciseType = ExerciseType.RepsOnly,
             exerciseModel = new List<ExerciseModel>()
         };
@@ -128,6 +133,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Spider Curls",
+            categoryName="Biceps",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
@@ -135,6 +141,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Bicep Curl (Dumbbell)",
+            categoryName = "Biceps",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };
@@ -142,6 +149,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             index = 0,
             name = "Bicep Curl (Machine)",
+            categoryName = "Biceps",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
         };

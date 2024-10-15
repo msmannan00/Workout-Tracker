@@ -20,6 +20,7 @@ public class HistoryTempleteModel
 public class HistoryExerciseTypeModel
 {
     public string exerciseName;
+    public string categoryName;
     public int index;
     public ExerciseType exerciseType;
     public List<HistoryExerciseModel> exerciseModel = new List<HistoryExerciseModel>();

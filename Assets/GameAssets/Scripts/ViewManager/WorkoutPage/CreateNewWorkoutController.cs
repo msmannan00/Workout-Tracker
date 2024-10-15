@@ -50,6 +50,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                     typeModel = new ExerciseTypeModel
                     {
                         name = dataItem.exerciseName,
+                        categoryName=dataItem.category,
                         exerciseModel = new List<ExerciseModel>(),
                         index = exerciseCounter++,
                         exerciseType=dataItem.exerciseType

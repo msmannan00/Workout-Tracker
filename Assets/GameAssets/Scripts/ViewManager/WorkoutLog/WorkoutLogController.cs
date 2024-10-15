@@ -300,10 +300,12 @@ public class WorkoutLogController : MonoBehaviour, PageController
             var historyExerciseType = new HistoryExerciseTypeModel
             {
                 exerciseName = exerciseType.name,
+                categoryName = exerciseType.categoryName,
                 index = exerciseType.index,
                 exerciseType = exerciseType.exerciseType,
                 exerciseModel = new List<HistoryExerciseModel>()
             };
+            print(historyExerciseType.categoryName + "/" + exerciseType.categoryName);
             // Populate HistoryExerciseModel list but only add exercises where toggle is true
             foreach (var exercise in exerciseType.exerciseModel)
             {
@@ -402,6 +404,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             ExerciseTypeModel exerciseCopy = new ExerciseTypeModel();
             exerciseCopy.index = exercise.index;
             exerciseCopy.name = exercise.name;
+            exerciseCopy.categoryName= exercise.categoryName;
             exerciseCopy.exerciseType = exercise.exerciseType;
 
             // Copy each exercise model in the template
