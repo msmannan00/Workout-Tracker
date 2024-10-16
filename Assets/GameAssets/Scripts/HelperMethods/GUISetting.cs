@@ -17,7 +17,7 @@ public class GUISetting : MonoBehaviour
 
     private void OnEnable()
     {
-        switch(userSessionManager.Instance.gameTheme)
+        switch(ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
                 break;

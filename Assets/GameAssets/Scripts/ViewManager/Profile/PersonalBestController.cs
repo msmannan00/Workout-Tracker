@@ -14,7 +14,7 @@ public class PersonalBestController : MonoBehaviour, PageController
     public List<string> haveExercises = new List<string>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        _data = DataManager.Instance.getPersonalBestData();
+        _data = ApiDataHandler.Instance.getPersonalBestData();
         LoadData();
     }
     public void LoadData()
@@ -69,12 +69,12 @@ public class PersonalBestController : MonoBehaviour, PageController
                 }
 
             }
-            DataManager.Instance.SavePersonalBestData();
+            ApiDataHandler.Instance.SavePersonalBestData();
         }
     }
     public void Back()
     {
-        DataManager.Instance.SavePersonalBestData();
+        ApiDataHandler.Instance.SavePersonalBestData();
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }

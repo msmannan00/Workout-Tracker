@@ -32,7 +32,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     {
         ExerciseDataItem exercise = (ExerciseDataItem)data["data"];
         exerciseNameText.text = exercise.exerciseName.ToUpper();
-        List<HistoryExerciseModel> exerciseHistory = SearchExerciseByName(userSessionManager.Instance.historyData, exercise.exerciseName);
+        List<HistoryExerciseModel> exerciseHistory = SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
 
         switch (exercise.exerciseType)
         {

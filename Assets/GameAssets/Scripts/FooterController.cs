@@ -19,7 +19,7 @@ public class FooterController : MonoBehaviour
     {
         List<Image> buttonImages = new List<Image> { body, sharing, dashboard, history, profile };
         
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                 foreach (Image img in buttonImages)

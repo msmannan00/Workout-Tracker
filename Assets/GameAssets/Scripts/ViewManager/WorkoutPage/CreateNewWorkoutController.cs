@@ -99,8 +99,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         if (templeteModel.exerciseTemplete.Count > 0)
         {
             templeteModel.templeteName = workoutName.text;
-            userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
-            userSessionManager.Instance.SaveExcerciseData();
+            ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Add(templeteModel);
+            ApiDataHandler.Instance.SaveTemplateData();
         }
         //StateManager.Instance.HandleBackAction(gameObject);
         //StateManager.Instance.OpenFooter(null, null, false);

@@ -32,7 +32,7 @@ public class HistoryController : MonoBehaviour, PageController
     public void Completed()
     {
         List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
-        foreach (var workouts in userSessionManager.Instance.historyData.exerciseTempleteModel)
+        foreach (var workouts in ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel)
         {
             list.Add(workouts);
         }
@@ -119,7 +119,7 @@ public class HistoryController : MonoBehaviour, PageController
         }
         if (exerciseHistory.Count == 0)
         {
-            ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+            ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
 
             foreach (ExerciseDataItem exercise in exerciseData.exercises)
             {
@@ -161,8 +161,8 @@ public class HistoryController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
-        HistoryModel historyData = userSessionManager.Instance.historyData;
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
+        HistoryModel historyData = ApiDataHandler.Instance.getHistoryData();
         List<string> filterExercises = GetUniqueExercises(historyData);
         //string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
 

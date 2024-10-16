@@ -27,7 +27,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         isWorkoutLog = (bool)data["isWorkoutLog"];
         isTemplateCreator = (bool)data["isTemplateCreator"];
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
-        exerciseHistory = GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
+        exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
         {
             case ExerciseType.RepsOnly:
@@ -64,7 +64,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     }
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                 exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;

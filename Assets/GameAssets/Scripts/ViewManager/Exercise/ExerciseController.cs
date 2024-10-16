@@ -61,7 +61,7 @@ public class ExerciseController : MonoBehaviour, PageController
         //    addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
         //}
 
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
                // searchInputField.gameObject.GetComponent<Image>().color = Color.white;
@@ -125,7 +125,7 @@ public class ExerciseController : MonoBehaviour, PageController
             TextMeshProUGUI textMeshPro = textLabelObject.GetComponentInChildren<TextMeshProUGUI>();
             textLabelObject.name = $"Label_{letter}";
             textMeshPro.text = letter.ToString();
-            switch (userSessionManager.Instance.gameTheme)
+            switch (ApiDataHandler.Instance.gameTheme)
             {
                 case Theme.Light:
                     textMeshPro.font = userSessionManager.Instance.lightHeadingFont;
@@ -187,8 +187,8 @@ public class ExerciseController : MonoBehaviour, PageController
         }
         exerciseItems.Clear();
 
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
-        HistoryModel historyData = userSessionManager.Instance.historyData;
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
+        HistoryModel historyData = ApiDataHandler.Instance.getHistoryData();
         List<string> filterExercises = GetUniqueExercises(historyData);
         foreach(string name in filterExercises)
         {
@@ -310,7 +310,7 @@ public class ExerciseController : MonoBehaviour, PageController
 
         AddAlphabeticLabels();
 
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
 
         List<GameObject> relevantLabels = new List<GameObject>();
 
@@ -409,7 +409,7 @@ public class ExerciseController : MonoBehaviour, PageController
 
         AddAlphabeticLabels();
 
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
         List<GameObject> relevantLabels = new List<GameObject>();
         bool showAll = string.IsNullOrEmpty(filter);
 
@@ -512,7 +512,7 @@ public class ExerciseController : MonoBehaviour, PageController
 
         AddAlphabeticLabels();
 
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
 
         List<GameObject> relevantLabels = new List<GameObject>();
 
@@ -675,6 +675,6 @@ public class ExerciseController : MonoBehaviour, PageController
             print("save");
             print(json);
         }
-        userSessionManager.Instance.LoadHistory();
+        ApiDataHandler.Instance.LoadHistory();
     }
 }

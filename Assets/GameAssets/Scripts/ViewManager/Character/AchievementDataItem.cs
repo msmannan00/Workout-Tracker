@@ -34,19 +34,19 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         switch (_data.type)
         {
             case AchievementType.BodyweightMultiplier:
-                CheckBodyWeightAchievements(_data,DataManager.Instance.getPersonalBestData());
+                CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData());
                 break;
             case AchievementType.WorkoutCount:
-                CheckWorkoutCountAchievements(_data, userSessionManager.Instance.historyData.exerciseTempleteModel.Count);
+                CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count);     //historyData.exerciseTempleteModel.Count);
                 break;
             case AchievementType.ExerciseCount:
-                CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(userSessionManager.Instance.historyData));
+                CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()));
                 break;
             case AchievementType.Specialist:
-                CheckSpecialistAchievements(_data, userSessionManager.Instance.historyData);
+                CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData());
                 break;
             case AchievementType.CardioTime:
-                CheckCardioTimeAchievements(_data, userSessionManager.Instance.historyData);
+                CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData());
                 break;
                 
         }

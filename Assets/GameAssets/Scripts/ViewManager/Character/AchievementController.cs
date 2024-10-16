@@ -18,9 +18,9 @@ public class AchievementController : MonoBehaviour, PageController
     List<GameObject> milestoneAchievement = new List<GameObject>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        trophysText.text = "Trophies " + DataManager.Instance.GetCompletedTrophys().ToString() + " / " + DataManager.Instance.GetTotalTrophys().ToString();
-        completedText.text = "Completed " + DataManager.Instance.GetCompletedAchievements().ToString() + " / " + DataManager.Instance.GetTotalAchievements().ToString();
-        achievementData = DataManager.Instance.getAchievementData();
+        trophysText.text = "Trophies " + ApiDataHandler.Instance.GetCompletedTrophys().ToString() + " / " + ApiDataHandler.Instance.GetTotalTrophys().ToString();
+        completedText.text = "Completed " + ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements().ToString();
+        achievementData = ApiDataHandler.Instance.getAchievementData();
         Rank();
     }
 
@@ -77,7 +77,7 @@ public class AchievementController : MonoBehaviour, PageController
 
     public void Back()
     {
-        DataManager.Instance.SaveAchievementData();
+        ApiDataHandler.Instance.SaveAchievementData();
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }

@@ -30,9 +30,9 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
     void Save()
     {
         int index = GetIndexByTempleteName(modifiedModel.templeteName);
-        userSessionManager.Instance.excerciseData.exerciseTemplete.RemoveAt(index);
-        userSessionManager.Instance.excerciseData.exerciseTemplete.Insert(index, modifiedModel);
-        userSessionManager.Instance.SaveExcerciseData();
+        ApiDataHandler.Instance.RemoveItemFromTempleteData(index);
+        ApiDataHandler.Instance.InsertItemToTemplateData(index, modifiedModel);//.exerciseTemplete.Insert(index, modifiedModel);
+        ApiDataHandler.Instance.SaveTemplateData();
         PopupController.Instance.ClosePopup("FinishWorkoutPopup");
         StateManager.Instance.HandleBackAction(workoutScreen);
         StateManager.Instance.OpenFooter(null, null, false);
@@ -41,6 +41,6 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
 
     public int GetIndexByTempleteName(string name)
     {
-        return userSessionManager.Instance.excerciseData.exerciseTemplete.FindIndex(t => t.templeteName == name);
+        return ApiDataHandler.Instance.getTemplateData().exerciseTemplete.FindIndex(t => t.templeteName == name);
     }
 }

@@ -27,7 +27,7 @@ public class AddNewExercise : MonoBehaviour, PageController
         this.callback = callback;
         TMP_FontAsset headingFont = null;
         TMP_FontAsset textFont = null;
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
                 headingFont = userSessionManager.Instance.lightHeadingFont;
@@ -151,7 +151,7 @@ public class AddNewExercise : MonoBehaviour, PageController
         {
             if (!IsExerciseNamePresent(exerciseDataItem.exerciseName))
             {
-                DataManager.Instance.SaveExerciseData(exerciseDataItem);
+                ApiDataHandler.Instance.SaveExerciseData(exerciseDataItem);
                 callback.Invoke(exerciseDataItem);
                 OnClose();
             }

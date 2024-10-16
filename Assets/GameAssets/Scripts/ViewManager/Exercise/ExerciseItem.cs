@@ -32,7 +32,7 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
         {
             exerciseNameText.text = exerciseData.exerciseName;
             categoryNameText.text = exerciseData.category;
-            switch (userSessionManager.Instance.gameTheme)
+            switch (ApiDataHandler.Instance.gameTheme)
             {
                 case Theme.Light:
                     exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;

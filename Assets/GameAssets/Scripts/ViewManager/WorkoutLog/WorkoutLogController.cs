@@ -74,7 +74,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                // this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
@@ -331,16 +331,18 @@ public class WorkoutLogController : MonoBehaviour, PageController
         }
         if (historyTemplate.exerciseTypeModel.Count > 0)
         {
-            userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
-            userSessionManager.Instance.SaveHistory();
+            ApiDataHandler.Instance.AddItemToHistoryData(historyTemplate);
+            //userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
+            ApiDataHandler.Instance.SaveHistory();
         }
 
         if (isTemplateCreator)
         {
             if (templeteModel.exerciseTemplete.Count > 0)
             {
-                userSessionManager.Instance.excerciseData.exerciseTemplete.Add(templeteModel);
-                userSessionManager.Instance.SaveExcerciseData();
+                ApiDataHandler.Instance.AddItemToTemplateData(templeteModel);
+                //userSessionManager.Instance.templateData.exerciseTemplete.Add(templeteModel);
+                ApiDataHandler.Instance.SaveTemplateData();
             }
             StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);
@@ -390,7 +392,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
     }
     public int GetIndexByTempleteName(string name)
     {
-        return userSessionManager.Instance.excerciseData.exerciseTemplete.FindIndex(t => t.templeteName == name);
+        TemplateData templateData = ApiDataHandler.Instance.getTemplateData();
+        return templateData.exerciseTemplete.FindIndex(t => t.templeteName == name);
     }
     public DefaultTempleteModel DeepCopy(DefaultTempleteModel original)
     {

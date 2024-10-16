@@ -26,7 +26,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
         TMP_FontAsset headingFont = null;
         TMP_FontAsset itemFont = null;
         Color itemColor= Color.white;
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
                 headingFont = userSessionManager.Instance.lightHeadingFont;

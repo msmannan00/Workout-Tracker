@@ -24,7 +24,7 @@ public class DashboardController : MonoBehaviour, PageController
     }
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                // this.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
@@ -124,7 +124,7 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-        foreach (var exercise in userSessionManager.Instance.excerciseData.exerciseTemplete)
+        foreach (var exercise in ApiDataHandler.Instance.getTemplateData().exerciseTemplete)
         {
             DefaultTempleteModel templeteData = exercise;
             Dictionary<string, object> mData = new Dictionary<string, object>
@@ -163,7 +163,7 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject) ;
         }
-        ExcerciseData exerciseData = userSessionManager.Instance.excerciseData;
+        TemplateData exerciseData = ApiDataHandler.Instance.getTemplateData();
 
         bool showAll = string.IsNullOrEmpty(filter);
 
@@ -203,7 +203,7 @@ public class DashboardController : MonoBehaviour, PageController
     }
     public void BottomButtonSelectionSeter(GameObject clickedObject)
     {
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                 foreach(Image img in footerButtonImages)

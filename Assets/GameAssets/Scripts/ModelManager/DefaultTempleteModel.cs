@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public class ExcerciseData
+public class TemplateData
 {
     public List<DefaultTempleteModel> exerciseTemplete = new List<DefaultTempleteModel>();
 }

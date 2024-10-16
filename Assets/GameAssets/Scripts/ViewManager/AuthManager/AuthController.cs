@@ -176,9 +176,8 @@ public class AuthController : MonoBehaviour, PageController
         }
         else
         {
-            Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
-            //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
+            Dictionary<string, object> mData = new Dictionary<string, object> { {"data",true } };
+            StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
         }
     }
 
@@ -287,6 +286,7 @@ public class AuthController : MonoBehaviour, PageController
         {
             Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>
             {
+                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername,false);
                 GlobalAnimator.Instance.FadeOutLoader();
                 userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
@@ -306,6 +306,7 @@ public class AuthController : MonoBehaviour, PageController
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
+                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
 
                 GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");
                 GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
@@ -319,6 +320,7 @@ public class AuthController : MonoBehaviour, PageController
                     { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
                 };
                 StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+                ApiDataHandler.Instance.SetJoiningDate(DateTime.Now);
             };
 
             Action<PlayFabError> callbackFailure = (pError) =>

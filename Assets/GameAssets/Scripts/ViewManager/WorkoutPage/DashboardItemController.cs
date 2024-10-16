@@ -53,7 +53,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     }
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Dark:
                 exerciseFont = userSessionManager.Instance.darkTextFont;
