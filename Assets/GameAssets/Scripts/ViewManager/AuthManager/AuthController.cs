@@ -29,7 +29,7 @@ public class AuthController : MonoBehaviour, PageController
     public GoogleAuth GoogleAuth;
     public Text Log;
     public Text Output;
-
+    public bool isRegistering;
     public FacebookAuth FacebookAuth;
 
 
@@ -80,6 +80,7 @@ public class AuthController : MonoBehaviour, PageController
             userSessionManager.Instance.OnInitialize(mUsername, mUsername);
             onSignIn();
         }
+        print(mUsername);
     }
 
     IEnumerator CallSavedlogins()
@@ -166,18 +167,23 @@ public class AuthController : MonoBehaviour, PageController
         bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
         if (!mFirsTimePlanInitialized)
         {
+            print(DateTime.Now);    
+            print("if");
             GlobalAnimator.Instance.FadeOutLoader();
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
             StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            userSessionManager.Instance.AddGymVisit();
             //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
         }
         else
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { {"data",true } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
         }
     }
 
@@ -286,7 +292,6 @@ public class AuthController : MonoBehaviour, PageController
         {
             Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>
             {
-                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername,false);
                 GlobalAnimator.Instance.FadeOutLoader();
                 userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
@@ -306,6 +311,7 @@ public class AuthController : MonoBehaviour, PageController
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
+                print("true");
                 PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
 
                 GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");

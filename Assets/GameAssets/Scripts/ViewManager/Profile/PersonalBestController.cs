@@ -64,7 +64,7 @@ public class PersonalBestController : MonoBehaviour, PageController
                     }
                     else
                     {
-                        ShowTextForOneSecond("Exercise already added.");
+                        GlobalAnimator.Instance.ShowTextForOneSecond(messageText, "Exercise already added.");
                     }
                 }
 
@@ -77,14 +77,5 @@ public class PersonalBestController : MonoBehaviour, PageController
         ApiDataHandler.Instance.SavePersonalBestData();
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
-    }
-    public void ShowTextForOneSecond(string message)
-    {
-        // Set the text and ensure it's fully visible (alpha = 1)
-        messageText.text = message;
-        messageText.alpha = 1;
-
-        // Hide the text after 1 second using a fade-out animation
-        messageText.DOFade(0, 1f).SetDelay(1f);  // Wait for 1 second, then fade out over 1 second
     }
 }

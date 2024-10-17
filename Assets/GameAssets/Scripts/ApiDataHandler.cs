@@ -12,6 +12,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     private PersonalBestData personalBestData = new PersonalBestData();
     private TemplateData templateData = new TemplateData();
     private HistoryModel historyData = new HistoryModel();
+    private MeasurementModel measurementData = new MeasurementModel();
 
     [Header("Theme Settings")]
     public Theme gameTheme;
@@ -172,6 +173,14 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetString("historyData", json);
         PreferenceManager.Instance.Save();
     }
+
+    public void SaveMeasurementData()
+    {
+        string json = JsonUtility.ToJson(measurementData);
+        PreferenceManager.Instance.SetString("measurementData", json);
+        PreferenceManager.Instance.Save();
+    }
+
     public void LoadHistory()
     {
         if (PreferenceManager.Instance.HasKey("historyData"))
@@ -185,8 +194,23 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         }
     }
 
+    public void LoadMeasurementData()
+    {
+        if (PreferenceManager.Instance.HasKey("measurementData"))
+        {
+            string json = PreferenceManager.Instance.GetString("measurementData");
+            measurementData = JsonUtility.FromJson<MeasurementModel>(json);
+        }
+        else
+        {
+            measurementData = new MeasurementModel();
+        }
+    }
 
-
+    public MeasurementModel getMeasurementData()
+    {
+        return measurementData;
+    }
 
 
 
@@ -206,6 +230,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         LoadHistory();
 
         LoadTemplateData();
+
+        LoadMeasurementData();
 
         gameTheme = LoadTheme();
     }
@@ -258,11 +284,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         PreferenceManager.Instance.SetInt("WeeklyGoal", goal);
     }
-    public void SetWeeklyGoalSetedDate(DateTime date)
-    {
-        string dateInString = date.ToString("MMM dd, yyyy");
-        PreferenceManager.Instance.SetString("WeeklyGoalSetedDate", dateInString);
-    }
+    //public void SetWeeklyGoalSetedDate(DateTime date)
+    //{
+    //    string dateInString = date.ToString("MMM dd, yyyy");
+    //    PreferenceManager.Instance.SetString("WeeklyGoalSetedDate", dateInString);
+    //}
     public void AddItemToHistoryData(HistoryTempleteModel item)
     {
         historyData.exerciseTempleteModel.Add(item);
@@ -281,7 +307,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public string GetJoiningDate()
     {
-        DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate"));
+        DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate",DateTime.Now.ToString("MMM dd, yyyy")));
         string formattedDate = parsedDateTime.ToString("MMM dd, yyyy");
         return formattedDate;
     }
@@ -289,11 +315,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return PreferenceManager.Instance.GetInt("WeeklyGoal");
     }
-    public DateTime GetWeeklyGoalSetedDate()
-    {
-        DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate"));
-        return parsedDateTime;
-    }
+    //public DateTime GetWeeklyGoalSetedDate()
+    //{
+    //    DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate"));
+    //    return parsedDateTime;
+    //}
     public int GetCompletedAchievements()
     {
         int completedCount = 0;
@@ -337,5 +363,63 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         }
 
         return count;
+    }
+
+
+
+    public void SetCurrentWeekStartDate(DateTime startDate)
+    {
+        string startDateString = startDate.ToString("yyyy-MM-dd");
+        PlayerPrefs.SetString("CurrentWeekStartDate", startDateString);
+        PlayerPrefs.Save();
+    }
+
+    // Method to get the start date of the current week
+    public DateTime GetCurrentWeekStartDate()
+    {
+        string startDateString = PlayerPrefs.GetString("CurrentWeekStartDate", "");
+
+        if (!string.IsNullOrEmpty(startDateString))
+        {
+            return DateTime.Parse(startDateString);
+        }
+
+        // If no start date is set, return the start of this week as a default
+        DateTime today = DateTime.Now;
+        int daysSinceMonday = (int)today.DayOfWeek - (int)DayOfWeek.Monday;
+        if (daysSinceMonday < 0) daysSinceMonday += 7;
+        return today.AddDays(-daysSinceMonday);
+    }
+
+    // Method to check if the week has changed and update the start date automatically
+    public void CheckAndUpdateWeekStartDate()
+    {
+        DateTime storedWeekStartDate = GetCurrentWeekStartDate();
+        DateTime currentWeekStartDate = GetStartOfCurrentWeek();
+
+        // If the stored week start date is not the same as the current week start date, update it
+        if (storedWeekStartDate != currentWeekStartDate)
+        {
+            SetCurrentWeekStartDate(currentWeekStartDate);
+        }
+    }
+
+    // Helper method to get the start date of the current week
+    public DateTime GetStartOfCurrentWeek()
+    {
+        DateTime today = DateTime.Now;
+        int daysSinceMonday = (int)today.DayOfWeek - (int)DayOfWeek.Monday;
+        if (daysSinceMonday < 0) daysSinceMonday += 7;
+        return today.AddDays(-daysSinceMonday);
+    }
+    public int GetUserStreak()
+    {
+        return PreferenceManager.Instance.GetInt("UserStreak", 0);
+    }
+
+    // Sets the user's streak
+    public void SetUserStreak(int streak)
+    {
+        PreferenceManager.Instance.SetInt("UserStreak", streak);
     }
 }

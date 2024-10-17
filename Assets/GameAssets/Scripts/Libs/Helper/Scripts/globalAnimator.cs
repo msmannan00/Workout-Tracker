@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -179,6 +180,15 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
     public void AnimateRectTransformX(RectTransform rectTransform, float targetX, float duration)
     {
         rectTransform.DOAnchorPosX(targetX, duration).SetEase(Ease.InOutCubic);
+    }
+    public void ShowTextForOneSecond(TextMeshProUGUI messageText, string message)
+    {
+        // Set the text and ensure it's fully visible (alpha = 1)
+        messageText.text = message;
+        messageText.alpha = 1;
+
+        // Hide the text after 1 second using a fade-out animation
+        messageText.DOFade(0, 1f).SetDelay(1f);  // Wait for 1 second, then fade out over 1 second
     }
     public void WobbleObject(GameObject pAppObject)
     {
