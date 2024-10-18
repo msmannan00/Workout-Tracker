@@ -65,27 +65,35 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     private List<Image> _pageSelectionImages;
 
     //------------------------------------------------------------------------
-    
+    private int _previousPageCount; // To store the previous page count for comparison
+
+    //------------------------------------------------------------------------
     private void Start()
     {
         _scrollRectComponent = GetComponent<ScrollRect>();
         _scrollRectRect = GetComponent<RectTransform>();
         _container = _scrollRectComponent.content;
         _pageCount = _container.childCount;
+        _previousPageCount = _pageCount; // Initialize previous page count
 
-        // is it horizontal or vertical scrollrect
-        if (_scrollRectComponent.horizontal && !_scrollRectComponent.vertical) {
+        // Check if the scroll is horizontal or vertical
+        if (_scrollRectComponent.horizontal && !_scrollRectComponent.vertical)
+        {
             _horizontal = true;
-        } else if (!_scrollRectComponent.horizontal && _scrollRectComponent.vertical) {
+        }
+        else if (!_scrollRectComponent.horizontal && _scrollRectComponent.vertical)
+        {
             _horizontal = false;
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("Confusing setting of horizontal/vertical direction. Default set to horizontal.");
             _horizontal = true;
         }
 
         _lerp = false;
 
-        // init
+        // Initialize
         SetPagePositions();
         SetPage(startingPage);
         InitPageSelection();
@@ -98,26 +106,40 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
 
         if (prevButton)
             prevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
-	}
+    }
 
     //------------------------------------------------------------------------
-    void Update() {
-        // if moving to target position
-        if (_lerp) {
-            // prevent overshooting with values greater than 1
+    void Update()
+    {
+        // Check if the number of items has changed
+        if (_container.childCount != _previousPageCount)
+        {
+            // Update the page count and positions
+            _pageCount = _container.childCount;
+            SetPagePositions();
+            InitPageSelection();
+            SetPageSelection(_currentPage);
+            SetSelectedNumberText();
+
+            _previousPageCount = _pageCount; // Update the previous page count
+        }
+
+        // Lerp to target page if necessary
+        if (_lerp)
+        {
             float decelerate = Mathf.Min(decelerationRate * Time.deltaTime, 1f);
             _container.anchoredPosition = Vector2.Lerp(_container.anchoredPosition, _lerpTo, decelerate);
-            // time to stop lerping?
-            if (Vector2.SqrMagnitude(_container.anchoredPosition - _lerpTo) < 0.25f) {
-                // snap to target and stop lerping
+
+            if (Vector2.SqrMagnitude(_container.anchoredPosition - _lerpTo) < 0.25f)
+            {
                 _container.anchoredPosition = _lerpTo;
                 _lerp = false;
-                // clear also any scrollrect move that may interfere with our lerping
                 _scrollRectComponent.velocity = Vector2.zero;
             }
 
-            // switches selection icon exactly to correct page
-            if (_showPageSelection) {
+            // Update the page selection indicator
+            if (_showPageSelection)
+            {
                 SetPageSelection(GetNearestPage());
             }
         }

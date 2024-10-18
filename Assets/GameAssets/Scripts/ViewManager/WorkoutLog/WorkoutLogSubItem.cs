@@ -25,9 +25,12 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     private float timer;
     private bool timerRunning = false;
     private Coroutine timerCoroutine;
+    private Action<object> callBack;
+    bool shake = true;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
+        this.callBack = callback;
         exerciseModel = (ExerciseModel)data["data"];
         exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
@@ -321,6 +324,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
         //{
             exerciseModel.toggle=value;
+        this.callBack?.Invoke(value);
             if (value)
             {
                 isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
@@ -358,4 +362,13 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             //    isComplete.interactable = false;
         }
     }
+    public void ToggleShake()
+    {
+        if (!isComplete.interactable && shake)
+        {
+            shake = false;
+            GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
+        }
+    }
+
 }

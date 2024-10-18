@@ -48,7 +48,9 @@ public class AchievementDataItem : MonoBehaviour,ItemController
             case AchievementType.CardioTime:
                 CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData());
                 break;
-                
+            case AchievementType.Streak:
+                CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak());
+                break;
         }
     }
 
@@ -191,7 +193,30 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         }
         descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
-
+    public void CheckStreakAchievements(AchievementTemplate data, int streak)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            if (achievementDataItem.isCompleted)
+            {
+                trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (streak >= achievementDataItem.value)
+            {
+                trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                achievementDataItem.isCompleted = true;
+            }
+            else
+            {
+                progressText.text = streak.ToString() + " / " + (achievementDataItem.value).ToString();
+                descriptionText.text = achievementDataItem.description;
+                return;
+            }
+        }
+        descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
 
     public static int GetUniqueExerciseCount(HistoryModel historyModel)
     {

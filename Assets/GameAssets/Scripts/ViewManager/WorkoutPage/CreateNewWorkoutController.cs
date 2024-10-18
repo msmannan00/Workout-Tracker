@@ -11,6 +11,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     public TMP_InputField workoutName;
     public Transform content;
     public Button addExercise;
+    public Button saveTemplate;
 
     private int exerciseCounter = 0;
     public List<ExerciseDataItem> exerciseDataItems = new List<ExerciseDataItem>();
@@ -21,7 +22,9 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     {
         workoutName.text = (string)data["workoutName"];
         this.callback = callback;
+        saveTemplate.interactable = false;
         addExercise.onClick.AddListener(() => AddExerciseButton());
+        saveTemplate.onClick.AddListener(() => SaveNewWorkout());
     }
     public void OnClose()
     {
@@ -78,6 +81,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
                 exerciseObject.transform.SetSiblingIndex(content.childCount-2);
                 exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+                saveTemplate.interactable = true;
             }
         }
     }

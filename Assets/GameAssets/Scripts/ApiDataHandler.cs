@@ -7,7 +7,7 @@ using System.Data;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
-    private ExerciseData exerciseData = new ExerciseData();
+    public ExerciseData exerciseData = new ExerciseData();
     private AchievementData achievementData = new AchievementData();
     private PersonalBestData personalBestData = new PersonalBestData();
     private TemplateData templateData = new TemplateData();
@@ -43,7 +43,6 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             string json = PreferenceManager.Instance.GetString("excerciseData");
             templateData = JsonUtility.FromJson<TemplateData>(json);
-            print(json);
         }
         else
         {
@@ -219,13 +218,19 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     public void loadData()
     {
         TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
-        this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJsonFile.text);
+        //this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJsonFile.text);
+        string exerciseJson = PreferenceManager.Instance.GetString("exerciseData", exerciseJsonFile.text);
+        this.exerciseData= JsonUtility.FromJson<ExerciseData>(exerciseJson);
 
         TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
-        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJsonFile.text);
+        //this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJsonFile.text);
+        string achievementJson = PreferenceManager.Instance.GetString("achievementData", achievementJsonFile.text);
+        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
 
         TextAsset personBestJsonFile = Resources.Load<TextAsset>("data/personalBest");
-        this.personalBestData = JsonUtility.FromJson<PersonalBestData>(personBestJsonFile.text);
+        //this.personalBestData = JsonUtility.FromJson<PersonalBestData>(personBestJsonFile.text);
+        string personBestJson = PreferenceManager.Instance.GetString("personBestData", personBestJsonFile.text);
+        this.personalBestData = JsonUtility.FromJson<PersonalBestData>(personBestJson);
 
         LoadHistory();
 
@@ -258,22 +263,35 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public void SaveExerciseData(ExerciseDataItem exercise)
     {
+        //this.exerciseData.exercises.Add(exercise);
+        //string json = JsonUtility.ToJson(exerciseData, true);
+        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/exercise.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
+        //File.WriteAllText(filePath, json);
+
         this.exerciseData.exercises.Add(exercise);
-        string json = JsonUtility.ToJson(exerciseData, true);
-        string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/exercise.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        File.WriteAllText(filePath, json);
+        string json = JsonUtility.ToJson(exerciseData);
+        PreferenceManager.Instance.SetString("exerciseData", json);
+        PreferenceManager.Instance.Save();
     }
     public void SaveAchievementData()
     {
-        string json = JsonUtility.ToJson(achievementData, true);
-        string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/achievement.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        File.WriteAllText(filePath, json);
+        //string json = JsonUtility.ToJson(achievementData, true);
+        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/achievement.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
+        //File.WriteAllText(filePath, json);
+
+        string json = JsonUtility.ToJson(achievementData);
+        PreferenceManager.Instance.SetString("achievementData", json);
+        PreferenceManager.Instance.Save();
     }
     public void SavePersonalBestData()
     {
-        string json = JsonUtility.ToJson(personalBestData, true);
-        string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/personalBest.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        File.WriteAllText(filePath, json);
+        //string json = JsonUtility.ToJson(personalBestData, true);
+        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/personalBest.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
+        //File.WriteAllText(filePath, json);
+
+        string json = JsonUtility.ToJson(personalBestData);
+        PreferenceManager.Instance.SetString("personBestData", json);
+        PreferenceManager.Instance.Save();
     }
     public void SetJoiningDate(DateTime date)
     {

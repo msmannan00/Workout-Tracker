@@ -63,7 +63,6 @@ public class CompleteWorkoutController : MonoBehaviour, PageController
             TextMeshProUGUI text=textObj.GetComponent<TextMeshProUGUI>();
             text.text = data.reps.ToString();
             text.fontSize = 14;
-            text.font = userSessionManager.Instance.darkTextFont;
         }
     }
     void ShowOnlyTime(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
@@ -73,7 +72,6 @@ public class CompleteWorkoutController : MonoBehaviour, PageController
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
             text.fontSize = 14;
-            text.font = userSessionManager.Instance.darkTextFont;
             if (data.time > 60)
             {
                 text.text = ((int)data.time / 60).ToString() + "m";
@@ -92,7 +90,6 @@ public class CompleteWorkoutController : MonoBehaviour, PageController
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
             text.text = data.weight.ToString() + "kg x " + data.reps.ToString();
             text.fontSize = 14;
-            text.font = userSessionManager.Instance.darkTextFont;
         }
     }
     void ShowTimeAndMile(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
@@ -112,7 +109,6 @@ public class CompleteWorkoutController : MonoBehaviour, PageController
             }
             text.text = data.mile.ToString() + "mile x " + time;
             text.fontSize = 14;
-            text.font = userSessionManager.Instance.darkTextFont;
         }
     }
 }

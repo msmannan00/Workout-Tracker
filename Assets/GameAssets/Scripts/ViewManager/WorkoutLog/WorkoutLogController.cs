@@ -15,6 +15,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public TMP_InputField editWorkoutName;
     public TextMeshProUGUI timerText;
     public Button editWorkoutButton;
+    public Button saveButton;
     public Image back, watch, watchpins, addExercise1, addExercise2, line, save, cancle;
     public Transform content;
 
@@ -70,50 +71,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         editWorkoutButton.onClick.AddListener(EditWorkoutName);
         OnToggleWorkout();
+        saveButton.interactable = false;
     }
 
-    private void OnEnable()
-    {
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Dark:
-               // this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                workoutNameText.font=userSessionManager.Instance.darkHeadingFont;
-                workoutNameText.color = Color.white;
-                timerText.color = Color.white;
-                back.color = Color.white;
-                watch.color = Color.white;
-                watchpins.color = userSessionManager.Instance.darkBgColor;
-                addExercise1.color = Color.white;
-                addExercise2.color = Color.white;
-                line.color = Color.white;
-                save.color = Color.white;
-                cancle.color = Color.white;
-                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.darkHeadingFont;
-                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = userSessionManager.Instance.darkBgColor;
-                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.darkHeadingFont;
-                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = userSessionManager.Instance.darkBgColor;
-                break;
-            case Theme.Light:
-               // this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                workoutNameText.font = userSessionManager.Instance.lightHeadingFont;
-                workoutNameText.color = userSessionManager.Instance.lightHeadingColor;
-                timerText.color = userSessionManager.Instance.lightHeadingColor;
-                back.color = userSessionManager.Instance.lightButtonColor;
-                watch.color = userSessionManager.Instance.lightButtonColor;
-                watchpins.color = Color.white;
-                addExercise1.color = userSessionManager.Instance.lightButtonColor;
-                addExercise2.color = userSessionManager.Instance.lightButtonColor;
-                line.color = new Color32(218,52,52,150);
-                save.color = userSessionManager.Instance.lightButtonColor;
-                cancle.color = userSessionManager.Instance.lightButtonColor;
-                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
-                save.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
-                cancle.gameObject.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-                break;
-        }
-    }
+    
     //private void Start()
     //{
     //    timerText.color = disabledColor;
@@ -239,7 +200,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
                 int childCount = content.childCount;
                 exerciseObject.transform.SetSiblingIndex(childCount - 2);
-                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
             }
         }
         else if (data is List<ExerciseTypeModel> dataList2)
@@ -260,10 +221,31 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
-                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
+                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
             }
         }
         else { print("null"); }
+    }
+
+    private void SaveButtonInteractable(object data)
+    {
+        bool check = (bool)data;
+        if (check) { saveButton.interactable = true; }
+        else
+        {
+            foreach (var exerciseType in templeteModel.exerciseTemplete)
+            {
+                foreach (var exercise in exerciseType.exerciseModel)
+                {
+                    if (exercise.toggle)
+                    {
+                        saveButton.interactable = true;
+                        return;
+                    }
+                }
+            }
+            saveButton.interactable = false;
+        }
     }
     private void OnRemoveIndex(object data)
     {

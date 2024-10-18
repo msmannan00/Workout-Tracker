@@ -13,8 +13,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public GameObject currentScreen;
     [Header("Theme Settings")]
     private Theme gameTheme;
-    public TMP_FontAsset darkHeadingFont, darkTextFont;
-    public TMP_FontAsset lightHeadingFont, lightTextFont;
+    public TMP_FontAsset darkPrimaryFont, darkSecondaryFont;
+    public TMP_FontAsset lightPrimaryFont, lightSecondaryFont;
     public Color darkBgColor, darkSearchBarColor, darkSearchIconColor;
     public Color lightBgColor, lightHeadingColor, lightButtonColor, lightTextColor;
 
@@ -25,10 +25,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
     private void Start()
     {
-        darkHeadingFont= Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Hoog0555/Hoog0555");
-        darkTextFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/K2D/K2D");
-        lightHeadingFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Alexandria/Alexandria");
-        lightTextFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Afacad/Afacad");
+        darkPrimaryFont= Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Hoog0555/Hoog0555");
+        darkSecondaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/K2D/K2D");
+        lightPrimaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Alexandria/Alexandria");
+        lightSecondaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Afacad/Afacad");
         darkBgColor = new Color32(99, 24, 24, 255);
         darkSearchBarColor = new Color32(81, 14, 14, 255);
         darkSearchIconColor = new Color32(127, 77, 77, 255);

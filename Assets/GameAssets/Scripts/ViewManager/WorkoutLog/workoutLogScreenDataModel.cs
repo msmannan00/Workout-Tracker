@@ -62,52 +62,6 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             OnAddSet(false);
         }
     }
-    private void OnEnable()
-    {
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Dark:
-                exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;
-                exerciseNameText.color = Color.white;
-                exerciseNotes.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                TextMeshProUGUI placeholde= exerciseNotes.placeholder as TextMeshProUGUI;
-                TextMeshProUGUI text = exerciseNotes.textComponent as TextMeshProUGUI;
-                placeholde.color= new Color32(255,255,255,150);
-                placeholde.font = userSessionManager.Instance.darkTextFont;
-                text.font = userSessionManager.Instance.darkTextFont;
-                text.color = Color.white;
-                foreach(TextMeshProUGUI _text in labelText)
-                {
-                    _text.font=userSessionManager.Instance.darkHeadingFont;
-                    _text.color= Color.white;
-                }
-                line.color = Color.white;
-                addSet.color = Color.white;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font=userSessionManager.Instance.darkHeadingFont;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color=userSessionManager.Instance.darkBgColor;
-                break;
-            case Theme.Light:
-                exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;
-                exerciseNameText.color = userSessionManager.Instance.lightHeadingColor;
-                exerciseNotes.gameObject.GetComponent<Image>().color = new Color32(246, 236, 220, 255);
-                TextMeshProUGUI _placeholde_ = exerciseNotes.placeholder as TextMeshProUGUI;
-                TextMeshProUGUI _text_ = exerciseNotes.textComponent as TextMeshProUGUI;
-                _placeholde_.color = new Color32(92, 59, 28, 150);
-                _placeholde_.font = userSessionManager.Instance.lightTextFont;
-                _text_.font = userSessionManager.Instance.lightTextFont;
-                _text_.color = userSessionManager.Instance.lightTextColor;
-                foreach (TextMeshProUGUI _text in labelText)
-                {
-                    _text.font = userSessionManager.Instance.lightHeadingFont;
-                    _text.color = userSessionManager.Instance.darkBgColor;
-                }
-                line.color = new Color32(218,52,52,150);
-                addSet.color = userSessionManager.Instance.lightButtonColor;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-                break;
-        }
-    }
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
         GameObject prefab;
@@ -135,7 +89,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             {"exerciseType", exerciseTypeModel.exerciseType  },
             {"exerciseHistory",history}
         };
-        newSubItemScript.onInit(initData);
+        newSubItemScript.onInit(initData,callback);
     }
 
     public void OnAddSet(bool addMore)

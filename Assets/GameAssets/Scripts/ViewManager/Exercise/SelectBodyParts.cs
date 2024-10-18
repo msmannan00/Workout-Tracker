@@ -22,35 +22,9 @@ public class SelectBodyParts : MonoBehaviour,PageController
         controller = (ExerciseController)data["controller"];
         float currentX = 0;
         float currentY = 0;
-        List<string> bodyParts = GetUniqueBodyParts(DataManager.Instance.exerciseData);
-        TMP_FontAsset headingFont = null;
-        TMP_FontAsset itemFont = null;
+        List<string> bodyParts = GetUniqueBodyParts(ApiDataHandler.Instance.getExerciseData());
         Color itemColor= Color.white;
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Light:
-                headingFont = userSessionManager.Instance.lightHeadingFont;
-                itemFont = userSessionManager.Instance.lightTextFont;
-                itemColor = userSessionManager.Instance.lightButtonColor;
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                label.font = headingFont;
-                bodyPartLabel.font = headingFont;
-                label.color = userSessionManager.Instance.lightHeadingColor;
-                bodyPartLabel.color = userSessionManager.Instance.lightHeadingColor;
-                backButton.color = userSessionManager.Instance.lightButtonColor;
-                break;
-            case Theme.Dark:
-                headingFont = userSessionManager.Instance.darkHeadingFont;
-                itemFont = userSessionManager.Instance.darkTextFont;
-                itemColor = Color.white;
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                label.font = headingFont;
-                bodyPartLabel.font = headingFont;
-                label.color = Color.white;
-                bodyPartLabel.color = Color.white;
-                backButton.color = Color.white;
-                break;
-        }
+        
         foreach (string text in bodyParts)
         {
             // Instantiate text prefab
@@ -58,7 +32,6 @@ public class SelectBodyParts : MonoBehaviour,PageController
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
             newTextObj.transform.GetChild(1).gameObject.SetActive(false);
             textComponent.text = text;
-            textComponent.font = itemFont;
             textComponent.color = userSessionManager.Instance.lightButtonColor;
             newTextObj.GetComponent<Button>().onClick.AddListener(() => SelectAndDeselect(text, newTextObj, controller, itemColor));
             newTextObj.GetComponent<Image>().color = itemColor;
@@ -85,7 +58,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
     {
         if (controller.selectedBodyParts.Contains(text))
         {
-            int matchingCount = GetMatchingCategoryCount(DataManager.Instance.exerciseData, text);
+            int matchingCount = GetMatchingCategoryCount(ApiDataHandler.Instance.getExerciseData(), text);
             globalCounter -= matchingCount;
             controller.selectedBodyParts.Remove(text);
             obj.GetComponent<Image>().color = col;
@@ -94,7 +67,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
         else
         {
             controller.selectedBodyParts.Add(text);
-            int matchingCount = GetMatchingCategoryCount(DataManager.Instance.exerciseData, text);
+            int matchingCount = GetMatchingCategoryCount(ApiDataHandler.Instance.getExerciseData(), text);
             globalCounter += matchingCount;
             obj.GetComponent<Image>().color = new Color32(51, 23, 23,255);
             label.text = "Filter(" + globalCounter.ToString() + ")";

@@ -25,55 +25,8 @@ public class AddNewExercise : MonoBehaviour, PageController
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
-        TMP_FontAsset headingFont = null;
-        TMP_FontAsset textFont = null;
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Light:
-                headingFont = userSessionManager.Instance.lightHeadingFont;
-                textFont = userSessionManager.Instance.lightTextFont;
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                foreach (TextMeshProUGUI text in labelHeading)
-                {
-                    text.color = userSessionManager.Instance.lightHeadingColor;
-                    text.font = headingFont;
-                }
-                foreach (TextMeshProUGUI text in placeholderAndText)
-                {
-                    text.color = userSessionManager.Instance.lightTextColor;
-                    text.font = textFont;
-                }
-                saveText.font = headingFont;
-                saveText.color = Color.white;
-                exerciseName.gameObject.GetComponent<Image>().color = Color.white;
-                categoryName.gameObject.GetComponent<Image>().color = Color.white;
-                backImage.color = userSessionManager.Instance.lightButtonColor;
-                saveImage.color = userSessionManager.Instance.lightButtonColor;
-                break;
-            case Theme.Dark:
-                headingFont = userSessionManager.Instance.darkHeadingFont;
-                textFont = userSessionManager.Instance.darkTextFont;
-                this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                foreach (TextMeshProUGUI text in labelHeading)
-                {
-                    text.color = Color.white;
-                    text.font = headingFont;
-                }
-                foreach (TextMeshProUGUI text in placeholderAndText)
-                {
-                    text.color = userSessionManager.Instance.darkSearchIconColor;
-                    text.font = textFont;
-                }
-                saveText.font = headingFont;
-                saveText.color = new Color32(51, 23, 23, 255);
-                exerciseName.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
-                categoryName.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
-                backImage.color = Color.white;
-                saveImage.color = Color.white;
-
-                break;
-        }
-        List<string> categorys = GetUniqueCategorys(DataManager.Instance.exerciseData);
+        
+        List<string> categorys = GetUniqueCategorys(ApiDataHandler.Instance.getExerciseData());
         InitializeCategoryDropdown(categorys);
         InitializeExerciseTypeDropdown(new List<string>(Enum.GetNames(typeof(ExerciseType))));
     }
@@ -183,7 +136,7 @@ public class AddNewExercise : MonoBehaviour, PageController
     public bool IsExerciseNamePresent(string nameToCheck)
     {
         // Loop through the exercises and check if any exerciseName matches the input string
-        foreach (var exercise in DataManager.Instance.exerciseData.exercises)
+        foreach (var exercise in ApiDataHandler.Instance.getExerciseData().exercises)
         {
             if (exercise.exerciseName.ToLower() == nameToCheck.ToLower())
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 
@@ -18,9 +19,11 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
     }
     void WeightValueChange(string value)
     {
-        if (int.TryParse(value, out int parsedWeight))
+        string numericValue = Regex.Replace(value, @"\D", "");
+
+        if (int.TryParse(numericValue, out int parsedWeight))
         {
-            weight.text = weight.text + " kg";
+            weight.text = parsedWeight.ToString() + " kg";
             _data.weight = parsedWeight; // Update weight only if parsing succeeds
         }
         else

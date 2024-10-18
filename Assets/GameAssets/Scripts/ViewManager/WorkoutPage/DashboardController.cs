@@ -24,65 +24,7 @@ public class DashboardController : MonoBehaviour, PageController
     }
     private void OnEnable()
     {
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Dark:
-               // this.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                headingColorText.color = Color.white;
-                topButtonBar.color = new Color32(51, 23, 23, 255);
-                searchIcon1.color = userSessionManager.Instance.darkSearchIconColor;
-                searchIcon2.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.textComponent.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.placeholder.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
-                foreach (TextMeshProUGUI text in headingTexts)
-                {
-                    text.font = userSessionManager.Instance.darkHeadingFont;
-                }
-                foreach (Image image in footerButtonImages)
-                {
-                    image.color = Color.red;
-                    foreach(Transform child in image.gameObject.transform)
-                    {
-                        if(child.GetComponent<Image>() != null)
-                            child.GetComponent<Image>().color = Color.white;
-                    }
-                }
-                BottomButtonSelectionSeter(bottomMiddelObject);
-                foreach (Image image in headerButtonImages)
-                {
-                    image.color = Color.white;
-                }
-                break;
-            case Theme.Light:
-                topButtonBar.color = Color.white;
-              //  this.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                headingColorText.color = userSessionManager.Instance.lightHeadingColor;
-                searchIcon1.color = userSessionManager.Instance.lightTextColor;
-                searchIcon2.color = userSessionManager.Instance.lightTextColor;
-                searchInputField.GetComponent<Image>().color = Color.white;
-                searchInputField.textComponent.color = userSessionManager.Instance.lightTextColor;
-                searchInputField.placeholder.color = userSessionManager.Instance.lightTextColor;
-                foreach (TextMeshProUGUI text in headingTexts)
-                {
-                    text.font = userSessionManager.Instance.lightHeadingFont;
-                }
-                foreach (Image image in footerButtonImages)
-                {
-                    image.color = Color.white;
-                    foreach (Transform child in image.gameObject.transform)
-                    {
-                        if (child.GetComponent<Image>() != null)
-                            child.GetComponent<Image>().color = Color.red;
-                    }
-                }
-                BottomButtonSelectionSeter(bottomMiddelObject);
-                foreach (Image image in headerButtonImages)
-                {
-                    image.color = userSessionManager.Instance.lightButtonColor;
-                }
-                break;
-        }
+        
     }
     public void EditTemplete()
     {

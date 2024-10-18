@@ -53,47 +53,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     }
     private void OnEnable()
     {
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Dark:
-                exerciseFont = userSessionManager.Instance.darkTextFont;
-                exerciseColor = Color.white;
-                spriteImage.sprite = darkTheme;
-                templateName.font = userSessionManager.Instance.darkHeadingFont;
-                templateName.color = Color.white;
-                line.color = Color.white;
-                edit.color = Color.white;
-                playButton.GetComponent<Image>().color = Color.white;
-                playButton.transform.GetChild(0).GetComponent<Image>().color = new Color32(51, 23, 23, 255);
-                if (exerciseText.Count > 0)
-                {
-                    foreach (TextMeshProUGUI text in exerciseText)
-                    {
-                        text.font = exerciseFont;
-                        text.color = exerciseColor;
-                    }
-                }
-                break;
-            case Theme.Light:
-                exerciseFont = userSessionManager.Instance.lightTextFont;
-                exerciseColor = userSessionManager.Instance.lightTextColor;
-                spriteImage.sprite = lightTheme;
-                templateName.font = userSessionManager.Instance.lightHeadingFont;
-                templateName.color = userSessionManager.Instance.lightHeadingColor;
-                line.color = userSessionManager.Instance.lightTextColor;
-                edit.color = Color.red;
-                playButton.GetComponent<Image>().color = Color.red;
-                playButton.transform.GetChild(0).GetComponent<Image>().color = Color.white;
-                if (exerciseText.Count > 0)
-                {
-                    foreach (TextMeshProUGUI text in exerciseText)
-                    {
-                        text.font = exerciseFont;
-                        text.color = exerciseColor;
-                    }
-                }
-                break;
-        }
+        
     }
     public void PlayButton()
     {

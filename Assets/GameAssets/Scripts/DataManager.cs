@@ -5,9 +5,9 @@ using System.Linq;
 
 public class DataManager : GenericSingletonClass<DataManager>
 {
-    public ExerciseData exerciseData = new ExerciseData();
-    public AchievementData achievementData = new AchievementData();
-    public PersonalBestData personalBestData = new PersonalBestData();
+    private ExerciseData exerciseData = new ExerciseData();
+    private AchievementData achievementData = new AchievementData();
+    private PersonalBestData personalBestData = new PersonalBestData();
     //public void loadData()
     //{
     //    TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");

@@ -80,7 +80,10 @@ public class AuthController : MonoBehaviour, PageController
             userSessionManager.Instance.OnInitialize(mUsername, mUsername);
             onSignIn();
         }
-        print(mUsername);
+        else if (mUsername == "")
+        {
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
+        }
     }
 
     IEnumerator CallSavedlogins()
@@ -164,11 +167,9 @@ public class AuthController : MonoBehaviour, PageController
     {
         gameObject.transform.parent.SetSiblingIndex(1);
 
-        bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
+        bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
         if (!mFirsTimePlanInitialized)
-        {
-            print(DateTime.Now);    
-            print("if");
+        {   
             GlobalAnimator.Instance.FadeOutLoader();
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
@@ -183,7 +184,7 @@ public class AuthController : MonoBehaviour, PageController
             Dictionary<string, object> mData = new Dictionary<string, object> { {"data",true } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
 
-            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
         }
     }
 
@@ -312,7 +313,7 @@ public class AuthController : MonoBehaviour, PageController
             {
                 GlobalAnimator.Instance.FadeOutLoader();
                 print("true");
-                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
+                //PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
 
                 GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");
                 GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");

@@ -61,36 +61,7 @@ public class ExerciseController : MonoBehaviour, PageController
         //    addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
         //}
 
-        switch (ApiDataHandler.Instance.gameTheme)
-        {
-            case Theme.Light:
-               // searchInputField.gameObject.GetComponent<Image>().color = Color.white;
-                searchInputField.placeholder.color = userSessionManager.Instance.lightTextColor;
-                searchInputField.textComponent.color= userSessionManager.Instance.lightTextColor;
-                labelText.color = userSessionManager.Instance.lightHeadingColor;
-                labelText.font = userSessionManager.Instance.lightHeadingFont;
-                foreach (Image image in themeColorItems)
-                {
-                    image.color = userSessionManager.Instance.lightButtonColor;
-                }
-                searchIcon1.color= userSessionManager.Instance.lightTextColor;
-                searchIcon2.color= userSessionManager.Instance.lightTextColor;
-                break;
-            case Theme.Dark:
-              //  this.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                searchInputField.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
-                searchInputField.placeholder.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.textComponent.color = userSessionManager.Instance.darkSearchIconColor;
-                labelText.color = Color.white;
-                labelText.font = userSessionManager.Instance.darkHeadingFont;
-                foreach (Image image in themeColorItems)
-                {
-                    image.color = Color.white;
-                }
-                searchIcon1.color = userSessionManager.Instance.darkSearchIconColor;
-                searchIcon2.color = userSessionManager.Instance.darkSearchIconColor;
-                break;
-        }
+       
     }
 
 
@@ -125,19 +96,6 @@ public class ExerciseController : MonoBehaviour, PageController
             TextMeshProUGUI textMeshPro = textLabelObject.GetComponentInChildren<TextMeshProUGUI>();
             textLabelObject.name = $"Label_{letter}";
             textMeshPro.text = letter.ToString();
-            switch (ApiDataHandler.Instance.gameTheme)
-            {
-                case Theme.Light:
-                    textMeshPro.font = userSessionManager.Instance.lightHeadingFont;
-                    textMeshPro.color = userSessionManager.Instance.lightHeadingColor;
-                    textLabelObject.GetComponentInChildren<Image>().color = userSessionManager.Instance.lightButtonColor;
-                    break;
-                case Theme.Dark:
-                    textMeshPro.font = userSessionManager.Instance.darkHeadingFont;
-                    textMeshPro.color = Color.white;
-                    textLabelObject.GetComponentInChildren<Image>().color = Color.white;
-                    break;
-            }
             alphabetLabels.Add(textLabelObject.gameObject);
         }
     }

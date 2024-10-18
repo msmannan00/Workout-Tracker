@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.UI;
 
 public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
@@ -189,6 +190,13 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
 
         // Hide the text after 1 second using a fade-out animation
         messageText.DOFade(0, 1f).SetDelay(1f);  // Wait for 1 second, then fade out over 1 second
+    }
+    public void ApplyShakeEffect(RectTransform transform, Action onComplete)
+    {
+        DOTween.Kill(transform);
+        // Shakes the toggle for 0.5 seconds with a strength of 10 and 10 vibrato
+        transform.DOShakePosition(0.5f, strength: new Vector3(10, 0, 0), vibrato: 10, randomness: 90, snapping: false, fadeOut: true).SetId(transform)
+            .OnComplete(() => onComplete?.Invoke());
     }
     public void WobbleObject(GameObject pAppObject)
     {
