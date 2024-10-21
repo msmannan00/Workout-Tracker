@@ -15,8 +15,17 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     private Theme gameTheme;
     public TMP_FontAsset darkPrimaryFont, darkSecondaryFont;
     public TMP_FontAsset lightPrimaryFont, lightSecondaryFont;
-    public Color darkBgColor, darkSearchBarColor, darkSearchIconColor;
-    public Color lightBgColor, lightHeadingColor, lightButtonColor, lightTextColor;
+
+    public Color darkButtonTextColor,lightButtonTextColor;
+    public Color darkButtonColor,lightButtonColor;
+    public Color darkPlaceholder, lightPlaceholder;
+    public Color darkInputFieldColor, lightInputFieldColor;
+    public Color darkSwitchTextColor;
+
+
+
+    public Color darkSearchBarColor, darkSearchIconColor;
+    public Color lightBgColor, lightHeadingColor, lightTextColor;
 
     public DefaultTempleteModel selectedTemplete;
     private TemplateData templateData = new TemplateData();
@@ -29,7 +38,18 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         darkSecondaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/K2D/K2D");
         lightPrimaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Alexandria/Alexandria");
         lightSecondaryFont = Resources.Load<TMP_FontAsset>("UIAssets/Shared/Font/Afacad/Afacad");
-        darkBgColor = new Color32(99, 24, 24, 255);
+        darkButtonTextColor = new Color32(51,23,23,255);
+        lightButtonTextColor = new Color32(150,0,0,255);
+        darkButtonColor = new Color32(255,255,255,255);
+        lightButtonColor = new Color32(218,52,52,255);
+        darkPlaceholder = new Color32(127,77,77,255);
+        lightPlaceholder = new Color32(92, 59, 28, 155);
+        darkInputFieldColor = new Color32(81,14,14,255);
+        lightInputFieldColor = new Color32(255,255,255,255);
+        darkSwitchTextColor = new Color32(171, 162, 162, 255);
+        
+
+        // darkBgColor = new Color32(99, 24, 24, 255);
         darkSearchBarColor = new Color32(81, 14, 14, 255);
         darkSearchIconColor = new Color32(127, 77, 77, 255);
         lightBgColor = new Color32(250, 249, 240, 255);

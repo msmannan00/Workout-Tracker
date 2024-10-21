@@ -8,23 +8,30 @@ using UnityEngine.UI;
 
 public class DashboardController : MonoBehaviour, PageController
 {
-    public List<TextMeshProUGUI> headingTexts;
-    public TextMeshProUGUI headingColorText;
-    public List<Image> footerButtonImages;
-    public List<Image> headerButtonImages;
-    public GameObject bottomMiddelObject;
+    //public List<TextMeshProUGUI> headingTexts;
+    //public TextMeshProUGUI headingColorText;
+    //public List<Image> footerButtonImages;
+    //public List<Image> headerButtonImages;
+    //public GameObject bottomMiddelObject;
     public TMP_InputField searchInputField;
-    public Image searchIcon1, searchIcon2, topButtonBar;
+    //public Image searchIcon1, searchIcon2, topButtonBar;
     public Transform content;
+    public RectTransform switchButton;
+    public TextMeshProUGUI switchWorkout, switchSplit;
+    List<GameObject> items = new List<GameObject>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
-        
+        Workout();
     }
     private void OnEnable()
     {
-        
+        foreach(GameObject go in items)
+        {
+            go.SetActive(false);
+            go.SetActive(true);
+        }
     }
     public void EditTemplete()
     {
@@ -143,39 +150,36 @@ public class DashboardController : MonoBehaviour, PageController
     {
         StateManager.Instance.OpenStaticScreen("history", gameObject, "historyScreen", null, true, null);
     }
-    public void BottomButtonSelectionSeter(GameObject clickedObject)
+
+    public void Workout()
     {
-        switch (ApiDataHandler.Instance.gameTheme)
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, -3, 0.25f);
+        switch(ApiDataHandler.Instance.gameTheme)
         {
-            case Theme.Dark:
-                foreach(Image img in footerButtonImages)
-                {
-                    if (img.gameObject == clickedObject)
-                        img.enabled = true;
-                    else
-                        img.enabled = false;
-                }
-                break;
             case Theme.Light:
-                foreach (Image img in footerButtonImages)
-                {
-                    if (img.gameObject == clickedObject)
-                    {
-                        foreach(Transform child in img.gameObject.transform)
-                        {
-                            child.GetComponent<Image>().color = Color.red;
-                        }
-                    }
-                        
-                    else
-                    {
-                        foreach (Transform child in img.gameObject.transform)
-                        {
-                            child.GetComponent<Image>().color = Color.white;
-                        }
-                    }
-                }       
+                switchWorkout.color = new Color32(255, 255, 255, 255);
+                switchSplit.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchWorkout.color = new Color32(51, 23, 23, 255);
+                switchSplit.color = new Color32(171, 162, 162, 255);
                 break;
         }
     }
+    public void Splits()
+    {
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, 141, 0.25f);
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                switchSplit.color = new Color32(255, 255, 255, 255);
+                switchWorkout.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchSplit.color = new Color32(51, 23, 23, 255);
+                switchWorkout.color = new Color32(171, 162, 162, 255);
+                break;
+        }
+    }
+
 }
