@@ -60,6 +60,7 @@ public class DynamicHorizontalLayout : MonoBehaviour
                 if (success)
                 {
                     userSessionManager.Instance.currentWeight = result;
+                    ApiDataHandler.Instance.SaveWeight(result);
                 }
                 for (int a = 0; a < pos.Length; a++)
                 {

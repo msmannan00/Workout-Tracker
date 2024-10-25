@@ -89,21 +89,36 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
 
     public void ApplyParallax(GameObject currentPage, GameObject targetPage, Action callbackSuccess, bool keepState = false)
     {
+        Canvas canvas = currentPage.GetComponentInParent<Canvas>();
         var currentCanvas = currentPage.GetComponent<CanvasGroup>();
         var targetCanvas = targetPage.GetComponent<CanvasGroup>();
 
         var overlayBlocker = Instantiate(Resources.Load<GameObject>("Prefabs/shared/overlayBlocker"));
         overlayBlocker.transform.SetParent(currentPage.transform, false);
-        overlayBlocker.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+
+        //overlayBlocker.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        overlayBlocker.GetComponent<RectTransform>().position = canvas.worldCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, canvas.planeDistance));
+        overlayBlocker.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);  // Ensure it matches the screen size
+
         overlayBlocker.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);
         overlayBlocker.GetComponent<Image>().color = new Color(0, 0, 0, 0);
         overlayBlocker.transform.SetAsLastSibling();
 
         float distanceFactor = 1.5f;
-        targetPage.transform.position = new Vector3(Screen.width * distanceFactor, targetPage.transform.position.y, targetPage.transform.position.z);
+       // targetPage.transform.position = new Vector3(Screen.width * distanceFactor, targetPage.transform.position.y, targetPage.transform.position.z);
+
+        RectTransform targetRect = targetPage.GetComponent<RectTransform>();
+        
+        // Convert screen position to world position in relation to the camera
+        Vector3 offScreenPosition = canvas.worldCamera.ScreenToWorldPoint(new Vector3(Screen.width * distanceFactor, Screen.height / 2f, canvas.planeDistance));
+        // Update the position of the RectTransform in world space
+        targetRect.position = new Vector3(offScreenPosition.x, targetRect.position.y, targetRect.position.z);
+
         targetPage.SetActive(true);
         targetCanvas.alpha = 0.3f;
         targetPage.transform.SetAsLastSibling();
+        // new line
+        Vector3 centerPosition = canvas.worldCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, canvas.planeDistance));
 
         DOTween.Sequence()
             .SetDelay(0.2f)
@@ -113,7 +128,7 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
                 targetCanvas.interactable = false;
             })
             .Append(overlayBlocker.GetComponent<Image>().DOFade(0.7f, 0.3f).SetEase(Ease.Linear))
-            .Join(targetPage.transform.DOMoveX(Screen.width / 2f, 0.3f).SetEase(Ease.OutQuad))
+            .Join(targetPage.transform.DOMoveX(centerPosition.x, 0.3f).SetEase(Ease.OutQuad))//.Join(targetPage.transform.DOMoveX(Screen.width / 2f, 0.3f).SetEase(Ease.OutQuad))
             .Join(targetCanvas.DOFade(1f, 0.2f).SetEase(Ease.Linear))
             .OnComplete(() =>
             {
@@ -182,14 +197,14 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
     {
         rectTransform.DOAnchorPosX(targetX, duration).SetEase(Ease.InOutCubic);
     }
-    public void ShowTextForOneSecond(TextMeshProUGUI messageText, string message)
+    public void ShowTextMessage(TextMeshProUGUI messageText, string message, float duration)
     {
         // Set the text and ensure it's fully visible (alpha = 1)
         messageText.text = message;
         messageText.alpha = 1;
 
         // Hide the text after 1 second using a fade-out animation
-        messageText.DOFade(0, 1f).SetDelay(1f);  // Wait for 1 second, then fade out over 1 second
+        messageText.DOFade(0, 1f).SetDelay(duration);  // Wait for 1 second, then fade out over 1 second
     }
     public void ApplyShakeEffect(RectTransform transform, Action onComplete)
     {

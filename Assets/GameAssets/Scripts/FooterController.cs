@@ -14,6 +14,10 @@ public class FooterController : MonoBehaviour
     {
         BottomButtonSelectionSeter(dashboard.gameObject);
     }
+    private void OnEnable()
+    {
+        //BottomButtonSelectionSeter(dashboard.gameObject);
+    }
 
     public void BottomButtonSelectionSeter(GameObject clickedObject)
     {

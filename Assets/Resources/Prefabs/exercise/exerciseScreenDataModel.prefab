@@ -386,8 +386,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Bench Press (Barbell)
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
+  m_sharedMaterial: {fileID: -5371140736701394580, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -622,6 +622,7 @@ GameObject:
   - component: {fileID: 7857939389620866225}
   - component: {fileID: 2432839549713269441}
   - component: {fileID: 8084812934297453657}
+  - component: {fileID: 1292433634048594797}
   m_Layer: 5
   m_Name: exerciseScreenDataModel
   m_TagString: Untagged
@@ -782,6 +783,20 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 2, y: -2}
   m_UseGraphicAlpha: 1
+--- !u!114 &1292433634048594797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4215233702548271735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95d586abfe7393428ca33dd7f8b689f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exerciseText: {fileID: 6930919340943480397}
+  categoryText: {fileID: 6533512357140598857}
 --- !u!1 &5472211601795859397
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,8 +864,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Chest
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b71ce472bb48a13449b79ace08daf05a, type: 2}
+  m_sharedMaterial: {fileID: 5390066104177037084, guid: b71ce472bb48a13449b79ace08daf05a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -989,7 +1004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.9411765, b: 0.85490197, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -23,7 +23,6 @@ TagManager:
   - CancelWorkoutPopup
   - weightScreen
   - loadingScreen
-  - completeWorkoutScreen
   - exerciseHistoryScreen
   - characterScreen
   - profileScreen
@@ -36,6 +35,9 @@ TagManager:
   - personalBestScreen
   - weeklyGoalScreen
   - measurementScreen
+  - RemoveExercisePopup
+  - AchievementCompletePopup
+  - completeWorkoutPopup
   layers:
   - Default
   - TransparentFX
@@ -72,4 +74,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 562606971
     locked: 0

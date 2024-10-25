@@ -31,5 +31,7 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
             // Optional: Handle invalid input case, like clearing or showing a warning
             Debug.Log("Invalid input: Please enter a valid integer.");
         }
+        ApiDataHandler.Instance.SavePersonalBestData();
+        userSessionManager.Instance.CheckAchievementStatus();
     }
 }

@@ -7,7 +7,7 @@ public class AchievementTemplateDataItem
     public string description;
     public bool isCompleted;
 
-    public int value;
+    public float value;
 
 }
 

@@ -11,14 +11,14 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public TextMeshProUGUI exerciseNameText;
     public TMP_InputField exerciseNotes;
     public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
-    public Image addSet, line;
-
+    public Button threeDots;
     public GameObject timer, mile, weight, reps, rir;
     public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
     public bool isTemplateCreator;
     List<HistoryExerciseModel> exerciseHistory;
+    DefaultTempleteModel templeteModel;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -26,6 +26,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         isTemplateCreator = (bool)data["isTemplateCreator"];
+        templeteModel = (DefaultTempleteModel)data["templeteModel"];
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
         exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
@@ -61,6 +62,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             OnAddSet(false);
         }
+        if (isTemplateCreator) threeDots.gameObject.SetActive(true);
+        else threeDots.gameObject.SetActive(false);
     }
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
@@ -96,13 +99,22 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     {
         if (isWorkoutLog && !isTemplateCreator)
         {
-            FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
+            //FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
         }
         ExerciseModel exerciseModel = new ExerciseModel();
         exerciseTypeModel.exerciseModel.Add(exerciseModel);
         AddSetFromModel(exerciseModel);
     }
-
+    public void OnRemoveExercisePopup(RectTransform transform)
+    {
+        List<object> initialData = new List<object> { this.gameObject, this.callback, isTemplateCreator };
+        PopupController.Instance.OpenSidePopup("workoutLog", "RemoveExercisePopup", OnRemoveExerciseCallBack, initialData,transform);
+    }
+    void OnRemoveExerciseCallBack(List<object> data)
+    {
+        templeteModel.exerciseTemplete.Remove(exerciseTypeModel);
+        Destroy(this.gameObject);
+    }
     public void onRemoveSet()
     {
         this.callback.Invoke(this.exerciseTypeModel.index);

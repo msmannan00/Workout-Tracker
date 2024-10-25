@@ -29,7 +29,11 @@ public class CharacterController : MonoBehaviour,PageController
     }
     public void AchievementButtonClick()
     {
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", null, true);
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "onFooter", true },{"backAction",true}
+        };
+        StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", mData, true);
         StateManager.Instance.CloseFooter();
     }
 }

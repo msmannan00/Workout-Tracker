@@ -64,7 +64,7 @@ public class PersonalBestController : MonoBehaviour, PageController
                     }
                     else
                     {
-                        GlobalAnimator.Instance.ShowTextForOneSecond(messageText, "Exercise already added.");
+                        GlobalAnimator.Instance.ShowTextMessage(messageText, "Exercise already added.",1.5f);
                     }
                 }
 

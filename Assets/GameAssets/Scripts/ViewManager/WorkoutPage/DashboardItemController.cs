@@ -13,8 +13,8 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public TMP_Text workoutNameText;
     public TMP_InputField editWorkoutName;
     public Transform exerciseParent;
-    public Image line, edit;
     public Button playButton;
+    public Button editButton;
     public Image spriteImage;
     public Sprite darkTheme, lightTheme;
     public DefaultTempleteModel defaultTempleteModel;
@@ -28,6 +28,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
         editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         playButton.onClick.AddListener(PlayButton);
+        editButton.onClick.AddListener(EditWorkoutName);
         
         
         foreach (var exercise in defaultTempleteModel.exerciseTemplete)
@@ -67,7 +68,9 @@ public class DashboardItemController : MonoBehaviour, ItemController
     {
         workoutNameText.gameObject.SetActive(false);
         editWorkoutName.gameObject.SetActive(true);
+        editWorkoutName.ActivateInputField();
         editWorkoutName.text = workoutNameText.text;
+        editButton.gameObject.SetActive(false);
     }
     public void OnNameChanged(string name)
     {
@@ -77,6 +80,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
         //workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
         workoutNameText.gameObject.SetActive(true);
         editWorkoutName.gameObject.SetActive(false);
+        editButton.gameObject.SetActive(true);
         ApiDataHandler.Instance.SaveTemplateData();
     }
     public void SetColor(TextMeshProUGUI text)

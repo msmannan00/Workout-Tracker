@@ -4,14 +4,21 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using System.Data;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
-    public ExerciseData exerciseData = new ExerciseData();
+    [SerializeField]
+    private ExerciseData exerciseData = new ExerciseData();
+    [SerializeField]
     private AchievementData achievementData = new AchievementData();
+    [SerializeField]
     private PersonalBestData personalBestData = new PersonalBestData();
+    [SerializeField]
     private TemplateData templateData = new TemplateData();
+    [SerializeField]
     private HistoryModel historyData = new HistoryModel();
+    [SerializeField]
     private MeasurementModel measurementData = new MeasurementModel();
 
     [Header("Theme Settings")]
@@ -21,6 +28,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     public void SaveTheme(Theme theme)
     {
         PreferenceManager.Instance.SetInt("SelectedTheme", (int)theme);
+        gameTheme = theme;
         PreferenceManager.Instance.Save();
     }
     public Theme LoadTheme()
@@ -28,7 +36,15 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         int savedTheme = PlayerPrefs.GetInt("SelectedTheme", (int)Theme.Dark);
         return (Theme)savedTheme;
     }
-
+    public void SaveWeight(int weight)
+    {
+        PreferenceManager.Instance.SetInt("Weight", weight);
+        PreferenceManager.Instance.Save();
+    }
+    public int GetWeight()
+    {
+         return PlayerPrefs.GetInt("Weight", 80);
+    }
     public void SaveTemplateData()
     {
         string json = JsonUtility.ToJson(templateData);
@@ -356,6 +372,44 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return achievementData.achievements.Count;
     }
+    public (int, int) GetRankedCompletedAchievements()
+    {
+        int totalCount = 0;
+        int completedCount = 0;
+        foreach (AchievementTemplate achievement in achievementData.achievements)
+        {
+            if (achievement.achievementData.Count > 1)
+            {
+                bool isAchievementCompleted = achievement.achievementData.All(item => item.isCompleted);
+                if (isAchievementCompleted)
+                {
+                    completedCount++;
+                }
+                totalCount++;
+            }
+        }
+
+        return (completedCount, totalCount);
+    }
+    public (int, int) GetMilestoneCompletedAchievements()
+    {
+        int totalCount = 0;
+        int completedCount = 0;
+        foreach (AchievementTemplate achievement in achievementData.achievements)
+        {
+            if (achievement.achievementData.Count == 1)
+            {
+                bool isAchievementCompleted = achievement.achievementData.All(item => item.isCompleted);
+                if (isAchievementCompleted)
+                {
+                    completedCount++;
+                }
+                totalCount++;
+            }
+        }
+
+        return (completedCount, totalCount);
+    }
     public int GetTotalTrophys()
     {
         int count = 0;
@@ -382,7 +436,48 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
         return count;
     }
+    public (int, int) GetRankedCompletedTrophys()
+    {
+        int total = 0;
+        int count = 0;
+        foreach (AchievementTemplate achievement in achievementData.achievements)
+        {
+            if (achievement.achievementData.Count > 1)
+            {
+                foreach (AchievementTemplateDataItem item in achievement.achievementData)
+                {
+                    if (item.isCompleted)
+                    {
+                        count++;
+                    }
+                    total++;
+                }
+            }
+        }
 
+        return (count, total);
+    }
+    public (int, int) GetMilestoneCompletedTrophys()
+    {
+        int total = 0;
+        int count = 0;
+        foreach (AchievementTemplate achievement in achievementData.achievements)
+        {
+            if (achievement.achievementData.Count == 1)
+            {
+                foreach (AchievementTemplateDataItem item in achievement.achievementData)
+                {
+                    if (item.isCompleted)
+                    {
+                        count++;
+                    }
+                    total++;
+                }
+            }
+        }
+
+        return (count, total);
+    }
 
 
     public void SetCurrentWeekStartDate(DateTime startDate)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using System;
+using UnityEngine.UI;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -20,6 +21,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public Color darkButtonColor,lightButtonColor;
     public Color darkPlaceholder, lightPlaceholder;
     public Color darkInputFieldColor, lightInputFieldColor;
+    public Color darkLineColor;
     public Color darkSwitchTextColor;
 
 
@@ -45,7 +47,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         darkPlaceholder = new Color32(127,77,77,255);
         lightPlaceholder = new Color32(92, 59, 28, 155);
         darkInputFieldColor = new Color32(81,14,14,255);
-        lightInputFieldColor = new Color32(255,255,255,255);
+        lightInputFieldColor = new Color32(246,236,220,255);
+        darkLineColor = new Color32(246, 236, 220, 85);
         darkSwitchTextColor = new Color32(171, 162, 162, 255);
         
 
@@ -109,10 +112,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         // Check if the user has met their weekly goal
         return visits.Count >= weeklyGoal;
     }
-    // Gets the user's current streak
-   
-
-    // Checks and updates the streak
     public void UpdateStreak()
     {
         // Check and update the current week's start date if needed
@@ -136,7 +135,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 // Reset streak if the user failed to meet the weekly goal
                 ApiDataHandler.Instance.SetUserStreak(0);
             }
-
             // Update the date when the weekly goal was last set
             ApiDataHandler.Instance.SetCurrentWeekStartDate(currentWeekStartDate);
         }
@@ -144,172 +142,372 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
 
 
-    //public void SaveTheme(Theme theme)
-    //{
-    //    PreferenceManager.Instance.SetInt("SelectedTheme", (int)theme);
-    //    PreferenceManager.Instance.Save();
-    //}
-    //public Theme LoadTheme()
-    //{
-    //    int savedTheme = PlayerPrefs.GetInt("SelectedTheme", (int)Theme.Dark);
-    //    return (Theme)savedTheme;
-    //}
 
 
-    //public void SaveTemplateData()
-    //{
-    //    string json = JsonUtility.ToJson(templateData);
-    //    print(json);
-    //    PreferenceManager.Instance.SetString("excerciseData", json);
-    //    PreferenceManager.Instance.Save();
-    //}
+    public void CheckAchievementStatus()
+    {
 
-    //public void LoadTemplateData()
-    //{
-    //    if (PreferenceManager.Instance.HasKey("excerciseData"))
-    //    {
-    //        string json = PreferenceManager.Instance.GetString("excerciseData");
-    //        templateData = JsonUtility.FromJson<TemplateData>(json);
-    //        print(json);
-    //    }
-    //    else
-    //    {
-    //        templateData = new TemplateData();
-    //        CreateRandomDefaultEntry();
-    //    }
-    //}
+        foreach(AchievementTemplate _data in ApiDataHandler.Instance.getAchievementData().achievements)
+        {
+            switch (_data.type)
+            {
+                case AchievementType.BodyweightMultiplier:
+                    CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), null, null, null);
+                    break;
+                case AchievementType.WorkoutCount:
+                    CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, null, null, null);
+                    break;
+                case AchievementType.ExerciseCount:
+                    CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), null, null, null);
+                    break;
+                case AchievementType.Specialist:
+                    CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), null, null, null);
+                    break;
+                case AchievementType.CardioTime:
+                    CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), null, null, null);
+                    break;
+                case AchievementType.Streak:
+                    CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), null, null, null);
+                    break;
+            }
+        }
+        ApiDataHandler.Instance.SaveAchievementData();
+        
+    }
 
-    //public void CreateRandomDefaultEntry()
-    //{
-    //    ExerciseTypeModel back1 = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Deadlift (Barbell)",
-    //        categoryName = "Glutes",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel back2 = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Seated narrow grip row (cable)",
-    //        categoryName ="Lats",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    }; 
-    //    ExerciseTypeModel chest = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bench Press (Barbell)",
-    //        categoryName ="Chest",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel running = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Running",
-    //        categoryName="Cardio",
-    //        exerciseType = ExerciseType.TimeAndMiles,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel jumpRope = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Jump Rope",
-    //        categoryName = "Cardio",
-    //        exerciseType = ExerciseType.RepsOnly,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel spiderCurls = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Spider Curls",
-    //        categoryName="Biceps",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel bicepCulDumbbell = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bicep Curl (Dumbbell)",
-    //        categoryName = "Biceps",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel bicepCurlMachine = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bicep Curl (Machine)",
-    //        categoryName = "Biceps",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseModel defaultExerciseModel1 = new ExerciseModel
-    //    {
-    //        setID = 1,
-    //        previous = "-",
-    //        weight = 0,
-    //        rir = 0,
-    //        reps = 0
-    //    };
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back2.exerciseModel.Add(defaultExerciseModel1);
-    //    chest.exerciseModel.Add(defaultExerciseModel1);
-    //    running.exerciseModel.Add(defaultExerciseModel1);
-    //    running.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    spiderCurls.exerciseModel.Add(defaultExerciseModel1);
-    //    spiderCurls.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
+    public void CheckBodyWeightAchievements(AchievementTemplate data, PersonalBestData personalBest,List<Image> trophyImages,TextMeshProUGUI progressText,TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
 
+            if (achievementDataItem.isCompleted)
+            {
+                if(trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            int totalWeight = 0;
+            foreach (string exerciseName in data.category_exercise)
+            {
+                PersonalBestDataItem matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.ToLower() == exerciseName.ToLower());
+                if (matchingExercise != null)
+                {
+                    totalWeight += matchingExercise.weight;
+                }
+            }
+            float value = achievementDataItem.value * ApiDataHandler.Instance.GetWeight();
+            if (totalWeight >= (int)value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = totalWeight.ToString() + " / " + value.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
+    }
 
-    //    DefaultTempleteModel chestAndBack = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Chest And Back",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { back1, back2, chest }
-    //    };
-    //    DefaultTempleteModel runingAndJumpRope = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Runing And Jump Rope",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { running, jumpRope }
-    //    };
-    //    DefaultTempleteModel bicep = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Biceps",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { bicepCulDumbbell, bicepCulDumbbell, spiderCurls }
-    //    };
-    //    templateData.exerciseTemplete.Clear();
-    //    templateData.exerciseTemplete.Add(chestAndBack);
-    //    templateData.exerciseTemplete.Add(runingAndJumpRope);
-    //    templateData.exerciseTemplete.Add(bicep);
+    public void CheckWorkoutCountAchievements(AchievementTemplate data, int performedWorkouts, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
 
-    //    SaveTemplateData();
-    //}
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (performedWorkouts >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = performedWorkouts.ToString() + " / " + achievementDataItem.value.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
 
-    //public void SaveHistory()
-    //{
-    //    string json = JsonUtility.ToJson(historyData);
-    //    PreferenceManager.Instance.SetString("historyData", json);
-    //    PreferenceManager.Instance.Save();
-    //}
-    //public void LoadHistory()
-    //{
-    //    if (PreferenceManager.Instance.HasKey("historyData"))
-    //    {
-    //        string json = PreferenceManager.Instance.GetString("historyData");
-    //        historyData = JsonUtility.FromJson<HistoryModel>(json);
-    //    }
-    //    else
-    //    {
-    //        historyData = new HistoryModel();
-    //    }
-    //}
+    public void CheckExerciseCountAchievements(AchievementTemplate data, int performedExercises, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (performedExercises >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = performedExercises.ToString() + " / " + achievementDataItem.value.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
+
+    public void CheckSpecialistAchievements(AchievementTemplate data, HistoryModel historyModel, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            int performed = GetPerformancedExercisesByCategory(historyModel, data.category_exercise);
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (performed >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = performed.ToString() + " / " + achievementDataItem.value.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
+
+    public void CheckCardioTimeAchievements(AchievementTemplate data, HistoryModel historyModel, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            int performed = GetTotalPerformancedExerciseTime(historyModel, data.category_exercise);
+            float performedTime = (float)performed / 60;
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (performedTime >= (float)achievementDataItem.value / 60)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = performedTime.ToString() + " / " + ((float)achievementDataItem.value / 60).ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
+    public void CheckStreakAchievements(AchievementTemplate data, int streak, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (streak >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = streak.ToString() + " / " + (achievementDataItem.value).ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.gameObject.SetActive(false);
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
+
+    public int GetUniqueExerciseCount(HistoryModel historyModel)
+    {
+        HashSet<string> uniqueExercises = new HashSet<string>();
+        foreach (var template in historyModel.exerciseTempleteModel)
+        {
+            foreach (var exerciseType in template.exerciseTypeModel)
+            {
+                uniqueExercises.Add(exerciseType.exerciseName);
+            }
+        }
+        return uniqueExercises.Count;
+    }
+
+    public int GetPerformancedExercisesByCategory(HistoryModel myHistory, List<string> categoryNames)
+    {
+        int totalCount = 0;
+        foreach (var item in categoryNames)
+        {
+            item.ToLower();
+        }
+        foreach (HistoryTempleteModel historyTemplate in myHistory.exerciseTempleteModel)
+        {
+            foreach (HistoryExerciseTypeModel exerciseType in historyTemplate.exerciseTypeModel)
+            {
+                if (categoryNames.Contains(SplitString(exerciseType.categoryName).ToLower()))
+                {
+                    totalCount++;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    public int GetTotalPerformancedExerciseTime(HistoryModel myHistory, List<string> categoryNames)
+    {
+        int totalTime = 0;
+        foreach (var item in categoryNames)
+        {
+            item.ToLower();
+        }
+        // Loop through each exercise template in the history
+        foreach (HistoryTempleteModel historyTemplate in myHistory.exerciseTempleteModel)
+        {
+            // Loop through each exercise type in the template
+            foreach (HistoryExerciseTypeModel exerciseType in historyTemplate.exerciseTypeModel)
+            {
+                // Check if the exercise category matches any category in the achievement template
+                if (categoryNames.Contains(exerciseType.categoryName.ToLower()))
+                {
+                    // Loop through each exercise model and sum its time
+                    foreach (HistoryExerciseModel exercise in exerciseType.exerciseModel)
+                    {
+                        totalTime += exercise.time;
+                    }
+                }
+            }
+        }
+
+        return totalTime;
+    }
+    public string SplitString(string inputList)
+    {
+        string resultList;
+
+        if (inputList.Contains('/'))
+        {
+            // Split the string and add the parts to the result list
+            string[] splitParts = inputList.Split('/');
+            resultList = splitParts[0];
+            return resultList;
+        }
+        else
+        {
+            resultList = inputList;
+        }
+
+        return resultList;
+    }
+
 }

@@ -54,7 +54,7 @@ public class ProfileController : MonoBehaviour,PageController
         }
         else
         {
-            GlobalAnimator.Instance.ShowTextForOneSecond(messageText, "This can only be changed once every 2  weeks.");
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.",2f);
         }
 
         

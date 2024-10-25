@@ -3197,6 +3197,7 @@ GameObject:
   - component: {fileID: 4922575972492708313}
   - component: {fileID: 7016577630594324701}
   - component: {fileID: 4219927731114599587}
+  - component: {fileID: 6407222778362323845}
   m_Layer: 5
   m_Name: exerciseScreen
   m_TagString: Untagged
@@ -3249,7 +3250,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3d0cba8d05375cd43af6a575f71bc5ba, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 101f05261bd44e94aaf36498a3d6a3d9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3299,6 +3300,7 @@ MonoBehaviour:
       prs: 0
       exerciseTypeModel:
       - exerciseName: Cycling
+        categoryName: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3308,6 +3310,7 @@ MonoBehaviour:
           rir: 0
           mile: 0
       - exerciseName: Squat
+        categoryName: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3317,6 +3320,7 @@ MonoBehaviour:
           rir: 0
           mile: 0
       - exerciseName: Yoga
+        categoryName: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3357,6 +3361,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6845840506607966541}
   m_CullTransparentMesh: 1
+--- !u!114 &6407222778362323845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6845840506607966541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 826902635060874435}
+  playButton: {fileID: 0}
+  primaryText:
+  - {fileID: 2745453571052304715}
+  secondaryText: []
+  buttonText: []
+  inputFields:
+  - {fileID: 6942226358134106078}
+  inputFieldSearchIcon:
+  - {fileID: 6474698927599468105}
+  - {fileID: 8159788434001477700}
+  buttons:
+  - {fileID: 8037339316854927235}
+  - {fileID: 8798139842424076576}
+  - {fileID: 3632465867289849765}
+  - {fileID: 571515100039131699}
+  - {fileID: 3234454183514269621}
+  button2: []
+  workoutLogDropdownToggle: []
+  line: []
+  outlines: []
+  dropdowns: []
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  darkbackground: {fileID: 21300000, guid: 101f05261bd44e94aaf36498a3d6a3d9, type: 3}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
 --- !u!1 &7932671136403290416
 GameObject:
   m_ObjectHideFlags: 0

@@ -127,7 +127,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         // Lerp to target page if necessary
         if (_lerp)
         {
-            float decelerate = Mathf.Min(decelerationRate * Time.deltaTime, 1f);
+            float decelerate = Mathf.Min(decelerationRate * Time.deltaTime , 1f);
             _container.anchoredPosition = Vector2.Lerp(_container.anchoredPosition, _lerpTo, decelerate);
 
             if (Vector2.SqrMagnitude(_container.anchoredPosition - _lerpTo) < 0.25f)
@@ -319,7 +319,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         if (Time.unscaledTime - _timeStamp < fastSwipeThresholdTime &&
             Mathf.Abs(difference) > fastSwipeThresholdDistance &&
             Mathf.Abs(difference) < _fastSwipeThresholdMaxLimit) {
-            if (difference > 0) {
+            if (difference > 0f) {
                 NextScreen();
             } else {
                 PreviousScreen();

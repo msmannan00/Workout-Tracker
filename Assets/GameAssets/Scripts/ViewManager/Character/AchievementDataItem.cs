@@ -21,35 +21,28 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         bool isRank = (bool)data["rank"];
         titleText.text = _data.title;
         CheckAchievement();
-        //if (isRank)
-        //{
-        //    for (int i = 0; i < _data.achievementData.Count; i++)
-        //    {
-        //        descriptionText.text = _data.achievementData[i].description;
-        //    }
-        //}
     }
     void CheckAchievement()
     {
         switch (_data.type)
         {
             case AchievementType.BodyweightMultiplier:
-                CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData());
+                userSessionManager.Instance.CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.WorkoutCount:
-                CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count);     //historyData.exerciseTempleteModel.Count);
+                userSessionManager.Instance.CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.ExerciseCount:
-                CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()));
+                userSessionManager.Instance.CheckExerciseCountAchievements(_data, userSessionManager.Instance.GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.Specialist:
-                CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData());
+                userSessionManager.Instance.CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.CardioTime:
-                CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData());
+                userSessionManager.Instance.CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.Streak:
-                CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak());
+                userSessionManager.Instance.CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
                 break;
         }
     }
@@ -74,19 +67,22 @@ public class AchievementDataItem : MonoBehaviour,ItemController
                     totalWeight += matchingExercise.weight;
                 }
             }
-            if (totalWeight >= achievementDataItem.value)
+            float value = achievementDataItem.value * userSessionManager.Instance.currentWeight;
+            if (totalWeight >= (int)value)
             {
                 trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 achievementDataItem.isCompleted = true;
             }
             else
             {
-                progressText.text = totalWeight.ToString() + " / " + achievementDataItem.value.ToString();
+                progressText.text = totalWeight.ToString() + " / " + value.ToString();
                 descriptionText.text = achievementDataItem.description;
                 return;
             }
         }
-        descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
+        progressText.gameObject.SetActive(false);
+        descriptionText.gameObject.SetActive(false);
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
     }
 
     public void CheckWorkoutCountAchievements(AchievementTemplate data, int performedWorkouts)
@@ -146,7 +142,7 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         for (int i = 0; i < data.achievementData.Count; i++)
         {
             AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
-            int performed = GetPerformancedExercisesByCategory(historyModel, data.category_exercise);
+            int performed = userSessionManager.Instance.GetPerformancedExercisesByCategory(historyModel, data.category_exercise);
             if (achievementDataItem.isCompleted)
             {
                 trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
@@ -172,7 +168,7 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         for (int i = 0; i < data.achievementData.Count; i++)
         {
             AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
-            int performed = GetTotalPerformancedExerciseTime(historyModel, data.category_exercise);
+            int performed = userSessionManager.Instance.GetTotalPerformancedExerciseTime(historyModel, data.category_exercise);
             float performedTime = (float)performed / 60;
             if (achievementDataItem.isCompleted)
             {
@@ -242,7 +238,7 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         {
             foreach (HistoryExerciseTypeModel exerciseType in historyTemplate.exerciseTypeModel)
             {
-                if (categoryNames.Contains(SplitString(exerciseType.categoryName).ToLower()))
+                if (categoryNames.Contains(userSessionManager.Instance.SplitString(exerciseType.categoryName).ToLower()))
                 {
                     totalCount++;
                 }

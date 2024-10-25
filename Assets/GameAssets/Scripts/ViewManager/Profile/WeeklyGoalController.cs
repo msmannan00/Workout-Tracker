@@ -11,6 +11,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
 {
     public TMP_Dropdown dropDown;
     public TextMeshProUGUI messageText;
+    public Button continueButton;
     bool firstTime;
     TextMeshProUGUI goalText = null;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -20,7 +21,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
         {
             goalText = (TextMeshProUGUI)data["text"];
         }
-        List<object> list = new List<object>();
+        continueButton.onClick.AddListener(Continue);
         ////dropDown.onValueChanged.AddListener((index) =>
         ////{
         ////    lastSelectedValue = index;
@@ -35,9 +36,8 @@ public class WeeklyGoalController : MonoBehaviour, PageController
         ApiDataHandler.Instance.SetWeeklyGoal(dropDown.value + 2);
         ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
         if (goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }
-        Invoke("Back", 0.25f);
     }
-    public void Back()
+    public void Continue()
     {
         if (firstTime)
         {
@@ -56,6 +56,6 @@ public class WeeklyGoalController : MonoBehaviour, PageController
 
     public void ShowDetails()
     {
-        GlobalAnimator.Instance.ShowTextForOneSecond(messageText, "This can only be changed once every 2  weeks.");
+        GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.",2f);
     }
 }

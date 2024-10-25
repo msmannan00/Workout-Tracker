@@ -97,6 +97,20 @@ public class ExerciseController : MonoBehaviour, PageController
             textLabelObject.name = $"Label_{letter}";
             textMeshPro.text = letter.ToString();
             alphabetLabels.Add(textLabelObject.gameObject);
+            Image line = textLabelObject.GetComponentInChildren<Image>();
+            switch (ApiDataHandler.Instance.gameTheme)
+            {
+                case Theme.Light:
+                    textMeshPro.font = userSessionManager.Instance.lightPrimaryFont;
+                    textMeshPro.color = userSessionManager.Instance.lightButtonTextColor;
+                    line.color = userSessionManager.Instance.lightPlaceholder;
+                    break;
+                case Theme.Dark:
+                    textMeshPro.font = userSessionManager.Instance.darkPrimaryFont;
+                    textMeshPro.color = Color.white;
+                    line.color = userSessionManager.Instance.darkLineColor;
+                    break;
+            }
         }
     }
     public static List<string> GetUniqueExercises(HistoryModel historyData)
@@ -212,7 +226,12 @@ public class ExerciseController : MonoBehaviour, PageController
         else
         {
             selectedExercises.Add(exercise);
-            Color col = obj.GetComponent<Image>().color;
+            Color col = new Color32();
+            switch (ApiDataHandler.Instance.gameTheme)
+            {
+                case Theme.Light: col = new Color32(226,136,0,255); break;
+                case Theme.Dark: col = new Color32(132, 0, 0, 255); break;
+            }
             col.a = 1;
             obj.GetComponent<Image>().color = col;
             //obj.GetComponent<ExerciseItem>().selected.SetActive(true);

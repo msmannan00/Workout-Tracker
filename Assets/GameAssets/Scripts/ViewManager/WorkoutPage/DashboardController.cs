@@ -32,6 +32,7 @@ public class DashboardController : MonoBehaviour, PageController
             go.SetActive(false);
             go.SetActive(true);
         }
+        Workout();
     }
     public void EditTemplete()
     {

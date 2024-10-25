@@ -80,6 +80,7 @@ public class StateManager : GenericSingletonClass<StateManager>
         else
         {
             footer.SetActive(true);
+            footer.transform.parent.SetAsLastSibling();
         }
 
         //GlobalAnimator.Instance.openSidebar(prefab);

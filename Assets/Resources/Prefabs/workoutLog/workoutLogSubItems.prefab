@@ -466,8 +466,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 278.74997, y: -20}
-  m_SizeDelta: {x: 99.49999, y: 40}
+  m_AnchoredPosition: {x: 278.12497, y: -20}
+  m_SizeDelta: {x: 99.24999, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1061248529365749844
 GameObject:
@@ -502,8 +502,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 223.99997, y: -20}
-  m_SizeDelta: {x: 77.59999, y: 40}
+  m_AnchoredPosition: {x: 278.12497, y: -20}
+  m_SizeDelta: {x: 99.24999, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1096108797091017601
 GameObject:
@@ -1074,6 +1074,7 @@ GameObject:
   - component: {fileID: 3201160627667911616}
   - component: {fileID: 5988582688801593127}
   - component: {fileID: 5206521821129900041}
+  - component: {fileID: 2626559644273746443}
   m_Layer: 5
   m_Name: workoutLogSubItems
   m_TagString: Untagged
@@ -1141,6 +1142,57 @@ MonoBehaviour:
     toggle: 0
     time: 0
     mile: 0
+--- !u!114 &2626559644273746443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901955122820576659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  playButton: {fileID: 0}
+  primaryText: []
+  secondaryText:
+  - {fileID: 2283849035070694609}
+  - {fileID: 6712034864215653793}
+  - {fileID: 2332394580789589272}
+  buttonText: []
+  inputFields:
+  - {fileID: 6310939035040417197}
+  - {fileID: 6063576447931430342}
+  - {fileID: 8286130245901621362}
+  - {fileID: 3389905256027392727}
+  inputFieldSearchIcon: []
+  buttons:
+  - {fileID: 2629767028596063235}
+  - {fileID: 163491942084102857}
+  button2: []
+  workoutLogDropdownToggle:
+  - {fileID: 5784392554938453234}
+  - {fileID: 716699029809064018}
+  - {fileID: 7578372595284569683}
+  line: []
+  outlines:
+  - {fileID: 1113417655427525946}
+  - {fileID: 8494983783975062676}
+  - {fileID: 1233477992450111957}
+  - {fileID: 8926541237089003713}
+  - {fileID: 753146404380577315}
+  - {fileID: 698335300294632797}
+  - {fileID: 4999100391776737233}
+  dropdowns:
+  - {fileID: 2272862445268974194}
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  darkbackground: {fileID: 0}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
 --- !u!1 &1981163861144401679
 GameObject:
   m_ObjectHideFlags: 0
@@ -1486,7 +1538,7 @@ MonoBehaviour:
   m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 0
+  m_CharacterLimit: 4
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -2375,7 +2427,7 @@ MonoBehaviour:
   m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 0
+  m_CharacterLimit: 4
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -2891,7 +2943,7 @@ MonoBehaviour:
   m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 0
+  m_CharacterLimit: 4
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -3535,8 +3587,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 187.5, y: -20}
-  m_SizeDelta: {x: 62.999996, y: 40}
+  m_AnchoredPosition: {x: 278.12497, y: -20}
+  m_SizeDelta: {x: 99.24999, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7608160079804646331
 GameObject:

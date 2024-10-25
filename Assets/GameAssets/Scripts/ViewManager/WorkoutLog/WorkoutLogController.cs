@@ -14,9 +14,9 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public TMP_InputField workoutNotes;
     public TMP_InputField editWorkoutName;
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI messageText;
     public Button editWorkoutButton;
     public Button saveButton;
-    public Image back, watch, watchpins, addExercise1, addExercise2, line, save, cancle;
     public Transform content;
 
     public bool addSets;
@@ -42,7 +42,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
         {
 
             DefaultTempleteModel dataTemplate = DeepCopy((DefaultTempleteModel)data["dataTemplate"]);
-            //orignalModel = DeepCopy(dataTemplate);
             templeteModel.templeteName= dataTemplate.templeteName;
             workoutNotes.text = dataTemplate.templeteNotes;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
@@ -60,48 +59,48 @@ public class WorkoutLogController : MonoBehaviour, PageController
             }
             workoutNotes.onValueChanged.AddListener(OnNotesChange);
         }
-        //else
-        //{
-        //    workoutNameText.text = (string)data["templeteName"];
-        //    editWorkoutName.text = (string)data["templeteName"];
-        //    float textWidth = workoutNameText.preferredWidth;
-        //    workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
-
-        //}
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         editWorkoutButton.onClick.AddListener(EditWorkoutName);
-        OnToggleWorkout();
-        saveButton.interactable = false;
+        
+        //saveButton.interactable = false;
+    }
+    private void OnEnable()
+    {
+        OnToggleWorkout(null);
     }
 
-    
-    //private void Start()
-    //{
-    //    timerText.color = disabledColor;
-    //    if (workoutNameText != null)
-    //    {
-    //        workoutNameText.onEndEdit.AddListener(OnNameChanged);
-    //    }
-    //}
+    private void OnDisable()
+    {
+        OnToggleWorkout(null);
+    }
 
     void EditWorkoutName()
     {
         workoutNameText.gameObject.SetActive(false);
         editWorkoutName.gameObject.SetActive(true);
         editWorkoutName.text=workoutNameText.text;
+        editWorkoutName.ActivateInputField();
     }
-    public void OnToggleWorkout()
+    public void OnToggleWorkout(List<object> data)
     {
         //if (templeteModel.exerciseTemplete.Count == 0)
         //{
         //    return;
         //}
-
         isTimerRunning = !isTimerRunning;
 
         if (isTimerRunning)
         {
-            timerText.color = enabledColor;
+            //timerText.color = enabledColor;
+            switch (ApiDataHandler.Instance.gameTheme)
+            {
+                case Theme.Light:
+                    timerText.color = userSessionManager.Instance.lightButtonTextColor;
+                    break;
+                case Theme.Dark:
+                    timerText.color = Color.white;
+                    break;
+            }
 
             if (timerCoroutine == null)
             {
@@ -193,7 +192,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator }
+                    { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator },{"templeteModel",templeteModel}
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -216,7 +215,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 {
                     { "data", typeModel },
                     { "isWorkoutLog", true },
-                    {"isTemplateCreator",isTemplateCreator }
+                    {"isTemplateCreator",isTemplateCreator },
+                    {"templeteModel",templeteModel}
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -229,23 +229,23 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     private void SaveButtonInteractable(object data)
     {
-        bool check = (bool)data;
-        if (check) { saveButton.interactable = true; }
-        else
-        {
-            foreach (var exerciseType in templeteModel.exerciseTemplete)
-            {
-                foreach (var exercise in exerciseType.exerciseModel)
-                {
-                    if (exercise.toggle)
-                    {
-                        saveButton.interactable = true;
-                        return;
-                    }
-                }
-            }
-            saveButton.interactable = false;
-        }
+        //bool check = (bool)data;
+        //if (check) { saveButton.interactable = true; }
+        //else
+        //{
+        //    foreach (var exerciseType in templeteModel.exerciseTemplete)
+        //    {
+        //        foreach (var exercise in exerciseType.exerciseModel)
+        //        {
+        //            if (exercise.toggle)
+        //            {
+        //                saveButton.interactable = true;
+        //                return;
+        //            }
+        //        }
+        //    }
+        //    saveButton.interactable = false;
+        //}
     }
     private void OnRemoveIndex(object data)
     {
@@ -264,8 +264,102 @@ public class WorkoutLogController : MonoBehaviour, PageController
         }
     }
 
+    public (int,int) CheckAllSetsComplete()
+    {
+        int totalSets=0;
+        int completedSets=0;
+        foreach (var exerciseType in templeteModel.exerciseTemplete)
+        {
+            foreach (var exercise in exerciseType.exerciseModel)
+            {
+                totalSets++;
+                if (exercise.toggle)
+                {
+                    completedSets++;
+                }
+            }
+        }
+        return (totalSets, completedSets);
+    }
+    public void OnFinishPopupOrMessage()
+    {
+        (int totalSets, int completedSets) = CheckAllSetsComplete();
+        if (completedSets == 0)
+        {
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Please Complete some sets before Finishing", 2f);
+            return;
+        }
+        OnToggleWorkout(null);
+       
+        if (completedSets > 0 && completedSets != totalSets)
+        {
+            string message = "All invalid/empty sets will be discarded. All sets with valid data will be automatically marked as completed.";
+            List<object> initialData = new List<object> { this.gameObject, templeteModel, this.callback,message, isTemplateCreator, SetDataForHistory() };
+            Action<List<object>> onFinish = OnToggleWorkout;
+            PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", onFinish, initialData);
+            return;
+        }
+        if (completedSets == totalSets)
+        {
+            string message = "Are you sure you want to discard this workout.";
+            List<object> initialData = new List<object> { this.gameObject, templeteModel, this.callback,message, isTemplateCreator, SetDataForHistory() };
+            Action<List<object>> onFinish = OnToggleWorkout;
+            PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", onFinish, initialData);
+            return;
+        }
+    }
+
+    public HistoryTempleteModel SetDataForHistory()
+    {
+        DateTime currentDateTime = DateTime.Now;
+        var historyTemplate = new HistoryTempleteModel
+        {
+            templeteName = templeteModel.templeteName,
+            dateTime = currentDateTime.ToString("MMM dd, yyyy"),
+            completedTime = (int)elapsedTime,
+            totalWeight = CalculateTotalWeight(templeteModel),
+            prs = 0 // Assuming PRs are not tracked here. Adjust as needed.
+        };
+        // Populate HistoryExerciseTypeModel list
+        foreach (var exerciseType in templeteModel.exerciseTemplete)
+        {
+            var historyExerciseType = new HistoryExerciseTypeModel
+            {
+                exerciseName = exerciseType.name,
+                categoryName = exerciseType.categoryName,
+                index = exerciseType.index,
+                exerciseType = exerciseType.exerciseType,
+                exerciseModel = new List<HistoryExerciseModel>()
+            };
+            //print(historyExerciseType.categoryName + "/" + exerciseType.categoryName);
+            // Populate HistoryExerciseModel list but only add exercises where toggle is true
+            foreach (var exercise in exerciseType.exerciseModel)
+            {
+                //print("bool " + exercise.toggle);
+                if (exercise.toggle) // Only add exercise if toggle is true
+                {
+                    var historyExercise = new HistoryExerciseModel
+                    {
+                        weight = exercise.weight,
+                        reps = exercise.reps,
+                        time = exercise.time
+                    };
+
+                    historyExerciseType.exerciseModel.Add(historyExercise);
+                }
+            }
+
+            // Only add the exerciseType if it has any exercises with toggle true
+            if (historyExerciseType.exerciseModel.Count > 0)
+            {
+                historyTemplate.exerciseTypeModel.Add(historyExerciseType);
+            }
+        }
+        return historyTemplate;
+    }
     public void Finish()
     {
+
         isTimerRunning = false;
         DateTime currentDateTime = DateTime.Now;
         var historyTemplate = new HistoryTempleteModel
@@ -314,7 +408,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (historyTemplate.exerciseTypeModel.Count > 0)
         {
             ApiDataHandler.Instance.AddItemToHistoryData(historyTemplate);
-            //userSessionManager.Instance.historyData.exerciseTempleteModel.Add(historyTemplate);
             ApiDataHandler.Instance.SaveHistory();
         }
 
@@ -323,7 +416,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
             if (templeteModel.exerciseTemplete.Count > 0)
             {
                 ApiDataHandler.Instance.AddItemToTemplateData(templeteModel);
-                //userSessionManager.Instance.templateData.exerciseTemplete.Add(templeteModel);
                 ApiDataHandler.Instance.SaveTemplateData();
             }
             StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null);
@@ -351,9 +443,11 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void OnBack()
     {
+        OnToggleWorkout(null);
         //StateManager.Instance.HandleBackAction(gameObject);
         List<object> initialData = new List<object> { this.gameObject };
-        PopupController.Instance.OpenPopup("workoutLog", "CancelWorkoutPopup", null, initialData);
+        Action<List<object>> onFinish = OnToggleWorkout;
+        PopupController.Instance.OpenPopup("workoutLog", "CancelWorkoutPopup", onFinish, initialData);
     }
     private int CalculateTotalWeight(DefaultTempleteModel defaultTemplate)
     {

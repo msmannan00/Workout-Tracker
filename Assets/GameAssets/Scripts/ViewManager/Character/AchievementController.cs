@@ -16,11 +16,14 @@ public class AchievementController : MonoBehaviour, PageController
     AchievementData achievementData;
     List<GameObject> rankAchievement = new List<GameObject>();
     List<GameObject> milestoneAchievement = new List<GameObject>();
+    bool onFooter;
+    bool backAction;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        trophysText.text = "Trophies " + ApiDataHandler.Instance.GetCompletedTrophys().ToString() + " / " + ApiDataHandler.Instance.GetTotalTrophys().ToString();
-        completedText.text = "Completed " + ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements().ToString();
+        onFooter = (bool)data["onFooter"];
+        backAction = (bool)data["backAction"];
         achievementData = ApiDataHandler.Instance.getAchievementData();
+        SetCompleteAndTrophiesTextForRank();
         Rank();
     }
 
@@ -34,6 +37,7 @@ public class AchievementController : MonoBehaviour, PageController
         if (rankAchievement.Count != 0)
         {
             foreach(GameObject obj in rankAchievement) { obj.SetActive(true); }
+            SetCompleteAndTrophiesTextForRank();
             return;
         }
         List<AchievementTemplate> rankAchievements = GetAchievementsForRank();
@@ -48,6 +52,7 @@ public class AchievementController : MonoBehaviour, PageController
             newItem.GetComponent<ItemController>().onInit(initData, null);
             rankAchievement.Add(newItem);
         }
+        SetCompleteAndTrophiesTextForRank();
     }
     public void Milestone()
     {
@@ -59,6 +64,7 @@ public class AchievementController : MonoBehaviour, PageController
         if (milestoneAchievement.Count != 0)
         {
             foreach (GameObject obj in milestoneAchievement) { obj.SetActive(true); }
+            SetCompleteAndTrophiesForMilestone();
             return;
         }
         List<AchievementTemplate> rankAchievements = GetAchievementsForMilestone();
@@ -73,13 +79,28 @@ public class AchievementController : MonoBehaviour, PageController
             newItem.GetComponent<ItemController>().onInit(initData, null);
             milestoneAchievement.Add(newItem);
         }
+        SetCompleteAndTrophiesForMilestone();
     }
-
+    void SetCompleteAndTrophiesForMilestone()
+    {
+        (int completeTrophies, int totalTrophies) = ApiDataHandler.Instance.GetMilestoneCompletedTrophys();
+        trophysText.text = "Trophies " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
+        (int completeAchievemet, int totalAchievement) = ApiDataHandler.Instance.GetMilestoneCompletedAchievements();
+        completedText.text = "Completed " + completeAchievemet.ToString() + " / " + totalAchievement.ToString();
+    }
+    void SetCompleteAndTrophiesTextForRank()
+    {
+        (int completeTrophies, int totalTrophies) = ApiDataHandler.Instance.GetRankedCompletedTrophys();
+        trophysText.text = "Trophies " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
+        (int completeAchievemet, int totalAchievement) = ApiDataHandler.Instance.GetRankedCompletedAchievements();
+        completedText.text = "Completed " + completeAchievemet.ToString() + " / " + totalAchievement.ToString();
+    }
     public void Back()
     {
         ApiDataHandler.Instance.SaveAchievementData();
         StateManager.Instance.HandleBackAction(gameObject);
-        StateManager.Instance.OpenFooter(null, null, false);
+        if(onFooter)
+            StateManager.Instance.OpenFooter(null, null, false);
     }
     public List<AchievementTemplate> GetAchievementsForMilestone()
     {

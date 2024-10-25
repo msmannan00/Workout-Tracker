@@ -23,9 +23,12 @@ public class GUISetting : MonoBehaviour
     [SerializeField]
     private List<Image> button2 = new List<Image>();
     [SerializeField]
+    private List<Image> workoutLogDropdownToggle = new List<Image>();
+    [SerializeField]
     private List<Image> line = new List<Image>();
     [SerializeField]
     private List<Outline> outlines = new List<Outline>();
+    public List<TMP_Dropdown> dropdowns = new List<TMP_Dropdown>();
     public TextMeshProUGUI switchButton1,switchButton2;
 
     public Sprite darkbackground, lightbackground;
@@ -43,22 +46,28 @@ public class GUISetting : MonoBehaviour
                     playButton.sprite = lightPlay;
                 setBackground(lightbackground);
                 SetPrimaryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
-                SetSecondaryText(userSessionManager.Instance.lightSecondaryFont);
+                SetSecondaryText(userSessionManager.Instance.lightSecondaryFont, userSessionManager.Instance.lightButtonTextColor);
                 SetButtonColor(userSessionManager.Instance.lightButtonColor);
                 SetButtonTextColor(Color.white);
                 SetButton2Color(userSessionManager.Instance.lightInputFieldColor);
-                SetInputFields(userSessionManager.Instance.lightSecondaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetInputFields(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetOutlines(userSessionManager.Instance.lightButtonColor);
+                SetWorkoutLogDropdownToggle(userSessionManager.Instance.lightInputFieldColor);
+                SetLineColor(userSessionManager.Instance.lightPlaceholder);
                 break;
             case Theme.Dark:
                 if(playButton != null)
                     playButton.sprite = darkPlay;
                 setBackground(darkbackground);
                 SetPrimaryText(userSessionManager.Instance.darkPrimaryFont, Color.white);
-                SetSecondaryText(userSessionManager.Instance.darkSecondaryFont);
+                SetSecondaryText(userSessionManager.Instance.darkSecondaryFont,Color.white);
                 SetButtonColor(userSessionManager.Instance.darkButtonColor);
                 SetButtonTextColor(userSessionManager.Instance.darkButtonTextColor);
                 SetButton2Color(userSessionManager.Instance.darkButtonTextColor);
-                SetInputFields(userSessionManager.Instance.darkSecondaryFont, new Color32(255, 255, 255, 255), userSessionManager.Instance.darkPlaceholder,userSessionManager.Instance.darkInputFieldColor);
+                SetInputFields(userSessionManager.Instance.darkPrimaryFont, new Color32(255, 255, 255, 255), userSessionManager.Instance.darkPlaceholder,userSessionManager.Instance.darkInputFieldColor);
+                SetOutlines(userSessionManager.Instance.darkButtonColor);
+                SetWorkoutLogDropdownToggle(userSessionManager.Instance.darkInputFieldColor);
+                SetLineColor(userSessionManager.Instance.darkLineColor);
                 break;
         }
     }
@@ -74,11 +83,13 @@ public class GUISetting : MonoBehaviour
             text.color = col;
         }
     }
-    public void SetSecondaryText(TMP_FontAsset font)
+    public void SetSecondaryText(TMP_FontAsset font, Color col)
     {
         foreach (TextMeshProUGUI text in secondaryText)
         {
             text.font = font;
+            text.color = col;
+            //print("sec");
         }
     }
     public void SetButtonTextColor(Color col)
@@ -102,18 +113,39 @@ public class GUISetting : MonoBehaviour
             img.color = col;
         }
     }
-    public void SetInputFields(TMP_FontAsset font,Color textCol, Color placeHolderCol,Color imageColor)
+    public void SetInputFields(TMP_FontAsset textFont, Color textCol, Color placeHolderCol,Color imageColor)
     {
         foreach(TMP_InputField inputField in inputFields)
         {
             inputField.GetComponent<Image>().color = imageColor;
-            inputField.fontAsset = font;
+            inputField.textComponent.font = textFont;
             inputField.textComponent.color = textCol;
             inputField.placeholder.color= placeHolderCol;
         }
         foreach(Image img in inputFieldSearchIcon)
         {
             img.color = placeHolderCol;
+        }
+    }
+    public void SetOutlines(Color col)
+    {
+        foreach(Outline item in outlines)
+        {
+            item.effectColor = col;
+        }
+    }
+    public void SetWorkoutLogDropdownToggle(Color col)
+    {
+        foreach(Image img in workoutLogDropdownToggle)
+        {
+            img.color = col;
+        }
+    }
+    public void SetLineColor(Color col)
+    {
+        foreach(Image img in line)
+        {
+            img.color = col;
         }
     }
 }
