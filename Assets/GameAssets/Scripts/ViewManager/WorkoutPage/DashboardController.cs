@@ -18,12 +18,19 @@ public class DashboardController : MonoBehaviour, PageController
     public Transform content;
     public RectTransform switchButton;
     public TextMeshProUGUI switchWorkout, switchSplit;
+    public Button createNewWorkout, startNewWorkout,workout,split;
     List<GameObject> items = new List<GameObject>();
+    bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
         Workout();
+        isWorkout = true;
+        createNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        startNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        workout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        split.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     private void OnEnable()
     {
@@ -33,6 +40,7 @@ public class DashboardController : MonoBehaviour, PageController
             go.SetActive(true);
         }
         Workout();
+        isWorkout = true;
     }
     public void EditTemplete()
     {
@@ -42,6 +50,7 @@ public class DashboardController : MonoBehaviour, PageController
     {
         if (userSessionManager.Instance.selectedTemplete != null)
         {
+            AudioController.Instance.OnButtonClick();
             StartEmptyWorkoutWithTemplate(userSessionManager.Instance.selectedTemplete);
         }
     }
@@ -154,6 +163,9 @@ public class DashboardController : MonoBehaviour, PageController
 
     public void Workout()
     {
+        if (isWorkout) return;
+        isWorkout = true;
+        //AudioController.Instance.OnButtonClick();
         GlobalAnimator.Instance.AnimateRectTransformX(switchButton, -3, 0.25f);
         switch(ApiDataHandler.Instance.gameTheme)
         {
@@ -169,6 +181,9 @@ public class DashboardController : MonoBehaviour, PageController
     }
     public void Splits()
     {
+        if(!isWorkout) return;
+        isWorkout = false;
+        //AudioController.Instance.OnButtonClick();
         GlobalAnimator.Instance.AnimateRectTransformX(switchButton, 141, 0.25f);
         switch (ApiDataHandler.Instance.gameTheme)
         {

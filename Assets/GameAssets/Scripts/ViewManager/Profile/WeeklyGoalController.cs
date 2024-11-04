@@ -12,6 +12,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
     public TMP_Dropdown dropDown;
     public TextMeshProUGUI messageText;
     public Button continueButton;
+    public Button infoButton;
     bool firstTime;
     TextMeshProUGUI goalText = null;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -22,17 +23,14 @@ public class WeeklyGoalController : MonoBehaviour, PageController
             goalText = (TextMeshProUGUI)data["text"];
         }
         continueButton.onClick.AddListener(Continue);
-        ////dropDown.onValueChanged.AddListener((index) =>
-        ////{
-        ////    lastSelectedValue = index;
-        ////    ApiDataHandler.Instance.SetWeeklyGoal(index + 2);
-        ////    ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
-        ////    if(goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }
-        ////    Invoke("Back", 0.25f);
-        ////});
+        continueButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        //dropDown.gameObject.AddComponent<Button>();
+        //dropDown.gameObject.GetComponent<Button>().onClick.AddListener(AudioController.Instance.OnButtonClick);
+        infoButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     public void OnDropdownClick()
     {
+        AudioController.Instance.OnButtonClick();
         ApiDataHandler.Instance.SetWeeklyGoal(dropDown.value + 2);
         ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
         if (goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }

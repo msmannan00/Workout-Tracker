@@ -12,14 +12,12 @@ public class ExerciseController : MonoBehaviour, PageController
     public Transform content;
     public TextMeshProUGUI labelText;
     public TMP_InputField searchInputField;
-    public Button addExerciseButton;
+    public Button addExerciseButton, backButton,bodyPartButton;
     public Button alphabetic, byRank, performed;
     public Color buttonUnselectColor;
     public GameObject bodyPartPrefab;
     public Transform bodyPartsContent;
 
-    public List<Image> themeColorItems;
-    public Image searchIcon1, searchIcon2;
     private SearchButtonType currentButton;
     public List<string> selectedBodyParts=new List<string>();
     public List<ExerciseDataItem> selectedExercises = new List<ExerciseDataItem>();
@@ -51,15 +49,10 @@ public class ExerciseController : MonoBehaviour, PageController
                 addExerciseButton.onClick.AddListener(() => AddExerciseToPersonalBest());
                 break;
         }
+        addExerciseButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        bodyPartButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
-        //if(isWorkoutLog)
-        //{
-        //    addExerciseButton.onClick.AddListener(() => AddExerciseToWorkoutLog());
-        //}
-        //else
-        //{
-        //    addExerciseButton.onClick.AddListener(() => AddExerciseToCreateWorkout());
-        //}
+
 
        
     }
@@ -67,18 +60,16 @@ public class ExerciseController : MonoBehaviour, PageController
 
     void Start()
     {
-        //SaveTestHistory();
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
 
-        //LoadExercises();
-        //searchInputField.onValueChanged.AddListener(OnSearchChanged);
-        //alphabetic.onClick.AddListener(() => LoadExercises());
-        //byRank.onClick.AddListener(() => ByRankExercises(""));
-        //performed.onClick.AddListener(() => PerformedExercises(""));
-        //alphabetic.onClick.AddListener(() =>ClearSearchBar());
-        //byRank.onClick.AddListener(() => ClearSearchBar());
-        //performed.onClick.AddListener(() => ClearSearchBar());
     }
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClose();
+        }
+    }
     public void SortBodyParts()
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
@@ -136,81 +127,82 @@ public class ExerciseController : MonoBehaviour, PageController
     
     void PerformedExercises(string filter)
     {
-        addExerciseButton.gameObject.SetActive(false);
-        selectedExercises.Clear();
-        currentButton = SearchButtonType.Performed;
-        SetSelectedButton();
+        //addExerciseButton.gameObject.SetActive(false);
+        //selectedExercises.Clear();
+        //currentButton = SearchButtonType.Performed;
+        //SetSelectedButton();
 
-        if (alphabetLabels != null)
-        {
-            foreach (GameObject label in alphabetLabels)
-            {
-                if (label != null)
-                {
-                    Destroy(label);
-                }
-            }
-            alphabetLabels.Clear();
-        }
+        //if (alphabetLabels != null)
+        //{
+        //    foreach (GameObject label in alphabetLabels)
+        //    {
+        //        if (label != null)
+        //        {
+        //            Destroy(label);
+        //        }
+        //    }
+        //    alphabetLabels.Clear();
+        //}
 
-        foreach (GameObject item in exerciseItems)
-        {
-            Destroy(item);
-        }
-        exerciseItems.Clear();
+        //foreach (GameObject item in exerciseItems)
+        //{
+        //    Destroy(item);
+        //}
+        //exerciseItems.Clear();
 
-        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
-        HistoryModel historyData = ApiDataHandler.Instance.getHistoryData();
-        List<string> filterExercises = GetUniqueExercises(historyData);
-        foreach(string name in filterExercises)
-        {
-            print(name);
-        }
-        string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
+        //ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
+        //HistoryModel historyData = ApiDataHandler.Instance.getHistoryData();
+        //List<string> filterExercises = GetUniqueExercises(historyData);
+        //foreach(string name in filterExercises)
+        //{
+        //    print(name);
+        //}
+        //string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
 
-        foreach (ExerciseDataItem exercise in exerciseData.exercises)
-        {
-            // Check if the exercise name or category should be filtered out
-            if (!string.IsNullOrEmpty(lowerFilter) &&
-                !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
-                  exercise.category.ToLower().Contains(lowerFilter)))
-            {
-                continue;
-            }
-            // Check if the exercise name is in the list of filterExercises
-            if (filterExercises != null && !filterExercises.Contains(exercise.exerciseName))
-            {
-                continue;
-            }
+        //foreach (ExerciseDataItem exercise in exerciseData.exercises)
+        //{
+        //    // Check if the exercise name or category should be filtered out
+        //    if (!string.IsNullOrEmpty(lowerFilter) &&
+        //        !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+        //          exercise.category.ToLower().Contains(lowerFilter)))
+        //    {
+        //        continue;
+        //    }
+        //    // Check if the exercise name is in the list of filterExercises
+        //    if (filterExercises != null && !filterExercises.Contains(exercise.exerciseName))
+        //    {
+        //        continue;
+        //    }
 
-            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
-            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+        //    GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+        //    GameObject newExerciseObject = Instantiate(exercisePrefab, content);
 
-            ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+        //    ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
 
-            Dictionary<string, object> initData = new Dictionary<string, object>
-            {
-                { "data", exercise },
-            };
+        //    Dictionary<string, object> initData = new Dictionary<string, object>
+        //    {
+        //        { "data", exercise },
+        //    };
 
-            newExerciseItem.onInit(initData);
+        //    newExerciseItem.onInit(initData);
 
-            Button button = newExerciseObject.GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() =>
-                {
-                    //callback?.Invoke(exercise);
-                    SelectAndDeselectExercise(newExerciseObject, exercise);
-                    //OnClose();
-                });
-            }
+        //    Button button = newExerciseObject.GetComponent<Button>();
+        //    if (button != null)
+        //    {
+        //        button.onClick.AddListener(() =>
+        //        {
+        //            //callback?.Invoke(exercise);
+        //            SelectAndDeselectExercise(newExerciseObject, exercise);
+        //            //OnClose();
+        //        });
+        //    }
 
-            exerciseItems.Add(newExerciseObject);
-        }
+        //    exerciseItems.Add(newExerciseObject);
+        //}
     }
     void SelectAndDeselectExercise(GameObject obj, ExerciseDataItem exercise)
     {
+        AudioController.Instance.OnButtonClick();
         if (selectedExercises.Contains(exercise))
         {
             selectedExercises.Remove(exercise);

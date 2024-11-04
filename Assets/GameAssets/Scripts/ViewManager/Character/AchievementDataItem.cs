@@ -42,7 +42,10 @@ public class AchievementDataItem : MonoBehaviour,ItemController
                 userSessionManager.Instance.CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.Streak:
-                userSessionManager.Instance.CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.LevelUp:
+                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserLevel(), trophyImages, progressText, descriptionText);
                 break;
         }
     }

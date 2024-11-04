@@ -13,11 +13,15 @@ public class AchievementController : MonoBehaviour, PageController
     public TextMeshProUGUI completedText;
     public RectTransform selectionLine;
     public Transform content;
+    public Button backButton;
+    public Button rankButton;
+    public Button milestoneButton;
     AchievementData achievementData;
     List<GameObject> rankAchievement = new List<GameObject>();
     List<GameObject> milestoneAchievement = new List<GameObject>();
     bool onFooter;
     bool backAction;
+    bool isRank;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onFooter = (bool)data["onFooter"];
@@ -25,10 +29,28 @@ public class AchievementController : MonoBehaviour, PageController
         achievementData = ApiDataHandler.Instance.getAchievementData();
         SetCompleteAndTrophiesTextForRank();
         Rank();
+        isRank = true;
+    }
+    private void Start()
+    {
+        backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        rankButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        milestoneButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
     }
 
     public void Rank()
     {
+        if (isRank) return;
+        isRank = true;
+        SetRankSelectionColor();
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -100f, 0.25f);
         if (milestoneAchievement.Count != 0)
         {
@@ -56,6 +78,9 @@ public class AchievementController : MonoBehaviour, PageController
     }
     public void Milestone()
     {
+        if (!isRank) return;
+        isRank = false;
+        SetMilestoneSelectionColor();
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 100f, 0.25f);
         if (rankAchievement.Count != 0)
         {
@@ -80,6 +105,34 @@ public class AchievementController : MonoBehaviour, PageController
             milestoneAchievement.Add(newItem);
         }
         SetCompleteAndTrophiesForMilestone();
+    }
+    public void SetRankSelectionColor()
+    {
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                rankButton.GetComponent<TextMeshProUGUI>().color = new Color32(218, 52, 52, 255);
+                milestoneButton.GetComponent<TextMeshProUGUI>().color = new Color32(92, 59, 28, 186);
+                break;
+            case Theme.Dark:
+                rankButton.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+                milestoneButton.GetComponent<TextMeshProUGUI>().color = new Color32(186, 172, 172, 186);
+                break;
+        }
+    }
+    public void SetMilestoneSelectionColor()
+    {
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                rankButton.GetComponent<TextMeshProUGUI>().color = new Color32(92, 59, 28, 186);
+                milestoneButton.GetComponent<TextMeshProUGUI>().color = new Color32(218, 52, 52, 255);
+                break;
+            case Theme.Dark:
+                rankButton.GetComponent<TextMeshProUGUI>().color = new Color32(186, 172, 172, 186);
+                milestoneButton.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+                break;
+        }
     }
     void SetCompleteAndTrophiesForMilestone()
     {

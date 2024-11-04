@@ -28,7 +28,9 @@ public class DashboardItemController : MonoBehaviour, ItemController
         editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         playButton.onClick.AddListener(PlayButton);
+        playButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         editButton.onClick.AddListener(EditWorkoutName);
+        editButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         
         
         foreach (var exercise in defaultTempleteModel.exerciseTemplete)
@@ -74,14 +76,23 @@ public class DashboardItemController : MonoBehaviour, ItemController
     }
     public void OnNameChanged(string name)
     {
-        defaultTempleteModel.templeteName = name.ToUpper();
-        workoutNameText.text = name.ToUpper();
-        //float textWidth = workoutNameText.preferredWidth;
-        //workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
-        workoutNameText.gameObject.SetActive(true);
-        editWorkoutName.gameObject.SetActive(false);
-        editButton.gameObject.SetActive(true);
-        ApiDataHandler.Instance.SaveTemplateData();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            workoutNameText.gameObject.SetActive(true);
+            editWorkoutName.gameObject.SetActive(false);
+            editButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            defaultTempleteModel.templeteName = name.ToUpper();
+            workoutNameText.text = name.ToUpper();
+            //float textWidth = workoutNameText.preferredWidth;
+            //workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+            workoutNameText.gameObject.SetActive(true);
+            editWorkoutName.gameObject.SetActive(false);
+            editButton.gameObject.SetActive(true);
+            ApiDataHandler.Instance.SaveTemplateData();
+        }
     }
     public void SetColor(TextMeshProUGUI text)
     {

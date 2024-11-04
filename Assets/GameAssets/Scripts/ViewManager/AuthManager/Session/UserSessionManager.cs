@@ -28,6 +28,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
     public Color darkSearchBarColor, darkSearchIconColor;
     public Color lightBgColor, lightHeadingColor, lightTextColor;
+    public Color lightXPbutton, darkXPbutton;
 
     public DefaultTempleteModel selectedTemplete;
     private TemplateData templateData = new TemplateData();
@@ -50,6 +51,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         lightInputFieldColor = new Color32(246,236,220,255);
         darkLineColor = new Color32(246, 236, 220, 85);
         darkSwitchTextColor = new Color32(171, 162, 162, 255);
+        lightXPbutton = new Color32(167, 200, 33, 255);
+        darkXPbutton = new Color32(241, 183, 32, 255);
         
 
         // darkBgColor = new Color32(99, 24, 24, 255);
@@ -167,7 +170,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), null, null, null);
                     break;
                 case AchievementType.Streak:
-                    CheckStreakAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), null, null, null);
+                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), null, null, null);
+                    break;
+                case AchievementType.LevelUp:
+                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserLevel(), null, null, null);
                     break;
             }
         }
@@ -204,7 +210,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, true };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -212,7 +218,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 if (progressText != null && descriptionText != null)
                 {
-                    progressText.text = totalWeight.ToString() + " / " + value.ToString();
+                    progressText.text = totalWeight.ToString() + "kg / " + value.ToString()+"kg";
                     descriptionText.text = achievementDataItem.description;
                 }
                 return;
@@ -221,7 +227,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
     }
@@ -245,7 +251,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -262,7 +268,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text= "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
@@ -286,7 +292,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -303,7 +309,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
@@ -327,7 +333,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -344,7 +350,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
@@ -369,7 +375,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -386,11 +392,11 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
-    public void CheckStreakAchievements(AchievementTemplate data, int streak, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    public void CheckStreakAndLevelAchievements(AchievementTemplate data, int streak, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
     {
         for (int i = 0; i < data.achievementData.Count; i++)
         {
@@ -408,7 +414,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, false };
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
                     PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
@@ -425,7 +431,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
-            descriptionText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }

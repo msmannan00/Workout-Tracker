@@ -11,6 +11,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
     public TextMeshProUGUI label,bodyPartLabel;
     public GameObject prefab;
     public RectTransform content;
+    public Button back;
     public Image backButton;
     public float maxRowWidth = 350f; // Maximum width for one row
     public float verticalSpacing = 20f; // Spacing between rows
@@ -52,7 +53,14 @@ public class SelectBodyParts : MonoBehaviour,PageController
         }
         float contentHeight = Mathf.Abs(currentY) + verticalSpacing;
         content.sizeDelta = new Vector2(content.sizeDelta.x, contentHeight);
-
+        back.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClose();
+        }
     }
     public void SelectAndDeselect(string text, GameObject obj, ExerciseController controller,Color col)
     {

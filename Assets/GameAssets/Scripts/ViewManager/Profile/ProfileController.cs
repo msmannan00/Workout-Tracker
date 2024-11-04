@@ -28,21 +28,25 @@ public class ProfileController : MonoBehaviour,PageController
     }
     public void Settings()
     {
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "settingScreen", null,true);
         StateManager.Instance.CloseFooter();
     }
     public void PersonalBest()
     {
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "personalBestScreen", null, true);
         StateManager.Instance.CloseFooter();
     }
     public void Measurement()
     {
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "measurementScreen", null,true);
         StateManager.Instance.CloseFooter();
     }
     public void WeeklyGoal()
     {
+        AudioController.Instance.OnButtonClick();
         DateTime now = DateTime.Now;
         print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
         TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();

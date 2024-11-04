@@ -24,6 +24,14 @@ public class RemoveExercisePopup : MonoBehaviour,IPrefabInitializer
     {
         fade.onClick.AddListener(Closs);
         removeExercise.onClick.AddListener(RemoveExercise);
+        removeExercise.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Closs();
+        }
     }
     public void Closs()
     {

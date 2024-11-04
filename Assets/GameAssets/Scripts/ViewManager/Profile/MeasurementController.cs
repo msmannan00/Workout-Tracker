@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MeasurementController : MonoBehaviour,PageController
 {
+    public Button backButton;
+
     public TMP_InputField weight;
     public TMP_InputField bodyFat;
     public TMP_InputField chest;
@@ -26,6 +29,18 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         InitializeInputFields();
         AddListeners();
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
+    }
+    private void Start()
+    {
+        backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     void AddListeners()
     {

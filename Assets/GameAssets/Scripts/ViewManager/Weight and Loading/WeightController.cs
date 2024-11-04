@@ -11,6 +11,7 @@ public class WeightController : MonoBehaviour,PageController
     }
     public void Next()
     {
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
     }
 }

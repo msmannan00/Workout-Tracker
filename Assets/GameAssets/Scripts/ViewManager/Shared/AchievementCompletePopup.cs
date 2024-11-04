@@ -8,12 +8,14 @@ public class AchievementCompletePopup : MonoBehaviour, IPrefabInitializer
 {
     public GameObject achievementButton,continue1, continue2;
     public TextMeshProUGUI achievementNameText;
+    public TextMeshProUGUI descriptionText;
     public ParticleSystem particles;
     public bool isAchievement;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
     {
         achievementNameText.text = (string)data[0];
-        isAchievement = (bool)data[1];
+        descriptionText.text = (string)data[1];
+        isAchievement = (bool)data[2];
         if (isAchievement)
         {
             achievementButton.SetActive(true);
@@ -30,22 +32,32 @@ public class AchievementCompletePopup : MonoBehaviour, IPrefabInitializer
         //callback = onFinish;
         //workoutScreen = (GameObject)data[0];
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Continue();
+        }
+    }
     void PlayParticle()
     {
+        AudioController.Instance.OnAchievement();
         particles.Play();
     }
     public void SeeAllAchievemens()
     {
+        AudioController.Instance.OnButtonClick();
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
             { "onFooter", false },{"backAction",false}
         };
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", mData, true);
+        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "achievementScreen", mData, true);
         StateManager.Instance.CloseFooter();
         Continue();
     }
     public void Continue()
     {
+        AudioController.Instance.OnButtonClick();
         PopupController.Instance.ClosePopup("AchievementCompletePopup");
     }
 }

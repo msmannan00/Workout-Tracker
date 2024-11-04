@@ -18,10 +18,18 @@ public class SettingController : MonoBehaviour, PageController
     {
         
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
+    }
     void Start()
     {
         searchBar.onValueChanged.AddListener(SearchItems);
         backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         changeThemeToggle.gameObject.GetComponent<Button>().onClick.AddListener(ChangeGameTheme);
         gameTheme=ApiDataHandler.Instance.LoadTheme();
         switch (gameTheme)
@@ -33,7 +41,7 @@ public class SettingController : MonoBehaviour, PageController
                 break;
             case Theme.Light:
                 GlobalAnimator.Instance.AnimateRectTransformX(changeThemeToggle, 13, 0.25f);
-                changeThemeToggle.parent.GetComponent<Image>().color = Color.white;
+                changeThemeToggle.parent.GetComponent<Image>().color = new Color32(236, 219, 190, 255);
                 changeThemeToggle.GetComponent<Image>().color = new Color32(218, 52, 52, 255);
                 break;
         }
@@ -70,12 +78,12 @@ public class SettingController : MonoBehaviour, PageController
     }
     public void Back()
     {
-        print("back");
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }
     public void ChangeGameTheme()
     {
+        AudioController.Instance.OnButtonClick();
         switch (gameTheme)
         {
             case Theme.Light:
@@ -87,11 +95,16 @@ public class SettingController : MonoBehaviour, PageController
                 break;
             case Theme.Dark:
                 GlobalAnimator.Instance.AnimateRectTransformX(changeThemeToggle, 13, 0.25f);
-                changeThemeToggle.parent.GetComponent<Image>().color = Color.white;
+                changeThemeToggle.parent.GetComponent<Image>().color = new Color32(236, 219, 190, 255);
                 changeThemeToggle.GetComponent<Image>().color = new Color32(218, 52, 52, 255);
                 ApiDataHandler.Instance.SaveTheme(Theme.Light);
                 gameTheme= Theme.Light;
                 break;
+        }
+        GUISetting[] scripts = FindObjectsOfType<GUISetting>();
+        foreach (GUISetting script in scripts)
+        {
+            script.SetTheme();
         }
     }
 }

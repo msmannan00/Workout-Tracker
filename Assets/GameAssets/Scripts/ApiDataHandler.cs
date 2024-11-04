@@ -535,4 +535,14 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         PreferenceManager.Instance.SetInt("UserStreak", streak);
     }
+
+    public int GetUserLevel()
+    {
+        return PreferenceManager.Instance.GetInt("UserLevel", 0);
+    }
+
+    public void SetUserLevel(int level)
+    {
+        PreferenceManager.Instance.SetInt("UserStreak", level);
+    }
 }

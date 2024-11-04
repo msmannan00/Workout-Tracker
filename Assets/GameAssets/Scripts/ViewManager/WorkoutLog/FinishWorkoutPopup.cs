@@ -27,8 +27,17 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
     private void Start()
     {
         saveButton.onClick.AddListener(Save);
+        saveButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         discardButton.onClick.AddListener(Discard);
+        discardButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         fade.onClick.AddListener(Discard);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Discard();
+        }
     }
     void Discard()
     {

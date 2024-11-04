@@ -3075,6 +3075,7 @@ GameObject:
   - component: {fileID: 5833649446806916186}
   - component: {fileID: 2913196361417559936}
   - component: {fileID: 1262411949344015564}
+  - component: {fileID: 5493246951079982920}
   m_Layer: 5
   m_Name: exerciseHistoryScreen
   m_TagString: exerciseHistoryScreen
@@ -3200,6 +3201,73 @@ MonoBehaviour:
   maxWeightText: {fileID: 4130252224358658133}
   content: {fileID: 717542428981029932}
   matchedDateTimes: []
+--- !u!114 &5493246951079982920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5410071902157915901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 2913196361417559936}
+  playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
+  primaryText:
+  - {fileID: 3916366280456417116}
+  - {fileID: 7436165549218156486}
+  secondaryText:
+  - {fileID: 2594292004927755759}
+  - {fileID: 4219388855208318090}
+  - {fileID: 7764568801386735209}
+  - {fileID: 7845076349224974256}
+  - {fileID: 4568492086530953346}
+  - {fileID: 1930730208618169894}
+  - {fileID: 2253105690777408253}
+  - {fileID: 8076847526630142196}
+  - {fileID: 2924375133791516818}
+  - {fileID: 632427337524836176}
+  - {fileID: 6841407893684868887}
+  - {fileID: 5828856916095810850}
+  - {fileID: 6229015841335844137}
+  - {fileID: 2129024966584578581}
+  - {fileID: 4498561260411784640}
+  - {fileID: 3620135235870455396}
+  - {fileID: 895662947910848317}
+  - {fileID: 5428775121308048868}
+  - {fileID: 8445244130359033940}
+  - {fileID: 1642801102565362751}
+  - {fileID: 4130252224358658133}
+  - {fileID: 8928856479125175948}
+  - {fileID: 8482107363070522611}
+  - {fileID: 4612501834661133996}
+  - {fileID: 9031894475110044060}
+  - {fileID: 6580038467247553899}
+  buttonText: []
+  inputFields: []
+  inputFieldSearchIcon: []
+  buttons:
+  - {fileID: 930033418587470423}
+  - {fileID: 7349684213661164586}
+  button2: []
+  workoutLogDropdownToggle: []
+  line: []
+  outlines: []
+  dropdowns: []
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  darkbackground: {fileID: 21300000, guid: 795ba710e1c22cc4fbc0858862fb73b2, type: 3}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &5470267304750915876
 GameObject:
   m_ObjectHideFlags: 0

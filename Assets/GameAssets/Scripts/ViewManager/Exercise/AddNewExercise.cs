@@ -19,6 +19,7 @@ public class AddNewExercise : MonoBehaviour, PageController
     public Image backImage, saveImage;
     public TextMeshProUGUI saveText;
     public GameObject messageObj;
+    public Button saveButton, backButton;
 
     public ExerciseDataItem exerciseDataItem = new ExerciseDataItem();
     private Action<ExerciseDataItem> callback;
@@ -39,6 +40,8 @@ public class AddNewExercise : MonoBehaviour, PageController
         rank.onValueChanged.AddListener(OnRankChanged);
         exerciseTypeDropdown.onValueChanged.AddListener(OnExerciseTypeValueChanged);
         isWeightExercise.onValueChanged.AddListener(OnIsWeightExerciseChanged);
+        saveButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
 
     private void OnExerciseNameChanged(string value)
@@ -52,10 +55,12 @@ public class AddNewExercise : MonoBehaviour, PageController
     //}
     private void OnCategoryValueChanged(int category)
     {
+        AudioController.Instance.OnButtonClick();
         exerciseDataItem.category = categoryDropdown.options[category].text;
     }
     private void OnExerciseTypeValueChanged(int category)
     {
+        AudioController.Instance.OnButtonClick();
         exerciseDataItem.exerciseType = (ExerciseType)(category + 1);
     }
     private void InitializeCategoryDropdown(List<string> categorys)

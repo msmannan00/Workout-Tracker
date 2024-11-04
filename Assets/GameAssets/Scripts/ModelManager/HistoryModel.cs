@@ -21,6 +21,7 @@ public class HistoryExerciseTypeModel
 {
     public string exerciseName;
     public string categoryName;
+    public string exerciseNotes;
     public int index;
     public ExerciseType exerciseType;
     public List<HistoryExerciseModel> exerciseModel = new List<HistoryExerciseModel>();

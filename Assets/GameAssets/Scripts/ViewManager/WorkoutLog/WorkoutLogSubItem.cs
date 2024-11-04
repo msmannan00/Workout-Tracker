@@ -27,6 +27,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     private Coroutine timerCoroutine;
     private Action<object> callBack;
     bool shake = true;
+    bool isWorkoutLog;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
@@ -34,6 +35,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         exerciseModel = (ExerciseModel)data["data"];
         exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
+        isWorkoutLog = (bool)data["isWorkoutLog"];
         ResetModel(exerciseModel);
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
@@ -41,59 +43,39 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         {
             case ExerciseType.RepsOnly:
                 reps.transform.parent.gameObject.SetActive(true);
+                if (!isWorkoutLog)
+                    OffAllInteractables();
                 break;
             case ExerciseType.TimeBased:
                 timerText.transform.parent.gameObject.SetActive(true);
-                if (exerciseHistory != null)
+                if (exerciseHistory != null && isWorkoutLog)
                 {
                     int minutes = exerciseHistory.time / 60;
                     int seconds = exerciseHistory.time % 60;
 
                     previous.text = $"{minutes:D2}:{seconds:D2}";
                 }
+                if (!isWorkoutLog)
+                    OffAllInteractables();
                 break;
             case ExerciseType.TimeAndMiles:
                 timerText.transform.parent.gameObject.SetActive(true);
                 mile.transform.parent.gameObject.SetActive(true);
-                print("Need to implement Time and Miles");
+                if (!isWorkoutLog)
+                    OffAllInteractables();
+                //print("Need to implement Time and Miles");
                 break;
             case ExerciseType.WeightAndReps:
                 timerText.transform.parent.gameObject.SetActive(false);
                 weight.transform.parent.gameObject.SetActive(true);
                 rir.transform.parent.gameObject.SetActive(true);
                 reps.transform.parent.gameObject.SetActive(true);
-                if (exerciseHistory != null)
+                if (exerciseHistory != null && isWorkoutLog)
                     previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
+                if (!isWorkoutLog)
+                    OffAllInteractables();
                 break;
         }
-
-        //if (exerciseModel.weight != 0)
-        //{
-        //    weight.text = exerciseModel.weight.ToString();
-        //}
-        //else
-        //{
-        //    weight.text = "";
-        //}
-
-        //if (exerciseModel.lbs != 0)
-        //{
-        //    lbs.text = exerciseModel.lbs.ToString();
-        //}
-        //else
-        //{
-        //    lbs.text = "";
-        //}
-
-
-        //if (exerciseModel.reps > 0)
-        //{
-        //    reps.value = exerciseModel.reps - 1;
-        //}
-        //else
-        //{
-        //    reps.value = 0;
-        //}
 
         InitializeRirDropdown();
 
@@ -106,6 +88,15 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             isComplete.onValueChanged.AddListener(OnToggleValueChange);
         UpdateToggleInteractableState();
         OnRIRChanged(0);
+    }
+    void OffAllInteractables()
+    {
+        weight.interactable = false;
+        rir.interactable= false;
+        reps.interactable= false;
+        timerText.interactable= false;
+        mile.interactable= false;
+        isComplete.interactable= false;
     }
     void ResetModel(ExerciseModel model)
     {
@@ -327,6 +318,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         this.callBack?.Invoke(value);
             if (value)
             {
+            AudioController.Instance.OnSetComplete();
                 isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
             }
             else
@@ -367,6 +359,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         if (!isComplete.interactable && shake)
         {
             shake = false;
+            AudioController.Instance.OnError();
             GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
         }
     }

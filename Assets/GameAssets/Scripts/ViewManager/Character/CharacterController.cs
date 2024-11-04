@@ -16,6 +16,9 @@ public class CharacterController : MonoBehaviour,PageController
         shopButton.onClick.AddListener(ShopeButtonClick);
         emotesButton.onClick.AddListener(EmotesButtonClick);
         achievementButton.onClick.AddListener(AchievementButtonClick);
+        shopButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        emotesButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        achievementButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     public void ShopeButtonClick()
     {

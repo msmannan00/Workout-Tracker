@@ -14,6 +14,7 @@ public class HistoryController : MonoBehaviour, PageController
     public RectTransform selectionLine;
     public List<GameObject> templeteHistory = new List<GameObject>();
     public List<GameObject> exerciseHistory = new List<GameObject>();
+    private bool isCompleted;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
 
@@ -26,11 +27,15 @@ public class HistoryController : MonoBehaviour, PageController
         //    list.Add(workouts);
         //}
         Completed();
+        isCompleted = true;
         //OnExerciseAdd(list);
     }
 
     public void Completed()
     {
+        if (isCompleted) return;
+        isCompleted = true;
+        AudioController.Instance.OnButtonClick();
         List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
         foreach (var workouts in ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel)
         {
@@ -45,6 +50,9 @@ public class HistoryController : MonoBehaviour, PageController
     }
     public void Exercise()
     {
+        if (!isCompleted) return;
+        isCompleted = false;
+        AudioController.Instance.OnButtonClick();
         VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
         vlg.childControlHeight = false;
         vlg.spacing = 5;

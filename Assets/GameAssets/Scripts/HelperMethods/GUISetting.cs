@@ -8,10 +8,15 @@ public class GUISetting : MonoBehaviour
 {
     public Image background;
     public Image playButton;
+    public Image character;
+    public Image xpBar, xpButton;
+    public Image characterScreenOffOn;
     [SerializeField]
     private List<TextMeshProUGUI> primaryText = new List<TextMeshProUGUI>();
     [SerializeField]
     private List<TextMeshProUGUI> secondaryText = new List<TextMeshProUGUI>();
+    [SerializeField]
+    private List<TextMeshProUGUI> historySubText = new List<TextMeshProUGUI>();
     [SerializeField]
     private List<TextMeshProUGUI> buttonText = new List<TextMeshProUGUI>();
     [SerializeField]
@@ -27,15 +32,23 @@ public class GUISetting : MonoBehaviour
     [SerializeField]
     private List<Image> line = new List<Image>();
     [SerializeField]
+    private List<Shadow> shadow = new List<Shadow>();
+    [SerializeField]
     private List<Outline> outlines = new List<Outline>();
     public List<TMP_Dropdown> dropdowns = new List<TMP_Dropdown>();
     public TextMeshProUGUI switchButton1,switchButton2;
+    public List<TextMeshProUGUI> personlBestAndMeasurementExercise=new List<TextMeshProUGUI>();
 
     public Sprite darkbackground, lightbackground;
     public Sprite lightPlay, darkPlay;
+    public Sprite lightCharacter, darkCharacter;
     private void OnEnable()
     {
         SetTheme();
+    }
+    private void Awake()
+    {
+        //SetTheme();
     }
     public void SetTheme()
     {
@@ -44,31 +57,66 @@ public class GUISetting : MonoBehaviour
             case Theme.Light:
                 if (playButton != null)
                     playButton.sprite = lightPlay;
+                if(character!=null)
+                    character.sprite = lightCharacter;
+                if (xpBar != null)
+                    xpBar.color = userSessionManager.Instance.lightInputFieldColor;
+                if (xpButton != null)
+                    xpButton.color = userSessionManager.Instance.lightXPbutton;
+                if (characterScreenOffOn != null)
+                    characterScreenOffOn.enabled = true;
+
+                SetShadow(true);
+                SetPersonalBestAndMeasurementText(userSessionManager.Instance.lightPrimaryFont, new Color32(92,59,28,255));
                 setBackground(lightbackground);
                 SetPrimaryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
                 SetSecondaryText(userSessionManager.Instance.lightSecondaryFont, userSessionManager.Instance.lightButtonTextColor);
+                SetHistorySubText(userSessionManager.Instance.lightSecondaryFont, new Color32(92, 59, 28, 155));
                 SetButtonColor(userSessionManager.Instance.lightButtonColor);
                 SetButtonTextColor(Color.white);
                 SetButton2Color(userSessionManager.Instance.lightInputFieldColor);
                 SetInputFields(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetDropdowns(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
                 SetOutlines(userSessionManager.Instance.lightButtonColor);
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.lightInputFieldColor);
                 SetLineColor(userSessionManager.Instance.lightPlaceholder);
+                SetSwitchColor(Color.white,userSessionManager.Instance.lightPlaceholder);
                 break;
             case Theme.Dark:
                 if(playButton != null)
                     playButton.sprite = darkPlay;
+                if (character != null)
+                    character.sprite = darkCharacter;
+                if (xpBar != null)
+                    xpBar.color = userSessionManager.Instance.darkButtonTextColor;
+                if (xpButton != null)
+                    xpButton.color = userSessionManager.Instance.darkXPbutton;
+                if (characterScreenOffOn != null)
+                    characterScreenOffOn.enabled = false;
+                SetShadow(false);
+                SetPersonalBestAndMeasurementText(userSessionManager.Instance.darkPrimaryFont, new Color32(186, 172, 172, 255));
                 setBackground(darkbackground);
                 SetPrimaryText(userSessionManager.Instance.darkPrimaryFont, Color.white);
                 SetSecondaryText(userSessionManager.Instance.darkSecondaryFont,Color.white);
+                SetHistorySubText(userSessionManager.Instance.darkSecondaryFont, new Color32(217, 217, 217, 127));
                 SetButtonColor(userSessionManager.Instance.darkButtonColor);
                 SetButtonTextColor(userSessionManager.Instance.darkButtonTextColor);
                 SetButton2Color(userSessionManager.Instance.darkButtonTextColor);
                 SetInputFields(userSessionManager.Instance.darkPrimaryFont, new Color32(255, 255, 255, 255), userSessionManager.Instance.darkPlaceholder,userSessionManager.Instance.darkInputFieldColor);
+                SetDropdowns(userSessionManager.Instance.darkPrimaryFont, new Color32(255, 255, 255, 255), userSessionManager.Instance.darkPlaceholder,userSessionManager.Instance.darkInputFieldColor);
                 SetOutlines(userSessionManager.Instance.darkButtonColor);
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.darkInputFieldColor);
                 SetLineColor(userSessionManager.Instance.darkLineColor);
+                SetSwitchColor(userSessionManager.Instance.darkButtonTextColor, userSessionManager.Instance.darkSwitchTextColor);
                 break;
+        }
+    }
+    public void SetPersonalBestAndMeasurementText(TMP_FontAsset font,Color col)
+    {
+        foreach(TextMeshProUGUI text in personlBestAndMeasurementExercise)
+        {
+            text.color = col;
+            text.font = font;
         }
     }
     public void setBackground(Sprite sprite)
@@ -86,6 +134,22 @@ public class GUISetting : MonoBehaviour
     public void SetSecondaryText(TMP_FontAsset font, Color col)
     {
         foreach (TextMeshProUGUI text in secondaryText)
+        {
+            text.font = font;
+            text.color = col;
+            //print("sec");
+        }
+    }
+    public void SetShadow(bool enable)
+    {
+        foreach(Shadow sh in shadow)
+        {
+            sh.enabled = enable;
+        }
+    }
+    public void SetHistorySubText(TMP_FontAsset font, Color col)
+    {
+        foreach (TextMeshProUGUI text in historySubText)
         {
             text.font = font;
             text.color = col;
@@ -127,6 +191,18 @@ public class GUISetting : MonoBehaviour
             img.color = placeHolderCol;
         }
     }
+    public void SetDropdowns(TMP_FontAsset textFont, Color textCol, Color placeHolderCol, Color imageColor)
+    {
+        foreach (TMP_Dropdown dropdown in dropdowns)
+        {
+            dropdown.GetComponent<Image>().color = imageColor;
+            dropdown.captionText.font = textFont;
+            dropdown.captionText.color = textCol;
+            dropdown.template.gameObject.SetActive(true);
+            dropdown.template.GetComponent<Image>().color = imageColor;
+            dropdown.template.gameObject.SetActive(false);
+        }
+    }
     public void SetOutlines(Color col)
     {
         foreach(Outline item in outlines)
@@ -147,5 +223,12 @@ public class GUISetting : MonoBehaviour
         {
             img.color = col;
         }
+    }
+    public void SetSwitchColor(Color col1,Color col2)
+    {
+        if(switchButton1!=null)
+            switchButton1.color= col1;
+        if(switchButton2!=null)
+        switchButton2.color= col2;
     }
 }

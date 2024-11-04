@@ -5,17 +5,32 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class PersonalBestController : MonoBehaviour, PageController
 {
     public Transform content;
     public TextMeshProUGUI messageText;
+    public Button backButton;
+    public Button addExerciseButton;
     public PersonalBestData _data;
     public List<string> haveExercises = new List<string>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         _data = ApiDataHandler.Instance.getPersonalBestData();
         LoadData();
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
+    }
+    private void Start()
+    {
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        addExerciseButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     public void LoadData()
     {

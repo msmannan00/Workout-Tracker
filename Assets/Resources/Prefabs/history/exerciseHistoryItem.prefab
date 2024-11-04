@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8905201517179798844}
   - component: {fileID: 8024713017611523307}
   - component: {fileID: 5908693013040949147}
+  - component: {fileID: 7516059082123597701}
   m_Layer: 5
   m_Name: exerciseHistoryItem
   m_TagString: Untagged
@@ -134,3 +135,41 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7516059082123597701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2615153435932798452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
+  primaryText: []
+  secondaryText:
+  - {fileID: 5908693013040949147}
+  buttonText: []
+  inputFields: []
+  inputFieldSearchIcon: []
+  buttons: []
+  button2: []
+  workoutLogDropdownToggle: []
+  line: []
+  outlines: []
+  dropdowns: []
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  darkbackground: {fileID: 0}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}

@@ -175,9 +175,9 @@ public class AuthController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
-            StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+            //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
             userSessionManager.Instance.AddGymVisit();
-            //StateManager.Instance.OpenFooter("shared", gameObject, "footer");
         }
         else
         {
@@ -289,6 +289,7 @@ public class AuthController : MonoBehaviour, PageController
 
     public void OnTrigger()
     {
+        AudioController.Instance.OnButtonClick();
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
             Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>

@@ -19,7 +19,16 @@ public class CancelWorkoutPopup : MonoBehaviour,IPrefabInitializer
     {
         fade.onClick.AddListener(Resume);
         cancelButton.onClick.AddListener(Cancel);
+        cancelButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         resumeButton.onClick.AddListener(Resume);
+        resumeButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Resume();
+        }
     }
     void Cancel()
     {

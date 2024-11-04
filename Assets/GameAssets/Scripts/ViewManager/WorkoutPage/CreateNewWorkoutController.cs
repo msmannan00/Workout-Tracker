@@ -12,6 +12,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     public Transform content;
     public Button addExercise;
     public Button saveTemplate;
+    public Button backButton;   
 
     private int exerciseCounter = 0;
     public List<ExerciseDataItem> exerciseDataItems = new List<ExerciseDataItem>();
@@ -24,7 +25,17 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         this.callback = callback;
         saveTemplate.interactable = false;
         addExercise.onClick.AddListener(() => AddExerciseButton());
-        saveTemplate.onClick.AddListener(() => SaveNewWorkout());
+        saveTemplate.onClick.AddListener(() => SaveNewWorkout()); 
+        addExercise.onClick.AddListener(() => AudioController.Instance.OnButtonClick());
+        saveTemplate.onClick.AddListener(() => AudioController.Instance.OnButtonClick());
+        backButton.onClick.AddListener(() => AudioController.Instance.OnButtonClick());
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClose();
+        }
     }
     public void OnClose()
     {

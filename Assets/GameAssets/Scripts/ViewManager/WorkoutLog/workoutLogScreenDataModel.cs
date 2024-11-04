@@ -26,7 +26,10 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         isTemplateCreator = (bool)data["isTemplateCreator"];
-        templeteModel = (DefaultTempleteModel)data["templeteModel"];
+        if (data.ContainsKey("templeteModel"))
+        {
+            templeteModel = (DefaultTempleteModel)data["templeteModel"];
+        }
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
         exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
@@ -64,6 +67,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         if (isTemplateCreator) threeDots.gameObject.SetActive(true);
         else threeDots.gameObject.SetActive(false);
+        exerciseNotes.onEndEdit.AddListener(OnExerciseNotesChange);
     }
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
@@ -90,7 +94,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             {  "data", exerciseModel   },
             {"exerciseType", exerciseTypeModel.exerciseType  },
-            {"exerciseHistory",history}
+            {"exerciseHistory",history},
+            {"isWorkoutLog",isWorkoutLog }
         };
         newSubItemScript.onInit(initData,callback);
     }
@@ -100,6 +105,10 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         if (isWorkoutLog && !isTemplateCreator)
         {
             //FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
+        }
+        if (addMore)
+        {
+            AudioController.Instance.OnButtonClick();
         }
         ExerciseModel exerciseModel = new ExerciseModel();
         exerciseTypeModel.exerciseModel.Add(exerciseModel);
@@ -120,7 +129,10 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.callback.Invoke(this.exerciseTypeModel.index);
         GameObject.Destroy(gameObject);
     }
-
+    public void OnExerciseNotesChange(string name)
+    {
+        exerciseTypeModel.exerciseNotes = name.ToUpper();
+    }
     public void SaveExercisePreferences(string exerciseName, HistoryExerciseModel exercisedata)
     {
         string json = JsonUtility.ToJson(exercisedata);

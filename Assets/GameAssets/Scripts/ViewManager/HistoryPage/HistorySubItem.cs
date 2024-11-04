@@ -4,17 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HistorySubItem : MonoBehaviour,ItemController
 {
     public TextMeshProUGUI exerciseNameText;
-    //public TextMeshProUGUI bestSetText;
+    public Image line;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        HistoryExerciseTypeModel history= (HistoryExerciseTypeModel)data["data"];
+        HistoryExerciseTypeModel history = (HistoryExerciseTypeModel)data["data"];
         exerciseNameText.text = history.exerciseName + " x " + history.exerciseModel.Count.ToString();
         //bestSetText.text=GetBestSet(history.exerciseModel,history.isWeightExercise);
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                exerciseNameText.color = new Color32(92, 59, 28, 155);
+                line.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                exerciseNameText.color = new Color32(217, 217, 217, 127);
+                line.color = new Color32(217, 217, 217, 127);
+                break;
+        }
     }
     public string GetBestSet(List<HistoryExerciseModel> exerciseModel, bool isWeight)
     {
