@@ -13,6 +13,8 @@ public class ProfileController : MonoBehaviour,PageController
     public TextMeshProUGUI joinedText;
     public TextMeshProUGUI goalText;
     public TextMeshProUGUI messageText;
+    public TextMeshProUGUI levelText;
+    public Image badgeIamge;
     public Button settingButton;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -20,11 +22,21 @@ public class ProfileController : MonoBehaviour,PageController
     }
     private void Start()
     {
+        
+
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
         joinedText.text = ApiDataHandler.Instance.GetJoiningDate();
-        streakText.text = "Streak: "+ApiDataHandler.Instance.GetUserStreak().ToString();
-        goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString();
+        
         settingButton.onClick.AddListener(Settings);
+    }
+    private void OnEnable()
+    {
+        levelText.text= "level "+ApiDataHandler.Instance.GetCharacterLevel().ToString();
+        streakText.text = "Streak: " + ApiDataHandler.Instance.GetUserStreak().ToString();
+        goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString();
+        string badgeName = ApiDataHandler.Instance.GetBadgeName();
+        Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
+        badgeIamge.sprite= sprite;
     }
     public void Settings()
     {

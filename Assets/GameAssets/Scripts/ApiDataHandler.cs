@@ -33,7 +33,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public Theme LoadTheme()
     {
-        int savedTheme = PlayerPrefs.GetInt("SelectedTheme", (int)Theme.Dark);
+        int savedTheme = PlayerPrefs.GetInt("SelectedTheme", (int)Theme.Light);
         return (Theme)savedTheme;
     }
     public void SaveWeight(int weight)
@@ -43,7 +43,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public int GetWeight()
     {
-         return PlayerPrefs.GetInt("Weight", 80);
+         return PlayerPrefs.GetInt("Weight", 0);
     }
     public void SaveTemplateData()
     {
@@ -172,7 +172,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         DefaultTempleteModel bicep = new DefaultTempleteModel
         {
             templeteName = "Biceps",
-            exerciseTemplete = new List<ExerciseTypeModel> { bicepCulDumbbell, bicepCulDumbbell, spiderCurls }
+            exerciseTemplete = new List<ExerciseTypeModel> { bicepCulDumbbell, bicepCurlMachine, spiderCurls }
         };
         templateData.exerciseTemplete.Clear();
         templateData.exerciseTemplete.Add(chestAndBack);
@@ -318,6 +318,19 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         PreferenceManager.Instance.SetInt("WeeklyGoal", goal);
     }
+    public void SetWeightUnit(int unit)
+    {
+        PreferenceManager.Instance.SetInt("WeightUnit", unit);
+    }
+    public void SetBadgeName(string name)
+    {
+        string badgeName= name.Replace(" ", "");
+        PreferenceManager.Instance.SetString("BadgeName", badgeName);
+    }
+    public void SetCharacterLevel(int level)
+    {
+        PreferenceManager.Instance.SetInt("CharacterLevel", 1);
+    }
     //public void SetWeeklyGoalSetedDate(DateTime date)
     //{
     //    string dateInString = date.ToString("MMM dd, yyyy");
@@ -347,7 +360,19 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public int GetWeeklyGoal()
     {
-        return PreferenceManager.Instance.GetInt("WeeklyGoal");
+        return PreferenceManager.Instance.GetInt("WeeklyGoal",0);
+    }
+    public int GetWeightUnit()
+    {
+        return PreferenceManager.Instance.GetInt("WeightUnit", 1);
+    }
+    public string GetBadgeName()
+    {
+        return PreferenceManager.Instance.GetString("BadgeName", "TheGorillaBadge");
+    }
+    public int GetCharacterLevel()
+    {
+        return PreferenceManager.Instance.GetInt("CharacterLevel", 1);
     }
     //public DateTime GetWeeklyGoalSetedDate()
     //{
@@ -536,13 +561,5 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetInt("UserStreak", streak);
     }
 
-    public int GetUserLevel()
-    {
-        return PreferenceManager.Instance.GetInt("UserLevel", 0);
-    }
-
-    public void SetUserLevel(int level)
-    {
-        PreferenceManager.Instance.SetInt("UserStreak", level);
-    }
+    
 }

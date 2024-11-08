@@ -45,7 +45,7 @@ public class AchievementDataItem : MonoBehaviour,ItemController
                 userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
                 break;
             case AchievementType.LevelUp:
-                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserLevel(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText);
                 break;
         }
     }

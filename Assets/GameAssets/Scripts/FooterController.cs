@@ -116,26 +116,23 @@ public class FooterController : MonoBehaviour
         }
     }
     public void OnDashboard()
-    {print("dashboard");
+    {
         StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,isfooter:true);
     }
     public void OnHistory()
-    {print("history");
+    {
         StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, isfooter: true);
     }
     public void OnProfile()
     {
-        print("profile");
         StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, isfooter: true);
     }
     public void OnSocial()
     {
-        print("social");
         StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, isfooter: true);
     }
     public void OnBody()
     {
-        print("body");
         StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, isfooter: true);
     }
 }

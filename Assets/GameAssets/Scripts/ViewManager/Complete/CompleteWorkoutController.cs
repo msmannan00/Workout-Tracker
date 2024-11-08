@@ -32,7 +32,16 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
         {
             totalTimeText.text = historyWorkout.completedTime.ToString() + "s";
         }
-        totalWeightText.text=historyWorkout.totalWeight.ToString();
+        switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+        {
+            case WeightUnit.kg:
+                totalWeightText.text = historyWorkout.totalWeight.ToString()+" kg";
+                break;
+            case WeightUnit.lbs:
+                totalWeightText.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(historyWorkout.totalWeight)).ToString("F2") +" lbs";
+                break;
+        }
+        
         foreach(HistoryExerciseTypeModel exercise in historyWorkout.exerciseTypeModel)
         {
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/complete/completeScreenDataModel");
@@ -117,6 +126,15 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
             text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
             text.fontSize = 14;
+            switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+            {
+                case WeightUnit.kg:
+                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
+                    break;
+                case WeightUnit.lbs:
+                    text.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString();
+                    break;
+            }
         }
     }
     void ShowTimeAndMile(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)

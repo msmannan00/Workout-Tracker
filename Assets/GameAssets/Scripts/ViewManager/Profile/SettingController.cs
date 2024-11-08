@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class SettingController : MonoBehaviour, PageController
 {
     public TMP_InputField searchBar;
+    //public TextMeshProUGUI messageText;
     public Button backButton;
     public GameObject[] items;
 
@@ -106,5 +107,36 @@ public class SettingController : MonoBehaviour, PageController
         {
             script.SetTheme();
         }
+    }
+    public void ChangeWeightUnit()
+    {
+        PopupController.Instance.OpenPopup("profile", "ChangeUnitPopup", null, null);
+    }
+    public void ChangeBadge()
+    {
+        PopupController.Instance.OpenPopup("profile", "ChangeBadgePopup", null, null);
+    }
+    public void ChangeWeeklyGoal()
+    {
+        AudioController.Instance.OnButtonClick();
+        DateTime now = DateTime.Now;
+        print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
+        TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
+        if (timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal() == 0)
+        {
+            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false }};
+            StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData, true);
+            StateManager.Instance.CloseFooter();
+        }
+        else
+        {
+            //GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.", 2f);
+        }
+
+
+    }
+    public void OnButtonClick()
+    {
+        AudioController.Instance.OnButtonClick();
     }
 }

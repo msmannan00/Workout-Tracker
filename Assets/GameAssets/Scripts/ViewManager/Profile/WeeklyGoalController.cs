@@ -17,6 +17,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
     TextMeshProUGUI goalText = null;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
+        print("oninit");
         firstTime = (bool)data["data"];
         if (data.ContainsKey("text"))
         {
@@ -31,16 +32,18 @@ public class WeeklyGoalController : MonoBehaviour, PageController
     public void OnDropdownClick()
     {
         AudioController.Instance.OnButtonClick();
-        ApiDataHandler.Instance.SetWeeklyGoal(dropDown.value + 2);
-        ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
-        if (goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }
     }
     public void Continue()
     {
+        ApiDataHandler.Instance.SetWeeklyGoal(dropDown.value + 2);
+        ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
+        if (goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }
         if (firstTime)
         {
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
+                { "isFirstTime", true }
             };
             StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
             userSessionManager.Instance.AddGymVisit();
@@ -48,7 +51,6 @@ public class WeeklyGoalController : MonoBehaviour, PageController
         else
         {
             StateManager.Instance.HandleBackAction(gameObject);
-            StateManager.Instance.OpenFooter(null, null, false);
         }
     }
 

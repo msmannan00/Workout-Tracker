@@ -236,7 +236,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 817732114635411269}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -687,6 +687,8 @@ MonoBehaviour:
   joinedText: {fileID: 2899750159581744692}
   goalText: {fileID: 7259613383604218412}
   messageText: {fileID: 1836220722584175860}
+  levelText: {fileID: 5913232642809356982}
+  badgeIamge: {fileID: 1745871695492688196}
   settingButton: {fileID: 1784789109155761780}
 --- !u!114 &3361585356394457488
 MonoBehaviour:
@@ -763,8 +765,10 @@ MonoBehaviour:
   shadow: []
   outlines: []
   dropdowns: []
+  achievementCountText: []
   switchButton1: {fileID: 0}
   switchButton2: {fileID: 0}
+  personlBestAndMeasurementExercise: []
   darkbackground: {fileID: 21300000, guid: 1d58f50e7ef64ea49803f7a42f7c0f81, type: 3}
   lightbackground: {fileID: 0}
   lightPlay: {fileID: 0}
@@ -2366,7 +2370,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

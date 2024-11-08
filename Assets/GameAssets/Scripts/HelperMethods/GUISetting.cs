@@ -36,6 +36,7 @@ public class GUISetting : MonoBehaviour
     [SerializeField]
     private List<Outline> outlines = new List<Outline>();
     public List<TMP_Dropdown> dropdowns = new List<TMP_Dropdown>();
+    public List<TextMeshProUGUI> achievementCountText=new List<TextMeshProUGUI>();
     public TextMeshProUGUI switchButton1,switchButton2;
     public List<TextMeshProUGUI> personlBestAndMeasurementExercise=new List<TextMeshProUGUI>();
 
@@ -63,8 +64,8 @@ public class GUISetting : MonoBehaviour
                     xpBar.color = userSessionManager.Instance.lightInputFieldColor;
                 if (xpButton != null)
                     xpButton.color = userSessionManager.Instance.lightXPbutton;
-                if (characterScreenOffOn != null)
-                    characterScreenOffOn.enabled = true;
+                //if (characterScreenOffOn != null)
+                    //characterScreenOffOn.enabled = true;
 
                 SetShadow(true);
                 SetPersonalBestAndMeasurementText(userSessionManager.Instance.lightPrimaryFont, new Color32(92,59,28,255));
@@ -81,6 +82,7 @@ public class GUISetting : MonoBehaviour
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.lightInputFieldColor);
                 SetLineColor(userSessionManager.Instance.lightPlaceholder);
                 SetSwitchColor(Color.white,userSessionManager.Instance.lightPlaceholder);
+                SetAchievementText(userSessionManager.Instance.lightSecondaryFont, Color.white);
                 break;
             case Theme.Dark:
                 if(playButton != null)
@@ -91,8 +93,8 @@ public class GUISetting : MonoBehaviour
                     xpBar.color = userSessionManager.Instance.darkButtonTextColor;
                 if (xpButton != null)
                     xpButton.color = userSessionManager.Instance.darkXPbutton;
-                if (characterScreenOffOn != null)
-                    characterScreenOffOn.enabled = false;
+                //if (characterScreenOffOn != null)
+                    //characterScreenOffOn.enabled = false;
                 SetShadow(false);
                 SetPersonalBestAndMeasurementText(userSessionManager.Instance.darkPrimaryFont, new Color32(186, 172, 172, 255));
                 setBackground(darkbackground);
@@ -108,6 +110,7 @@ public class GUISetting : MonoBehaviour
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.darkInputFieldColor);
                 SetLineColor(userSessionManager.Instance.darkLineColor);
                 SetSwitchColor(userSessionManager.Instance.darkButtonTextColor, userSessionManager.Instance.darkSwitchTextColor);
+                SetAchievementText(userSessionManager.Instance.darkSecondaryFont, new Color32(226, 136, 0, 255));
                 break;
         }
     }
@@ -138,6 +141,14 @@ public class GUISetting : MonoBehaviour
             text.font = font;
             text.color = col;
             //print("sec");
+        }
+    }
+    public void SetAchievementText(TMP_FontAsset font, Color col)
+    {
+        foreach (TextMeshProUGUI text in achievementCountText)
+        {
+            text.font = font;
+            text.color = col;
         }
     }
     public void SetShadow(bool enable)

@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterController : MonoBehaviour,PageController
 {
+    public TextMeshProUGUI levelText;
     public Button shopButton, emotesButton, achievementButton;
     public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
@@ -13,8 +15,9 @@ public class CharacterController : MonoBehaviour,PageController
     }
     private void Start()
     {
+        levelText.text = "level " + ApiDataHandler.Instance.GetCharacterLevel().ToString();
         shopButton.onClick.AddListener(ShopeButtonClick);
-        emotesButton.onClick.AddListener(EmotesButtonClick);
+        //emotesButton.onClick.AddListener(EmotesButtonClick);
         achievementButton.onClick.AddListener(AchievementButtonClick);
         shopButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         emotesButton.onClick.AddListener(AudioController.Instance.OnButtonClick);

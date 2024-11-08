@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 public class ExerciseHistoryController : MonoBehaviour, PageController
 {
     public TextMeshProUGUI exerciseNameText;
@@ -24,6 +27,8 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     public TextMeshProUGUI maxREPSText;
     public TextMeshProUGUI totalREPSText;
     public TextMeshProUGUI maxWeightText;
+
+    public Button backButton;
     public Transform content;
 
     public List<string> matchedDateTimes = new List<string>();
@@ -31,31 +36,78 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         ExerciseDataItem exercise = (ExerciseDataItem)data["data"];
-        exerciseNameText.text = exercise.exerciseName.ToUpper();
-        List<HistoryExerciseModel> exerciseHistory = SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
-
-        switch (exercise.exerciseType)
+        //exerciseNameText.text = exercise.exerciseName.ToUpper();
+        //List<HistoryExerciseModel> exerciseHistory = SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
+        List<ExerciseWithDate> _exerciseHistory = _SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
+        if (exercise.exerciseType == ExerciseType.WeightAndReps)
         {
-            case ExerciseType.RepsOnly:
-                singleItem.SetActive(true);
-                singleItemMaxLabel.text = "Max reps";
-                singleItemTotalLabel.text = "Total reps";
-                ShowRepsOnly(exerciseHistory);
-                break;
-            case ExerciseType.TimeBased:
-                singleItem.SetActive(true);
-                singleItemMaxLabel.text = "Max time";
-                singleItemTotalLabel.text = "Total time";
-                ShowTimeOnly(exerciseHistory);
-                break;
-            case ExerciseType.TimeAndMiles:
-                mileAndTime.SetActive(true);
-                CalculateExerciseMileAndTime(exerciseHistory);
-                break;
-            case ExerciseType.WeightAndReps:
-                weightAndREPS.SetActive(true);
-                CalculateWeightRepsStats(exerciseHistory);
-                break;
+            ExerciseWithDate heaviestSet = GetTopPerformance(_exerciseHistory, HistoryPerformance.HeaviestLifted);
+            foreach (var item in _exerciseHistory)
+            {
+                if (item == heaviestSet)
+                {
+                    item.performance = HistoryPerformance.HeaviestLifted;
+                    break;
+                }
+            }
+            ExerciseWithDate bestSet = GetTopPerformance(_exerciseHistory, HistoryPerformance.BestSet);
+            foreach (var item in _exerciseHistory)
+            {
+                if (item == bestSet)
+                {
+                    if (item.performance == HistoryPerformance.None)
+                        item.performance = HistoryPerformance.BestSet;
+                    else
+                        item.performance |= HistoryPerformance.BestSet;
+                    break;
+                }
+            }
+        }
+        backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        AddItems(_exerciseHistory);
+        //switch (exercise.exerciseType)
+        //{
+        //    case ExerciseType.RepsOnly:
+        //        singleItem.SetActive(true);
+        //        singleItemMaxLabel.text = "Max reps";
+        //        singleItemTotalLabel.text = "Total reps";
+        //        ShowRepsOnly(exerciseHistory);
+        //        break;
+        //    case ExerciseType.TimeBased:
+        //        singleItem.SetActive(true);
+        //        singleItemMaxLabel.text = "Max time";
+        //        singleItemTotalLabel.text = "Total time";
+        //        ShowTimeOnly(exerciseHistory);
+        //        break;
+        //    case ExerciseType.TimeAndMiles:
+        //        mileAndTime.SetActive(true);
+        //        CalculateExerciseMileAndTime(exerciseHistory);
+        //        break;
+        //    case ExerciseType.WeightAndReps:
+        //        weightAndREPS.SetActive(true);
+        //        CalculateWeightRepsStats(exerciseHistory);
+        //        break;
+        //}
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
+    }
+    public void AddItems(List<ExerciseWithDate> history)
+    {
+        foreach(var item in history)
+        {
+            Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                    { "history", item }
+                };
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/exerciseHistoryDataModel");
+            GameObject exerciseObject = Instantiate(exercisePrefab, content);
+            exerciseObject.GetComponent<ItemController>().onInit(mData, null);
         }
     }
     void ShowRepsOnly(List<HistoryExerciseModel> history)
@@ -80,8 +132,8 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 maxReps = exercise.reps;
             }
         }
-        singleItemTotal.text= totalReps.ToString();
-        singleItemMax.text= maxReps.ToString();
+        singleItemTotal.text = totalReps.ToString();
+        singleItemMax.text = maxReps.ToString();
     }
     void ShowTimeOnly(List<HistoryExerciseModel> history)
     {
@@ -200,7 +252,16 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/exerciseHistoryItem");
             GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-            newExerciseObject.GetComponent<TextMeshProUGUI>().text = exercise.weight.ToString() + "kg x " + exercise.reps.ToString();
+            switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+            {
+                case WeightUnit.kg:
+                    newExerciseObject.GetComponent<TextMeshProUGUI>().text = exercise.weight.ToString() + "kg x " + exercise.reps.ToString();
+                    break;
+                case WeightUnit.lbs:
+                    newExerciseObject.GetComponent<TextMeshProUGUI>().text = (userSessionManager.Instance.ConvertKgToLbs(exercise.weight)).ToString("F2") + "lbs x " + exercise.reps.ToString();
+                    break;
+            }
+            //newExerciseObject.GetComponent<TextMeshProUGUI>().text = exercise.weight.ToString() + "kg x " + exercise.reps.ToString();
             newTexts.Add(newExerciseObject.GetComponent<TextMeshProUGUI>());
         }
         for (int i = 0; i < newTexts.Count; i++)
@@ -209,10 +270,21 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
             string formattedDate = parsedDate.ToString("dddd, dd MMMM yyyy");
             newTexts[i].text += "\t" + formattedDate;
         }
-        maxWeightText.text = maxWeight.ToString() + " kg";
+        switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+        {
+            case WeightUnit.kg:
+                maxWeightText.text = maxWeight.ToString() + " kg";
+                maxVolumeText.text = totalVolume.ToString() + " kg";
+                break;
+            case WeightUnit.lbs:
+                maxWeightText.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(maxWeight)).ToString("F2") + " lbs";
+                maxVolumeText.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(totalVolume)).ToString("F2") + " lbs";
+                break;
+        }
         maxREPSText.text = maxReps.ToString();
         totalREPSText.text = totalReps.ToString();
-        maxVolumeText.text = totalVolume.ToString()+" kg";
+        //maxWeightText.text = maxWeight.ToString() + " kg";
+        //maxVolumeText.text = totalVolume.ToString()+" kg";
     }
 
     // Helper function to format time
@@ -249,21 +321,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }
-    public List<HistoryExerciseModel> _SearchExerciseByName(HistoryModel history, string exerciseName)
-    {
-        List<HistoryExerciseModel> result = new List<HistoryExerciseModel>();
-        foreach (var templete in history.exerciseTempleteModel)
-        {
-            foreach (var exerciseType in templete.exerciseTypeModel)
-            {
-                if (exerciseType.exerciseName == exerciseName)
-                {
-                    result.AddRange(exerciseType.exerciseModel);
-                }
-            }
-        }
-        return result;
-    }
+
     public List<HistoryExerciseModel> SearchExerciseByName(HistoryModel history, string exerciseName)
     {
         List<HistoryExerciseModel> matchedExercises = new List<HistoryExerciseModel>();
@@ -284,4 +342,56 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
         }
         return matchedExercises;
     }
+
+    public List<ExerciseWithDate> _SearchExerciseByName(HistoryModel history, string exerciseName)
+    {
+        List<ExerciseWithDate> matchedExercises = new List<ExerciseWithDate>();
+
+        foreach (var template in history.exerciseTempleteModel)
+        {
+            foreach (var exerciseType in template.exerciseTypeModel)
+            {
+                if (exerciseType.exerciseName.Equals(exerciseName, StringComparison.OrdinalIgnoreCase))
+                {
+                    var exerciseTemplate = new ExerciseWithDate
+                    {
+                        dateTime = template.dateTime,
+                        exerciseType = exerciseType.exerciseType
+                    };
+                    foreach (var exercise in exerciseType.exerciseModel)
+                    {
+                        exerciseTemplate.exercise.Add(exercise);
+                    }
+                    matchedExercises.Add((exerciseTemplate));
+                }
+            }
+        }
+
+        return matchedExercises;
+    }
+
+    public ExerciseWithDate GetTopPerformance(List<ExerciseWithDate> exercises, HistoryPerformance performanceType)
+    {
+        ExerciseWithDate topPerformance = null;
+
+        switch (performanceType)
+        {
+            case HistoryPerformance.HeaviestLifted:
+                topPerformance = exercises
+                    .OrderByDescending(e => e.GetHeaviestLiftedSet()?.weight ?? 0)
+                    .FirstOrDefault();
+                break;
+
+            case HistoryPerformance.BestSet:
+                topPerformance = exercises
+                    .OrderByDescending(e => e.GetBestSet()?.weight * (1 + 0.0333f * e.GetBestSet()?.reps ?? 0))
+                    .FirstOrDefault();
+                break;
+
+                // Add cases for other performance types if needed
+        }
+
+        return topPerformance;
+    }
+
 }

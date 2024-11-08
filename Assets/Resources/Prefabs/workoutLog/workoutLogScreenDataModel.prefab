@@ -484,7 +484,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
+  m_fontSize: 12
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1633,7 +1633,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -30}
+  m_SizeDelta: {x: 0, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1567957809911894874
 CanvasRenderer:
@@ -2181,7 +2181,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
+  m_fontSize: 12
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2537,7 +2537,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -26, y: -30}
+  m_SizeDelta: {x: -21, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7746014835055452860
 CanvasRenderer:
@@ -3502,6 +3502,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 0}
   playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
   primaryText:
   - {fileID: 6173693124547097068}
   - {fileID: 3304802188841546758}
@@ -3514,6 +3518,7 @@ MonoBehaviour:
   - {fileID: 7457731213848715766}
   - {fileID: 2171955521327472487}
   secondaryText: []
+  historySubText: []
   buttonText:
   - {fileID: 2171955521327472487}
   inputFields:
@@ -3525,14 +3530,19 @@ MonoBehaviour:
   workoutLogDropdownToggle: []
   line:
   - {fileID: 1320859911119622349}
+  shadow: []
   outlines: []
   dropdowns: []
+  achievementCountText: []
   switchButton1: {fileID: 0}
   switchButton2: {fileID: 0}
+  personlBestAndMeasurementExercise: []
   darkbackground: {fileID: 0}
   lightbackground: {fileID: 0}
   lightPlay: {fileID: 0}
   darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &8374890397484708024
 GameObject:
   m_ObjectHideFlags: 0

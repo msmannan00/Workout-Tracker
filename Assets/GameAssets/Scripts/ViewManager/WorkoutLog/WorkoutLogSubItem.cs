@@ -71,7 +71,18 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                 rir.transform.parent.gameObject.SetActive(true);
                 reps.transform.parent.gameObject.SetActive(true);
                 if (exerciseHistory != null && isWorkoutLog)
-                    previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
+                {
+                    switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+                    {
+                        case WeightUnit.kg:
+                            previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
+                            break;
+                        case WeightUnit.lbs:
+                            previous.text = (userSessionManager.Instance.ConvertKgToLbs(exerciseHistory.weight)).ToString() + "lbs " + "x " + exerciseHistory.reps.ToString("F2");
+                            break;
+                    }
+                    
+                }
                 if (!isWorkoutLog)
                     OffAllInteractables();
                 break;

@@ -43,3 +43,15 @@ public enum AchievementType
     WeightLifted = 8,
     Specialist = 9
 }
+public enum WeightUnit
+{
+    kg=1,
+    lbs=2
+}
+public enum HistoryPerformance
+{
+    None = 0,
+    HeaviestLifted = 1,
+    BestSet = 2,
+    Estimate1RM = 3
+}

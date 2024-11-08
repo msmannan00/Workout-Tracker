@@ -72,24 +72,28 @@ public class DynamicHorizontalLayout : MonoBehaviour
         // Highlight the selected item and adjust others
         for (int i = 0; i < pos.Length; i++)
         {
-            TextMeshProUGUI textComponent = transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>();
-
+            //TextMeshProUGUI textComponent = transform.GetChild(i).gameObject.GetComponent<TextMeshProUGUI>();
+            Image image = transform.GetChild(i).GetComponent<Image>();
             if (i == index)
             {
-                textComponent.fontSize = Mathf.Lerp(textComponent.fontSize, 36f, 0.1f);
-                textComponent.color = Color.red;
-                UpdateWeightData(textComponent.text);
+                ApiDataHandler.Instance.SetBadgeName(image.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                image.color = new Color32(255, 171, 0, 255);
+                //UpdateWeightData(textComponent.text);
+                image.transform.GetChild(0).gameObject.SetActive(true);
+                image.transform.GetChild(1).gameObject.SetActive(true);
             }
-            else if (i == index - 1 || i == index + 1)
+            else /*if (i == index - 1 || i == index + 1)*/
             {
-                textComponent.fontSize = Mathf.Lerp(textComponent.fontSize, 32f, 0.1f);
-                textComponent.color = new Color32(92, 59, 28, 155);
+                image.color = new Color32(231, 214, 169, 255);
+                image.transform.GetChild(0).gameObject.SetActive(false);
+                image.transform.GetChild(1).gameObject.SetActive(false);
             }
-            else
-            {
-                textComponent.fontSize = Mathf.Lerp(textComponent.fontSize, 24f, 0.1f);
-                textComponent.color = new Color32(92, 59, 28, 80);
-            }
+            //else
+            //{
+            //    textComponent.fontSize = Mathf.Lerp(textComponent.fontSize, 24f, 0.1f);
+            //    textComponent.color = new Color32(92, 59, 28, 80);
+            //}
+            
         }
     }
 

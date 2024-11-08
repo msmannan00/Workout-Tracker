@@ -343,12 +343,22 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public HistoryTempleteModel SetDataForHistory()
     {
         DateTime currentDateTime = DateTime.Now;
+        float totalWeightInKgs = 0;
+        switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+        {
+            case WeightUnit.kg:
+                totalWeightInKgs = CalculateTotalWeight(templeteModel);
+                break;
+            case WeightUnit.lbs:
+                totalWeightInKgs = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertLbsToKg(CalculateTotalWeight(templeteModel)));
+                break;
+        }
         var historyTemplate = new HistoryTempleteModel
         {
             templeteName = templeteModel.templeteName,
             dateTime = currentDateTime.ToString("MMM dd, yyyy"),
             completedTime = (int)elapsedTime,
-            totalWeight = CalculateTotalWeight(templeteModel),
+            totalWeight = totalWeightInKgs,
             prs = 0 // Assuming PRs are not tracked here. Adjust as needed.
         };
         // Populate HistoryExerciseTypeModel list
@@ -370,9 +380,19 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 //print("bool " + exercise.toggle);
                 if (exercise.toggle) // Only add exercise if toggle is true
                 {
+                    float weightInKgs = 0;
+                    switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+                    {
+                        case WeightUnit.kg:
+                            weightInKgs = exercise.weight;
+                            break;
+                        case WeightUnit.lbs:
+                            weightInKgs = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertLbsToKg(exercise.weight));
+                            break;
+                    }
                     var historyExercise = new HistoryExerciseModel
                     {
-                        weight = exercise.weight,
+                        weight = weightInKgs,
                         reps = exercise.reps,
                         time = exercise.time
                     };
@@ -482,9 +502,9 @@ public class WorkoutLogController : MonoBehaviour, PageController
         Action<List<object>> onFinish = null;
         PopupController.Instance.OpenPopup("workoutLog", "CancelWorkoutPopup", onFinish, initialData);
     }
-    private int CalculateTotalWeight(DefaultTempleteModel defaultTemplate)
+    private float CalculateTotalWeight(DefaultTempleteModel defaultTemplate)
     {
-        int totalWeight = 0;
+        float totalWeight = 0;
 
         foreach (var exerciseType in defaultTemplate.exerciseTemplete)
         {

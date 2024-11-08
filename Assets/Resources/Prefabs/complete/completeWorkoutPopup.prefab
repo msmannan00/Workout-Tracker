@@ -733,9 +733,9 @@ MonoBehaviour:
   m_fontSize: 16
   m_fontSizeBase: 16
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 12
+  m_fontSizeMax: 16
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5e2fe869a51e1884281a90b29347d798, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b46801f6949f8ba43ad3ae1960663b14, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1541,6 +1541,7 @@ GameObject:
   - component: {fileID: 1300826896241700824}
   - component: {fileID: 1720498718863655192}
   - component: {fileID: 1731019162046348967}
+  - component: {fileID: 5284653687827161483}
   m_Layer: 5
   m_Name: completeWorkoutPopup
   m_TagString: completeWorkoutPopup
@@ -1654,6 +1655,63 @@ MonoBehaviour:
   particleComplete: {fileID: 6270131878279952900}
   workoutScreen: {fileID: 0}
   backButton: {fileID: 3229736890587977443}
+--- !u!114 &5284653687827161483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5755523075360400536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 1720498718863655192}
+  playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
+  primaryText:
+  - {fileID: 7068170394280702035}
+  - {fileID: 1486172496565931478}
+  secondaryText:
+  - {fileID: 8643328371917014317}
+  - {fileID: 7556396208812067021}
+  - {fileID: 5392893006805421451}
+  historySubText: []
+  buttonText: []
+  inputFields: []
+  inputFieldSearchIcon: []
+  buttons:
+  - {fileID: 290705017739908784}
+  - {fileID: 2396154752672824832}
+  - {fileID: 2151638764976666311}
+  - {fileID: 3348101293035139468}
+  - {fileID: 6196906531254506377}
+  - {fileID: 1687631493993296656}
+  - {fileID: 8067173269972849513}
+  - {fileID: 8888883281142623586}
+  - {fileID: 5158421216633846553}
+  - {fileID: 3628457678542672196}
+  - {fileID: 1050301608502016693}
+  button2: []
+  workoutLogDropdownToggle: []
+  line: []
+  shadow: []
+  outlines: []
+  dropdowns: []
+  achievementCountText: []
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  personlBestAndMeasurementExercise: []
+  darkbackground: {fileID: 21300000, guid: d5f0f0431d75f054aae12b2d639505e3, type: 3}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &5855143153276117745
 GameObject:
   m_ObjectHideFlags: 0

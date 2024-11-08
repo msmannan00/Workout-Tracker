@@ -44,7 +44,16 @@ public class MeasurementController : MonoBehaviour,PageController
     }
     void AddListeners()
     {
-        weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
+        switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+        {
+            case WeightUnit.kg:
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
+                break;
+            case WeightUnit.lbs:
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "lbs"));
+                break;
+        }
+        //weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
         bodyFat.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().bodyFat, "%"));
         chest.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().chest, "cm"));
         shoulder.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().shoulder, "cm"));
@@ -63,7 +72,16 @@ public class MeasurementController : MonoBehaviour,PageController
     // Initialize input fields with values from the MeasurementModel and add units
     void InitializeInputFields()
     {
-        weight.text = ApiDataHandler.Instance.getMeasurementData().weight + " kg";
+        switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+        {
+            case WeightUnit.kg:
+                weight.text = ApiDataHandler.Instance.getMeasurementData().weight + " kg";
+                break;
+            case WeightUnit.lbs:
+                weight.text = ApiDataHandler.Instance.getMeasurementData().weight + " lbs";
+                break;
+        }
+        //weight.text = ApiDataHandler.Instance.getMeasurementData().weight + " kg";
         bodyFat.text = ApiDataHandler.Instance.getMeasurementData().bodyFat + " %";
         chest.text = ApiDataHandler.Instance.getMeasurementData().chest + " cm";
         shoulder.text = ApiDataHandler.Instance.getMeasurementData().shoulder + " cm";
@@ -103,6 +121,7 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         // Check which input field needs to be updated by comparing the original text value
         if (originalValue.Contains("kg")) weight.text = value + " kg";
+        else if (originalValue.Contains("lbs")) weight.text = value + " lbs";
         else if (originalValue.Contains("%")) bodyFat.text = value + " %";
         else if (originalValue.Contains("cm"))
         {

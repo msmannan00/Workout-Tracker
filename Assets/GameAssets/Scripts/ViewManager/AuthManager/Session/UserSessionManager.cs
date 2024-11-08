@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
+    private const float lbsToKgFactor = 0.453592f;
+    private const float kgToLbsFactor = 2.20462f;
     public string mProfileUsername;
     public string mProfileID;
     public bool mSidebar = false;
@@ -24,10 +26,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public Color darkLineColor;
     public Color darkSwitchTextColor;
 
-
-
-    public Color darkSearchBarColor, darkSearchIconColor;
-    public Color lightBgColor, lightHeadingColor, lightTextColor;
     public Color lightXPbutton, darkXPbutton;
 
     public DefaultTempleteModel selectedTemplete;
@@ -53,15 +51,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         darkSwitchTextColor = new Color32(171, 162, 162, 255);
         lightXPbutton = new Color32(167, 200, 33, 255);
         darkXPbutton = new Color32(241, 183, 32, 255);
-        
 
-        // darkBgColor = new Color32(99, 24, 24, 255);
-        darkSearchBarColor = new Color32(81, 14, 14, 255);
-        darkSearchIconColor = new Color32(127, 77, 77, 255);
-        lightBgColor = new Color32(250, 249, 240, 255);
-        lightHeadingColor = new Color32(150, 0, 0, 255);
-        lightButtonColor = new Color32(218, 52, 52, 255);
-        lightTextColor = new Color32(92, 59, 28, 255);
     }
 
     public void OnInitialize(string pProfileUsername, string pProfileID)
@@ -127,16 +117,24 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         // Check if it's a new week
         if (currentWeekStartDate > lastWeekStartDate)
         {
+            int level = ApiDataHandler.Instance.GetCharacterLevel();
             // If the user met the weekly goal, increase the streak
             if (HasMetWeeklyGoal())
             {
                 int currentStreak = ApiDataHandler.Instance.GetUserStreak();
                 ApiDataHandler.Instance.SetUserStreak(currentStreak + 1);
+                level++;
+                ApiDataHandler.Instance.SetCharacterLevel(level);
             }
             else
             {
                 // Reset streak if the user failed to meet the weekly goal
                 ApiDataHandler.Instance.SetUserStreak(0);
+                if (level > 1)
+                {
+                    level--;
+                    ApiDataHandler.Instance.SetCharacterLevel(level);
+                }
             }
             // Update the date when the weekly goal was last set
             ApiDataHandler.Instance.SetCurrentWeekStartDate(currentWeekStartDate);
@@ -173,7 +171,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), null, null, null);
                     break;
                 case AchievementType.LevelUp:
-                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserLevel(), null, null, null);
+                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCompletedAchievements(), null, null, null);
                     break;
             }
         }
@@ -202,7 +200,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     totalWeight += matchingExercise.weight;
                 }
             }
-            float value = achievementDataItem.value * ApiDataHandler.Instance.GetWeight();
+            float value = achievementDataItem.value * ApiDataHandler.Instance.getMeasurementData().weight;
             if (totalWeight >= (int)value)
             {
                 achievementDataItem.isCompleted = true;
@@ -514,6 +512,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
 
         return resultList;
+    }
+
+    public float ConvertLbsToKg(float pounds)
+    {
+        return pounds * lbsToKgFactor;
+    }
+    public float ConvertKgToLbs(float kilograms)
+    {
+        return kilograms * kgToLbsFactor;
     }
 
 }
