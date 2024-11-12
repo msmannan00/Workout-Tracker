@@ -78,7 +78,7 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
         rmText.transform.parent.gameObject.SetActive(true);
         rirText.text=exerciseModel.rir.ToString();
         repsText.text=exerciseModel.reps.ToString();
-        rmText.text = (exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps)).ToString("F1");
+        rmText.text = Mathf.RoundToInt((exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps))).ToString();
         switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
         {
             case WeightUnit.kg:

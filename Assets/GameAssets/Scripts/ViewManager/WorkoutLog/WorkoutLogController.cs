@@ -36,6 +36,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     private Coroutine timerCoroutine;
     private Color enabledColor = Color.white;
     private Color disabledColor = Color.gray;
+    bool back;
     Action<object> callback;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -75,6 +76,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
         //saveButton.interactable = false;
         OnToggleWorkout(null);
+        back = true;
     }
     private void OnEnable()
     {
@@ -87,10 +89,14 @@ public class WorkoutLogController : MonoBehaviour, PageController
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && back)
         {
             OnBack();
         }
+    }
+    void OnBackCheck(List<object> list)
+    {
+        back = true;
     }
     void EditWorkoutName()
     {
@@ -170,6 +176,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void AddExerciseButton()
     {
+        back = false;
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
             { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.WorkoutLogPage}
@@ -184,6 +191,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
     public void OnExerciseAdd(object data)
     {
+        OnBackCheck(null);
         //List<object> dataList = data as List<object>;
         if (data == null)
         {
@@ -325,7 +333,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             string message = "All invalid/empty sets will be discarded. All sets with valid data will be automatically marked as completed.";
             List<object> initialData = new List<object> { this.gameObject, templeteModel, this.callback,message, isTemplateCreator, SetDataForHistory() };
             //Action<List<object>> onFinish = OnToggleWorkout;
-            Action<List<object>> onFinish = null;
+            Action<List<object>> onFinish = OnBackCheck;
             PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", onFinish, initialData);
             return;
         }
@@ -334,7 +342,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             string message = "Are you sure you want to finish this workout.";
             List<object> initialData = new List<object> { this.gameObject, templeteModel, this.callback,message, isTemplateCreator, SetDataForHistory() };
             //Action<List<object>> onFinish = OnToggleWorkout;
-            Action<List<object>> onFinish = null;
+            Action<List<object>> onFinish = OnBackCheck;
             PopupController.Instance.OpenPopup("workoutLog", "FinishWorkoutPopup", onFinish, initialData);
             return;
         }
@@ -499,7 +507,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         //StateManager.Instance.HandleBackAction(gameObject);
         List<object> initialData = new List<object> { this.gameObject };
         //Action<List<object>> onFinish = OnToggleWorkout;
-        Action<List<object>> onFinish = null;
+        Action<List<object>> onFinish = OnBackCheck;
         PopupController.Instance.OpenPopup("workoutLog", "CancelWorkoutPopup", onFinish, initialData);
     }
     private float CalculateTotalWeight(DefaultTempleteModel defaultTemplate)

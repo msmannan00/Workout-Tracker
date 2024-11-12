@@ -8,26 +8,30 @@ using UnityEngine.UI;
 public class SettingController : MonoBehaviour, PageController
 {
     public TMP_InputField searchBar;
-    //public TextMeshProUGUI messageText;
+    public TextMeshProUGUI messageText;
     public Button backButton;
     public GameObject[] items;
 
     public RectTransform changeThemeToggle;
 
     Theme gameTheme;
+    [SerializeField]
+    private bool back;
+    private bool onMessage;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape)&&back)
         {
             Back();
         }
     }
     void Start()
     {
+        back=true;
         searchBar.onValueChanged.AddListener(SearchItems);
         backButton.onClick.AddListener(Back);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
@@ -82,6 +86,10 @@ public class SettingController : MonoBehaviour, PageController
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
     }
+    public void OnBackCheck(List<object> list)
+    {
+        back = true;
+    }
     public void ChangeGameTheme()
     {
         AudioController.Instance.OnButtonClick();
@@ -110,11 +118,15 @@ public class SettingController : MonoBehaviour, PageController
     }
     public void ChangeWeightUnit()
     {
-        PopupController.Instance.OpenPopup("profile", "ChangeUnitPopup", null, null);
+        back = false;
+        PopupController.Instance.OpenPopup("profile", "ChangeUnitPopup", OnBackCheck, null);
     }
+
+
     public void ChangeBadge()
     {
-        PopupController.Instance.OpenPopup("profile", "ChangeBadgePopup", null, null);
+        //PopupController.Instance.OpenPopup("profile", "ChangeBadgePopup", null, null);
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", null, true);
     }
     public void ChangeWeeklyGoal()
     {
@@ -124,16 +136,26 @@ public class SettingController : MonoBehaviour, PageController
         TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
         if (timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal() == 0)
         {
-            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false }};
+            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData, true);
             StateManager.Instance.CloseFooter();
         }
         else
         {
-            //GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.", 2f);
+            if (!onMessage)
+            {
+                onMessage = true;
+                GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2 weeks.", 2f);
+                StartCoroutine(OffMessageText(2));
+            }
         }
 
 
+    }
+    IEnumerator OffMessageText(float time)
+    {
+        yield return new WaitForSeconds(time);
+        onMessage = false;
     }
     public void OnButtonClick()
     {

@@ -8,9 +8,10 @@ public class ChangeUnitPopup : MonoBehaviour,IPrefabInitializer
 {
     public Toggle kg, lbs;
     public Button offPopupButtons, saveButton;
+    Action<List<object>> onFinish;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
     {
-
+        this.onFinish = onFinish;
     }
     void Start()
     {
@@ -51,6 +52,7 @@ public class ChangeUnitPopup : MonoBehaviour,IPrefabInitializer
     }
     public void OffPopup()
     {
+        onFinish?.Invoke(null);
         PopupController.Instance.ClosePopup("ChangeUnitPopup");
     }
     private void OnKgChanged(bool isOn)

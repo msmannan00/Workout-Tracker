@@ -19,10 +19,12 @@ public class HistorySubItem : MonoBehaviour,ItemController
         switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
+                exerciseNameText.font = userSessionManager.Instance.lightSecondaryFont;
                 exerciseNameText.color = new Color32(92, 59, 28, 155);
                 line.color = new Color32(92, 59, 28, 155);
                 break;
             case Theme.Dark:
+                exerciseNameText.font = userSessionManager.Instance.darkSecondaryFont;
                 exerciseNameText.color = new Color32(217, 217, 217, 127);
                 line.color = new Color32(217, 217, 217, 127);
                 break;

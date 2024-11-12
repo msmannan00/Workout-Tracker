@@ -56,8 +56,11 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         if (exerciseTypeModel.exerciseModel.Count > 0)
         {
+            int setCount = 0;
             foreach (var exerciseModel in exerciseTypeModel.exerciseModel)
             {
+                setCount++;
+                exerciseModel.setID = setCount;
                 AddSetFromModel(exerciseModel);
             }
         }
@@ -112,6 +115,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         ExerciseModel exerciseModel = new ExerciseModel();
         exerciseTypeModel.exerciseModel.Add(exerciseModel);
+        exerciseModel.setID = exerciseTypeModel.exerciseModel.Count;
         AddSetFromModel(exerciseModel);
     }
     public void OnRemoveExercisePopup(RectTransform transform)

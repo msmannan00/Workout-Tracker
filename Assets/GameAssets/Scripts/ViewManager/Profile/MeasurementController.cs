@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class MeasurementController : MonoBehaviour,PageController
 {
+    public Button saveButton;
     public Button backButton;
 
     public TMP_InputField weight;
@@ -37,36 +38,34 @@ public class MeasurementController : MonoBehaviour,PageController
             Back();
         }
     }
-    private void Start()
-    {
-        backButton.onClick.AddListener(Back);
-        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
-    }
     void AddListeners()
     {
+        saveButton.onClick.AddListener(Save);
+        backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
         {
             case WeightUnit.kg:
-                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg", weight));
                 break;
             case WeightUnit.lbs:
-                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "lbs"));
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "lbs",weight));
                 break;
         }
         //weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
-        bodyFat.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().bodyFat, "%"));
-        chest.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().chest, "cm"));
-        shoulder.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().shoulder, "cm"));
-        hips.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().hips, "cm"));
-        waist.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().waist, "cm"));
-        leftThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftThigh, "cm"));
-        rightThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightThigh, "cm"));
-        leftBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftBicep, "cm"));
-        rightBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightBicep, "cm"));
-        leftForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftForearm, "cm"));
-        rightForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightForearm, "cm"));
-        leftCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftCalf, "cm"));
-        rightCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightCalf, "cm"));
+        bodyFat.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().bodyFat, "%", bodyFat));
+        chest.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().chest, "cm", chest));
+        shoulder.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().shoulder, "cm", shoulder));
+        hips.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().hips, "cm", hips));
+        waist.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().waist, "cm", waist));
+        leftThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftThigh, "cm", leftThigh));
+        rightThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightThigh, "cm", rightThigh));
+        leftBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftBicep, "cm", leftBicep));
+        rightBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightBicep, "cm", rightBicep));
+        leftForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftForearm, "cm", leftForearm));
+        rightForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightForearm, "cm", rightForearm));
+        leftCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftCalf, "cm", leftCalf));
+        rightCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightCalf, "cm", rightCalf));
     }
 
     // Initialize input fields with values from the MeasurementModel and add units
@@ -98,7 +97,7 @@ public class MeasurementController : MonoBehaviour,PageController
     }
 
     // Generic function to handle input editing and update the MeasurementModel
-    public void OnInputEditEnd(string value, ref int targetField, string unit)
+    public void OnInputEditEnd(string value, ref int targetField, string unit,TMP_InputField text)
     {
         // Remove the unit from the input string before parsing
         string cleanedValue = value.Replace(unit, "").Trim();
@@ -113,31 +112,26 @@ public class MeasurementController : MonoBehaviour,PageController
         }
 
         // Update the input field to reflect the value with the unit
-        UpdateInputFieldWithUnit(targetField, unit, value);
+        UpdateInputFieldWithUnit(targetField, unit, text);
     }
 
     // Helper method to update the input field text with the value and unit
-    private void UpdateInputFieldWithUnit(int value, string unit, string originalValue)
+    private void UpdateInputFieldWithUnit(int value, string unit, TMP_InputField text)
     {
         // Check which input field needs to be updated by comparing the original text value
-        if (originalValue.Contains("kg")) weight.text = value + " kg";
-        else if (originalValue.Contains("lbs")) weight.text = value + " lbs";
-        else if (originalValue.Contains("%")) bodyFat.text = value + " %";
-        else if (originalValue.Contains("cm"))
-        {
-            if (chest.text.Contains(originalValue)) chest.text = value + " cm";
-            else if (shoulder.text.Contains(originalValue)) shoulder.text = value + " cm";
-            else if (hips.text.Contains(originalValue)) hips.text = value + " cm";
-            else if (waist.text.Contains(originalValue)) waist.text = value + " cm";
-            else if (leftThigh.text.Contains(originalValue)) leftThigh.text = value + " cm";
-            else if (rightThigh.text.Contains(originalValue)) rightThigh.text = value + " cm";
-            else if (leftBicep.text.Contains(originalValue)) leftBicep.text = value + " cm";
-            else if (rightBicep.text.Contains(originalValue)) rightBicep.text = value + " cm";
-            else if (leftForearm.text.Contains(originalValue)) leftForearm.text = value + " cm";
-            else if (rightForearm.text.Contains(originalValue)) rightForearm.text = value + " cm";
-            else if (leftCalf.text.Contains(originalValue)) leftCalf.text = value + " cm";
-            else if (rightCalf.text.Contains(originalValue)) rightCalf.text = value + " cm";
-        }
+        if (unit.Contains("kg"))
+            text.text = value + " " + unit;
+        else if (unit.Contains("lbs"))
+            text.text = value + " lbs";
+        else if (unit.Contains("%"))
+            text.text = value + " %";
+        else if (unit.Contains("cm"))
+            text.text = value + " cm";
+    }
+    public void Save()
+    {
+        ApiDataHandler.Instance.SaveMeasurementData();
+        AudioController.Instance.OnButtonClick();
     }
     public void Back()
     {

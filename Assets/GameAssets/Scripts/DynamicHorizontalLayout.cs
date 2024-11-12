@@ -10,6 +10,9 @@ public class DynamicHorizontalLayout : MonoBehaviour
     public float scroll_pos = 0;
     public float[] pos;
 
+    [SerializeField] private float smoothTime = 0.1f; // Adjust to control smoothness
+    private float scrollHorizontal = 0f; // Needed for SmoothDamp
+
     private HorizontalLayoutGroup layoutGroup;
     public int childWidth = 75; // Width of each child
     public int spacing = 10; // Spacing between children
@@ -64,7 +67,9 @@ public class DynamicHorizontalLayout : MonoBehaviour
 
     private void SmoothScrollTo(float targetPos)
     {
-        scrollbar.GetComponent<Scrollbar>().value = Mathf.Lerp(scrollbar.GetComponent<Scrollbar>().value, targetPos, 0.1f);
+        float newValue = Mathf.SmoothDamp(scrollbar.GetComponent<Scrollbar>().value, targetPos, ref scrollHorizontal, smoothTime);
+        scrollbar.GetComponent<Scrollbar>().value = newValue;
+        //scrollbar.GetComponent<Scrollbar>().value = Mathf.Lerp(scrollbar.GetComponent<Scrollbar>().value, targetPos, 0.1f);
     }
 
     private void HighlightItem(int index)
@@ -76,7 +81,7 @@ public class DynamicHorizontalLayout : MonoBehaviour
             Image image = transform.GetChild(i).GetComponent<Image>();
             if (i == index)
             {
-                ApiDataHandler.Instance.SetBadgeName(image.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                FindAnyObjectByType<BadgeController>().SetBadge(image.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
                 image.color = new Color32(255, 171, 0, 255);
                 //UpdateWeightData(textComponent.text);
                 image.transform.GetChild(0).gameObject.SetActive(true);

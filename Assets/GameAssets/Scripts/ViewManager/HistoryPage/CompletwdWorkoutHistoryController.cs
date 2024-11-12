@@ -34,10 +34,10 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
         switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
         {
             case WeightUnit.kg:
-                totalWeightText.text = historyWorkout.totalWeight.ToString("F2")+" kg";
+                totalWeightText.text = Mathf.RoundToInt(historyWorkout.totalWeight).ToString()+" kg";
                 break;
             case WeightUnit.lbs:
-                totalWeightText.text = userSessionManager.Instance.ConvertKgToLbs(historyWorkout.totalWeight).ToString("F2")+" lbs";
+                totalWeightText.text = Mathf.RoundToInt(userSessionManager.Instance.ConvertKgToLbs(historyWorkout.totalWeight)).ToString() + " lbs";
                 break;
         }
         //totalWeightText.text = historyWorkout.totalWeight.ToString();

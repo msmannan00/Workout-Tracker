@@ -94,7 +94,7 @@ public class HistoryController : MonoBehaviour, PageController
 
                     Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "data", typeModel } //, { "isWorkoutLog", true }
+                    { "data", typeModel } , { "mainParent", gameObject }
                 };
 
                     GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/historyScreenDataModel");

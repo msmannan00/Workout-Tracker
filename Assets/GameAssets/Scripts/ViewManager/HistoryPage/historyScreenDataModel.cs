@@ -11,10 +11,11 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
     public TextMeshProUGUI dateText;
 
     public HistoryTempleteModel historyWorkout;
-
+    private GameObject mainParent;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.historyWorkout = (HistoryTempleteModel)data["data"];
+        mainParent = (GameObject)data["mainParent"];
         workoutNameText.text = historyWorkout.templeteName.ToUpper();
         int completeTime = historyWorkout.completedTime;
         if(completeTime > 60) 
@@ -65,7 +66,7 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
             {
             { "workout",historyWorkout }
             };
-        StateManager.Instance.OpenStaticScreen("history", null, "completeWorkoutHistoryScreen", mData);
+        StateManager.Instance.OpenStaticScreen("history", mainParent, "completeWorkoutHistoryScreen", mData,true);
         StateManager.Instance.CloseFooter();
     }
 }

@@ -31,6 +31,13 @@ public class AddNewExercise : MonoBehaviour, PageController
         InitializeCategoryDropdown(categorys);
         InitializeExerciseTypeDropdown(new List<string>(Enum.GetNames(typeof(ExerciseType))));
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClose();
+        }
+    }
     private void Start()
     {
         // Subscribe to the onValueChanged events
