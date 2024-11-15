@@ -14,8 +14,8 @@ public class AppManager : MonoBehaviour
 
         userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
+        FirebaseManager.Instance.Load(null);
         FirebaseExerciseManager.Instance.Load();
-        FirebaseManager.Instance.Load();
         DataManager.Instance.loadData();
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))
         {

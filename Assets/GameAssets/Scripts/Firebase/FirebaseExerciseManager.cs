@@ -14,6 +14,7 @@ public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseMan
         // Initialize Firebase
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
+            print("FirebaseApp");
             if (task.IsCompleted && task.Result == Firebase.DependencyStatus.Available)
             {
                 // Firebase is ready
@@ -31,9 +32,7 @@ public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseMan
     // Deserialize JSON to ExerciseData object
     public void LoadExerciseData(string jsonData)
     {
-        print("load data");
         exerciseData = JsonUtility.FromJson<ExerciseData>(jsonData);
-        print("Load data2");
     }
 
     // Example function to retrieve data from Firebase
@@ -45,17 +44,69 @@ public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseMan
             {
                 DataSnapshot snapshot = task.Result;
                 string jsonData = snapshot.GetRawJsonValue();
-                print(jsonData);
                 LoadExerciseData(jsonData);
                 Debug.Log($"Retrieved data: {jsonData}");
+                AddExerciseForUser(userSessionManager.Instance.mProfileUsername, exerciseData);
             }
             else
             {
                 Debug.LogError("Failed to retrieve data.");
             }
         });
+        
+    }
+    public void AddExerciseForUser(string userId, ExerciseData exercise)
+    {
+        print("AddExerciseForUser start");
+        ExerciseData ex=new ExerciseData();
+        ex.exercises.Add(exercise.exercises[1]);
+        string json = JsonUtility.ToJson(ex);
+        databaseReference.Child("users").Child(userId).Child("exercises").SetRawJsonValueAsync(json).ContinueWith(task => {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Exercise added to user's exercises sub-child");
+            }
+            else
+            {
+                Debug.LogError("Failed to add exercise: " + task.Exception);
+            }
+        });
+        AddOrUpdateExerciseForUser(userId, exercise.exercises[2]);
     }
 
+    public void AddOrUpdateExerciseForUser(string userId, ExerciseDataItem exerciseItem)
+    {
+        // Convert the single exercise item to JSON
+        string json = JsonUtility.ToJson(exerciseItem);
+
+        // Reference the "exercises" node directly
+        var exercisesRef = databaseReference.Child("users").Child(userId).Child("exercises").Child("exercises");
+
+        // Fetch current count, then add a new item at the next index
+        exercisesRef.GetValueAsync().ContinueWith(task => {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                int nextIndex = (int)snapshot.ChildrenCount;  // Get the current count to use as the next index
+
+                // Add the new exercise at the next index
+                exercisesRef.Child(nextIndex.ToString()).SetRawJsonValueAsync(json).ContinueWith(addTask => {
+                    if (addTask.IsCompleted)
+                    {
+                        Debug.Log("Exercise added at index: " + nextIndex);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to add exercise: " + addTask.Exception);
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogError("Failed to get exercises: " + task.Exception);
+            }
+        });
+    }
     // Example function to add a new exercise and save it to Firebase
     public void AddNewExercise(ExerciseDataItem newExercise)
     {

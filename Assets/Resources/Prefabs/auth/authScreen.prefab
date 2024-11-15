@@ -675,7 +675,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4710197300677086245
 RectTransform:
   m_ObjectHideFlags: 0
@@ -702,11 +702,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 395682964946344381}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 149f6abcbcceef943a06550e3a9b2a50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dependencyStatus: 3
+  firebaseInitialized: 0
 --- !u!1 &1144611885256655408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,7 +2304,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aPlayFabManager: {fileID: 2504668725192051923}
-  aFireBaseManager: {fileID: 734997805974529604}
   aError: {fileID: 5074589827851031312}
   aPageToggleText1: {fileID: 852164519715952525}
   aPageToggleText2: {fileID: 4620929781369076433}

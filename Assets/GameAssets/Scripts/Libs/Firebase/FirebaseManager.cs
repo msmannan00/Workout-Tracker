@@ -8,30 +8,35 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
     public  FirebaseAuth auth;
     private FirebaseUser user;
-    public DependencyStatus dependencyStatus;
+    public DependencyStatus dependencyStatus=DependencyStatus.UnavilableMissing;
+    public bool firebaseInitialized;
 
     private void Start()
     {
-        //auth = FirebaseAuth.DefaultInstance;
-        Load();
-        //auth = FirebaseAuth.DefaultInstance;
+
     }
 
-    public void Load()
+    public void Load(Action onFirebaseInitialized)
     {
+        print("Load");
         // Initialize Firebase
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompleted && task.Result == Firebase.DependencyStatus.Available)
+            if (task.Result == Firebase.DependencyStatus.Available)
             {
                 // Firebase is ready
+                dependencyStatus = DependencyStatus.Available;
                 auth = FirebaseAuth.DefaultInstance;
                 print(task.Result);
+                firebaseInitialized = true;
+                onFirebaseInitialized?.Invoke();
             }
             else
             {
                 Debug.LogError($"Could not resolve all Firebase dependencies: {task.Result}");
             }
+            if (auth == null)
+                print("null");
         });
     }
 
@@ -45,13 +50,22 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     public void OnTryLogin(string email, string password, Action<string, string> onSuccess, Action<FirebaseException> onFailure)
     {
         print("out");
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        if (!firebaseInitialized)
+        {
+            print("Firebase not initialized. Loading...");
+            Load(() => OnTryLogin(email, password, onSuccess, onFailure));
+            return;
+        }
+        Credential credential =
+         EmailAuthProvider.GetCredential(email, password);
+        auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
         {
             print("in");
+            
             if (task.IsCanceled || task.IsFaulted)
             {
                 print("if");
-                onFailure(task.Exception.GetBaseException() as FirebaseException);
+                onFailure?.Invoke(task.Exception.GetBaseException() as FirebaseException);
             }
             else
             {
@@ -61,24 +75,33 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
                 string username = HelperMethods.Instance.ExtractUsernameFromEmail(email);
                 string userId = user.UserId;
                 print(username + "  " + userId);
-                onSuccess(username, userId);
+                onSuccess?.Invoke(username, userId);
             }
         });
     }
 
     public void OnTryRegisterNewAccount(string email, string password, Action pCallbackSuccess, Action<AggregateException> onFailure)
     {
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        print("try to create");
+        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
         {
-            if (task.IsCanceled || task.IsFaulted)
+            print("checking");
+            if (task.IsCanceled)
             {
+                print("cancel");
+                onFailure(task.Exception);
+            }
+            else if (task.IsFaulted)
+            {
+                print("fault");
                 onFailure(task.Exception);
             }
             else
             {
+                print("create");
                 user = task.Result.User;
                 OnSaveUser(email, password);
-                pCallbackSuccess();
+                pCallbackSuccess.Invoke();
             }
         });
     }

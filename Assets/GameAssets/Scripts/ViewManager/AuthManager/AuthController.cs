@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using Assets.SimpleGoogleSignIn.Scripts;
 using Assets.SimpleFacebookSignIn.Scripts;
 using System.Collections;
-using UnityEditor.PackageManager;
 using Firebase;
 using Firebase.Auth;
 
@@ -229,6 +228,7 @@ public class AuthController : MonoBehaviour, PageController
             };
             Action<FirebaseException> callbackFailure = (pError) =>
             {
+                print(pError);
                 GlobalAnimator.Instance.FadeOutLoader();
                 GlobalAnimator.Instance.FadeIn(aError.gameObject);
                 //var errorMessage = pError.InnerException != null
