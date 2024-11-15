@@ -287,10 +287,10 @@ public class ExerciseController : MonoBehaviour, PageController
 
         foreach (ExerciseDataItem exercise in exerciseData.exercises)
         {
-            string lowerFilter = filter.ToLower();
+            string lowerFilter = filter.Replace(" ", "").ToLower();
 
             if (!showAll &&
-                !(exercise.exerciseName.ToLower().Contains(lowerFilter) ||
+                !(exercise.exerciseName.Replace(" ", "").ToLower().Contains(lowerFilter) ||
                   exercise.category.ToLower().Contains(lowerFilter)))
             {
                 continue;

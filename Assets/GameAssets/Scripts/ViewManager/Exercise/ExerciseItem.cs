@@ -16,10 +16,6 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     [SerializeField]
     public GameObject selected;
 
-    void Start()
-    {
-    }
-
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -32,7 +28,9 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
         {
             exerciseNameText.text = exerciseData.exerciseName;
             categoryNameText.text = exerciseData.category;
-            
+            Sprite sp= Resources.Load<Sprite>("UIAssets/ExcerciseIcons/"+exerciseData.exerciseName+"-1");
+            if (sp != null)
+                exerciseImage.sprite = sp;
         }
     }
 
