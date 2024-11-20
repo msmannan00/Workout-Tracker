@@ -68,6 +68,7 @@ public class PersonalBestController : MonoBehaviour, PageController
                         PersonalBestDataItem _data = new PersonalBestDataItem();
                         _data.exerciseName = dataItem.exerciseName;
                         _data.weight = 0;
+                        _data.rep = 1;
                         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/profile/personalBestSubItem");
                         GameObject exerciseObject = Instantiate(exercisePrefab, content);
                         Dictionary<string, object> mData = new Dictionary<string, object>
@@ -75,6 +76,7 @@ public class PersonalBestController : MonoBehaviour, PageController
                             { "data", _data }
                         };
                         exerciseObject.GetComponent<ItemController>().onInit(mData, null);
+                        ApiDataHandler.Instance.SetPersonalBestData(_data);
                         haveExercises.Add(dataItem.exerciseName.ToLower());
                     }
                     else

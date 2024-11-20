@@ -7,15 +7,15 @@ using UnityEngine.UI;
 public class BadgeController : MonoBehaviour,PageController
 {
     public Button continuButton;
-    //public Button backButton;
+    public Button backButton;
     [SerializeField]
     private string currentBadge;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         continuButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         continuButton.onClick.AddListener(Continu);
-        //backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
-        //backButton.onClick.AddListener(Back);
+        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        backButton.onClick.AddListener(Back);
     }
     private void Update()
     {

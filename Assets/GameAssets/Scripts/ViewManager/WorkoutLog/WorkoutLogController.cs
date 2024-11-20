@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TMPro;
 using Unity.VisualScripting;
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 public class WorkoutLogController : MonoBehaviour, PageController
 {
     public TextMeshProUGUI workoutNameText;
-    public TMP_InputField workoutNotes;
+    //public TMP_InputField workoutNotes;
     public TMP_InputField editWorkoutName;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI messageText;
@@ -22,6 +23,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     public Button addExerciseButton;
     public Button timerButton;
     public Transform content;
+
 
     public bool addSets;
     private int exerciseCounter = 0;
@@ -48,12 +50,13 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
             DefaultTempleteModel dataTemplate = DeepCopy((DefaultTempleteModel)data["dataTemplate"]);
             templeteModel.templeteName= dataTemplate.templeteName;
-            workoutNotes.text = dataTemplate.templeteNotes;
+            //workoutNotes.text = dataTemplate.templeteNotes;
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in dataTemplate.exerciseTemplete)
             {
                 list.Add(exerciseType);
             }
+            //UpdateExerciseNotesFromHistory(ApiDataHandler.Instance.getHistoryData(), (DefaultTempleteModel)data["dataTemplate"]);
             OnExerciseAdd(list);
             if (workoutNameText != null)
             {
@@ -62,7 +65,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 float textWidth = workoutNameText.preferredWidth;
                 workoutNameText.transform.GetComponent<RectTransform>().sizeDelta=new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
             }
-            workoutNotes.onValueChanged.AddListener(OnNotesChange);
+            //workoutNotes.onValueChanged.AddListener(OnNotesChange);
         }
         editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         editWorkoutButton.onClick.AddListener(EditWorkoutName);
@@ -78,15 +81,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         OnToggleWorkout(null);
         back = true;
     }
-    private void OnEnable()
-    {
-        //OnToggleWorkout(null);
-    }
 
-    private void OnDisable()
-    {
-        //OnToggleWorkout(null);
-    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && back)
@@ -184,10 +179,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         StateManager.Instance.OpenStaticScreen("exercise", null, "exerciseScreen", mData, true, OnExerciseAdd);
     }
 
-    private void OnNotesChange(string input)
-    {
-        templeteModel.templeteNotes = input;
-    }
+
 
     public void OnExerciseAdd(object data)
     {
@@ -206,36 +198,38 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 if (item is ExerciseDataItem dataItem)
                 {
-                    typeModel = new ExerciseTypeModel
+                    bool exerciseExists = templeteModel.exerciseTemplete
+                       .Any(exercise => exercise.name.ToLower() == dataItem.exerciseName.ToLower());
+
+                    if (!exerciseExists)
                     {
-                        name = dataItem.exerciseName,
-                        categoryName = dataItem.category,
-                        exerciseModel = new List<ExerciseModel>(),
-                        index = exerciseCounter++,
-                        exerciseType=dataItem.exerciseType
-                    };
+                        typeModel = new ExerciseTypeModel
+                        {
+                            name = dataItem.exerciseName,
+                            categoryName = dataItem.category,
+                            exerciseModel = new List<ExerciseModel>(),
+                            index = exerciseCounter++,
+                            exerciseType = dataItem.exerciseType
+                        };
 
-                    templeteModel.exerciseTemplete.Add(typeModel);
+                        templeteModel.exerciseTemplete.Add(typeModel);
 
-                    exerciseDataItems.Add(dataItem);
+                        exerciseDataItems.Add(dataItem);
+
+                        Dictionary<string, object> mData = new Dictionary<string, object>
+                        {
+                            { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator },
+                            {"templeteModel",templeteModel},{"inputManager",this.GetComponent<ScrollRect>()}
+                        };
+
+                        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
+                        GameObject exerciseObject = Instantiate(exercisePrefab, content);
+                        int childCount = content.childCount;
+                        //exerciseObject.transform.SetSiblingIndex(childCount - 2);
+                        exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
+                        print("1");
+                    }
                 }
-                else
-                {
-                    typeModel = (ExerciseTypeModel)item;
-                    templeteModel.exerciseTemplete.Add(typeModel);
-                }
-
-                Dictionary<string, object> mData = new Dictionary<string, object>
-                {
-                    { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator },{"templeteModel",templeteModel}
-                };
-
-                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
-                GameObject exerciseObject = Instantiate(exercisePrefab, content);
-                int childCount = content.childCount;
-                //exerciseObject.transform.SetSiblingIndex(childCount - 2);
-                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
-                print("1");
             }
         }
         else if (data is List<ExerciseTypeModel> dataList2)
@@ -253,6 +247,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
                     { "isWorkoutLog", true },
                     {"isTemplateCreator",isTemplateCreator },
                     {"templeteModel",templeteModel}
+                    //{"inputManager",this.GetComponent<InputFieldManager>()}
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -562,10 +557,45 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 exerciseCopy.exerciseModel.Add(exerciseModelCopy);
             }
-
             copy.exerciseTemplete.Add(exerciseCopy);
         }
 
         return copy;
+    }
+    public void UpdateExerciseNotesFromHistory(HistoryModel historyModel, DefaultTempleteModel defaultTemplateModel)
+    {
+        // Step 1: Filter history models with matching template names
+        var matchingHistoryTemplates = historyModel.exerciseTempleteModel
+            .Where(ht => ht.templeteName == defaultTemplateModel.templeteName)
+            .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by latest date first
+            .ToList();
+
+        // Step 2: Iterate through the exercise templates in the default template model
+        foreach (var exercise in defaultTemplateModel.exerciseTemplete)
+        {
+            bool noteAssigned = false;
+
+            // Step 3: Check through each matching history template
+            foreach (var historyTemplate in matchingHistoryTemplates)
+            {
+                // Check if the exercise name exists in the history template
+                var matchingExercise = historyTemplate.exerciseTypeModel
+                    .FirstOrDefault(e => e.exerciseName == exercise.name);
+
+                if (matchingExercise != null)
+                {
+                    // Assign the notes from the history template to the default template
+                    exercise.exerciseNotes = matchingExercise.exerciseNotes;
+                    noteAssigned = true;
+                    break; // Exit loop once note is assigned
+                }
+            }
+
+            // If no matching exercise found in any history template, the notes remain unchanged
+            if (!noteAssigned)
+            {
+                exercise.exerciseNotes = string.Empty; // Optional: Reset to empty if needed
+            }
+        }
     }
 }

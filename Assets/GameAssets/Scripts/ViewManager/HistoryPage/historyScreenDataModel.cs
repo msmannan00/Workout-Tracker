@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class historyScreenDataModel : MonoBehaviour, ItemController
 {
     public TextMeshProUGUI workoutNameText;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI dateText;
+    public Image line;
 
     public HistoryTempleteModel historyWorkout;
     private GameObject mainParent;
@@ -33,10 +35,25 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
         //else { dateText.text = "-"; }
         if (historyWorkout.exerciseTypeModel.Count > 0)
         {
+            int totalExercises = 0;
             foreach (var exerciseModel in historyWorkout.exerciseTypeModel)
             {
                 AddSetFromModel(exerciseModel);
+                totalExercises++;
             }
+            float imageY = line.GetComponent<RectTransform>().sizeDelta.y;
+            Vector2 newSize = new Vector2(line.GetComponent<RectTransform>().sizeDelta.x, imageY * totalExercises);
+            line.GetComponent<RectTransform>().sizeDelta = newSize;
+        }
+
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                line.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                line.color = new Color32(217, 217, 217, 127);
+                break;
         }
     }
     private void AddSetFromModel(HistoryExerciseTypeModel exerciseModel)

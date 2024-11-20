@@ -309,6 +309,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetString("personBestData", json);
         PreferenceManager.Instance.Save();
     }
+
+    public void SetPersonalBestData(PersonalBestDataItem item)
+    {
+        personalBestData.exercises.Add(item);
+    }
     public void SetJoiningDate(DateTime date)
     {
         string dateInString= date.ToString("MMM dd, yyyy");

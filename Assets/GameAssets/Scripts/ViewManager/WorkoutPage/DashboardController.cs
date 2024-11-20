@@ -18,7 +18,7 @@ public class DashboardController : MonoBehaviour, PageController
     public Transform content;
     public RectTransform switchButton;
     public TextMeshProUGUI switchWorkout, switchSplit;
-    public Button createNewWorkout, startNewWorkout,workout,split;
+    public Button createNewWorkout, startNewWorkout, workout, split;
     List<GameObject> items = new List<GameObject>();
     bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -42,9 +42,7 @@ public class DashboardController : MonoBehaviour, PageController
         Workout();
         isWorkout = true;
     }
-    public void EditTemplete()
-    {
-    }
+
 
     public void Play()
     {
@@ -56,9 +54,17 @@ public class DashboardController : MonoBehaviour, PageController
     }
     public void CreateNewWorkout()
     {
+        int number = content.childCount;
+        string templeteName = "Workout " + number;
+        while(ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Any(t => t.templeteName == templeteName))
+        {
+            number++;
+            templeteName = "Workout " + number;
+        }
         Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "workoutName", "Workout " + content.childCount }
+                { "workoutName", templeteName },
+                {"editWorkout", false}
             };
         StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData,true);
         StateManager.Instance.CloseFooter();
@@ -88,7 +94,8 @@ public class DashboardController : MonoBehaviour, PageController
             DefaultTempleteModel templeteData = exercise;
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "data", templeteData }
+                { "data", templeteData },
+                {"parent",gameObject }
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");

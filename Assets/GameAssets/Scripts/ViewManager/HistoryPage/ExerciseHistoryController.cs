@@ -384,7 +384,12 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
 
             case HistoryPerformance.BestSet:
                 topPerformance = exercises
-                    .OrderByDescending(e => e.GetBestSet()?.weight * (1 + 0.0333f * e.GetBestSet()?.reps ?? 0))
+                    .OrderByDescending(e =>
+                    {
+                        var bestSet = e.GetBestSet();
+                        if (bestSet == null) return 0; // Handle null case for GetBestSet
+                        return bestSet.reps == 1 ? bestSet.weight : bestSet.weight * (1 + 0.0333f * bestSet.reps);
+                    })
                     .FirstOrDefault();
                 break;
 

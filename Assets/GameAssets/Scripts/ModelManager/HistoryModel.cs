@@ -54,6 +54,8 @@ public class ExerciseWithDate
     // Calculate the best set based on the formula: weight * (1 + 0.0333 * reps)
     public HistoryExerciseModel GetBestSet()
     {
-        return exercise.OrderByDescending(e => e.weight * (1 + 0.0333f * e.reps)).FirstOrDefault();
+        return exercise
+       .OrderByDescending(e => e.reps == 1 ? e.weight : e.weight * (1 + 0.0333f * e.reps))
+       .FirstOrDefault();
     }
 }

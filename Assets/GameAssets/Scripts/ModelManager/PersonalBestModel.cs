@@ -6,6 +6,7 @@ public class PersonalBestDataItem
 {
     public string exerciseName;
     public int weight;
+    public int rep;
 }
 
 [System.Serializable]

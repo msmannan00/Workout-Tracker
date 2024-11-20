@@ -78,7 +78,23 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
         rmText.transform.parent.gameObject.SetActive(true);
         rirText.text=exerciseModel.rir.ToString();
         repsText.text=exerciseModel.reps.ToString();
-        rmText.text = Mathf.RoundToInt((exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps))).ToString();
+        // calculating 1Rm
+        if (exerciseModel.reps == 1)
+        {
+            rmText.text = exerciseModel.weight % 1 == 0
+                ? exerciseModel.weight.ToString("F0")
+                : exerciseModel.weight.ToString("F1");
+        }
+        else
+        {
+            float result = exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps);
+            float roundedResult = Mathf.Round(result * 2) / 2; // Rounds to the nearest 0.5
+            rmText.text = roundedResult % 1 == 0
+                ? roundedResult.ToString("F0")
+                : roundedResult.ToString("F1");
+        }
+
+        //rmText.text = Mathf.RoundToInt((exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps))).ToString();
         switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
         {
             case WeightUnit.kg:

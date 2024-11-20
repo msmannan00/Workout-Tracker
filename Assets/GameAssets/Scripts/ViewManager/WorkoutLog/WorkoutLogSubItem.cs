@@ -36,6 +36,11 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
+        //InputFieldManager inputFieldManager = (InputFieldManager)data["inputManager"];
+        //inputFieldManager.inputFields.Add(mile);
+        //inputFieldManager.inputFields.Add(timerText);
+        //inputFieldManager.inputFields.Add(weight);
+        //inputFieldManager.inputFields.Add(reps);
         ResetModel(exerciseModel);
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
@@ -186,7 +191,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         rir.ClearOptions();
         List<string> options = new List<string>();
-        for (int i = 1; i <= 5; i++)
+        for (int i = 0; i <= 5; i++)
         {
             options.Add(i.ToString());
         }
@@ -334,9 +339,8 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             }
             else
             {
-                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+                isComplete.targetGraphic.color = new Color32(246, 236, 220, 255);
             }
-            print("toggle");
         //}
     }
     private void UpdateToggleInteractableState()
@@ -347,7 +351,6 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 case ExerciseType.RepsOnly:
                     isComplete.interactable = (exerciseModel.reps > 0);
-                    print("reps");
                     break;
                 case ExerciseType.TimeBased:
                     isComplete.interactable = (exerciseModel.time > 0);
@@ -369,9 +372,9 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         if (!isComplete.interactable && shake)
         {
-            shake = false;
+            //shake = false;
             AudioController.Instance.OnError();
-            GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
+            //GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
         }
     }
 

@@ -18,7 +18,9 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     bool isWorkoutLog;
     public bool isTemplateCreator;
     List<HistoryExerciseModel> exerciseHistory;
-    DefaultTempleteModel templeteModel;
+    public DefaultTempleteModel templeteModel;
+    public List<WorkoutLogSubItem> workoutLogSubItems;
+    //InputFieldManager inputFieldManager;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
@@ -30,6 +32,11 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             templeteModel = (DefaultTempleteModel)data["templeteModel"];
         }
+        if (templeteModel != null)
+            UpdateExerciseNotes(ApiDataHandler.Instance.getHistoryData(), this.exerciseTypeModel, templeteModel.templeteName);
+        //if (data.ContainsKey("inputManager"))
+        //    inputFieldManager = (InputFieldManager)data["inputManager"];
+        //inputFieldManager.inputFields.Add(exerciseNotes);
         exerciseNameText.text = exerciseTypeModel.name.ToUpper();
         exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
@@ -68,8 +75,9 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             OnAddSet(false);
         }
-        if (isTemplateCreator) threeDots.gameObject.SetActive(true);
-        else threeDots.gameObject.SetActive(false);
+        //if (isTemplateCreator) threeDots.gameObject.SetActive(true);
+        //else threeDots.gameObject.SetActive(false);
+        exerciseNotes.text = this.exerciseTypeModel.exerciseNotes;
         exerciseNotes.onEndEdit.AddListener(OnExerciseNotesChange);
     }
     private void AddSetFromModel(ExerciseModel exerciseModel)
@@ -86,7 +94,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         int childCount = transform.childCount;
         newSubItem.transform.SetSiblingIndex(childCount - 3);
         WorkoutLogSubItem newSubItemScript = newSubItem.GetComponent<WorkoutLogSubItem>();
-
+        workoutLogSubItems.Add(newSubItemScript);
         HistoryExerciseModel history = null;
         if(exerciseHistory.Count > 0)
         {
@@ -99,6 +107,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             {"exerciseType", exerciseTypeModel.exerciseType  },
             {"exerciseHistory",history},
             {"isWorkoutLog",isWorkoutLog }
+            //{"inputManager",inputFieldManager}
         };
         newSubItemScript.onInit(initData,callback);
     }
@@ -187,5 +196,32 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
                 break;
         }
         return exerciseDataList;
+    }
+
+    public  void UpdateExerciseNotes(HistoryModel historyModel, ExerciseTypeModel exerciseToCheck, string templateName)
+    {
+        // Step 1: Filter history models with matching template names
+        var matchingHistoryTemplates = historyModel.exerciseTempleteModel
+            .Where(ht => ht.templeteName == templateName)
+            .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by date
+            .ToList();
+
+        // Step 2: Check each matching history template
+        foreach (var historyTemplate in matchingHistoryTemplates)
+        {
+            // Check if the exercise exists in the current history template
+            var matchingExercise = historyTemplate.exerciseTypeModel
+                .FirstOrDefault(e => e.exerciseName == exerciseToCheck.name);
+
+            if (matchingExercise != null)
+            {
+                // If a match is found, update the notes and exit the method
+                exerciseToCheck.exerciseNotes = matchingExercise.exerciseNotes;
+                return;
+            }
+        }
+
+        // Step 3: If no match is found, leave the notes unchanged
+        exerciseToCheck.exerciseNotes = string.Empty; // Optional: reset to empty if required
     }
 }
