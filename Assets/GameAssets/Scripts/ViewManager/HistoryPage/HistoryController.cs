@@ -17,7 +17,7 @@ public class HistoryController : MonoBehaviour, PageController
     private bool isCompleted;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-
+        callback?.Invoke(null);
     }
     private void Start()
     {
@@ -50,15 +50,16 @@ public class HistoryController : MonoBehaviour, PageController
     }
     public void Exercise()
     {
-        if (!isCompleted) return;
-        isCompleted = false;
-        AudioController.Instance.OnButtonClick();
-        VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
-        vlg.childControlHeight = false;
-        vlg.spacing = 5;
-        vlg.childAlignment = TextAnchor.UpperLeft;
-        GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
-        AllExercises();
+        OpenExerciseScreen();
+        //if (!isCompleted) return;
+        //isCompleted = false;
+        //AudioController.Instance.OnButtonClick();
+        //VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
+        //vlg.childControlHeight = false;
+        //vlg.spacing = 5;
+        //vlg.childAlignment = TextAnchor.UpperLeft;
+        //GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
+        //AllExercises();
     }
     public void Workout(object data)
     {
@@ -113,6 +114,14 @@ public class HistoryController : MonoBehaviour, PageController
                 obj.SetActive(true);
             }
         }
+    }
+    public void OpenExerciseScreen()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.HistoryPage}
+        };
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, null);
     }
 
     void AllExercises()

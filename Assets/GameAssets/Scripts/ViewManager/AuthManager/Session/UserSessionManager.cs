@@ -4,6 +4,8 @@ using TMPro;
 using Unity.VisualScripting;
 using System;
 using UnityEngine.UI;
+using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -145,38 +147,133 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
 
 
-    public void CheckAchievementStatus()
+    public void CheckAchievementStatus(List<Image> trophyImages=null, TextMeshProUGUI progressText=null, TextMeshProUGUI descriptionText = null)
     {
-
         foreach(AchievementTemplate _data in ApiDataHandler.Instance.getAchievementData().achievements)
         {
             switch (_data.type)
             {
                 case AchievementType.BodyweightMultiplier:
-                    CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), null, null, null);
+                    CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.WorkoutCount:
-                    CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, null, null, null);
+                    CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.ExerciseCount:
-                    CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), null, null, null);
+                    CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.Specialist:
-                    CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), null, null, null);
+                    CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.CardioTime:
-                    CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), null, null, null);
+                    CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.Streak:
-                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), null, null, null);
+                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
                     break;
                 case AchievementType.LevelUp:
-                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCompletedAchievements(), null, null, null);
+                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.CompleteAllAchievements:
+                    CheckCompleteAllAchivements(_data, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.LongSession:
+                    CheckLongSessionAchivements(_data, GetHighestCompletedTimeInHours(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.ExercisesInSingleSession:
+                    CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.ChangeTrainingBadge:
+                    ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.AddFriends:
+                    CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.RemoveFriend:
+                    CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.AddPersonBest:
+                    CheckAchievements(_data, ApiDataHandler.Instance.getPersonalBestData().exercises.Count, AchievementType.AddPersonBest, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.CreateWorkout:
+                    CheckAchievements(_data, ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount(), AchievementType.CreateWorkout, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.WorkoutInactivity:
+                    CheckAchievements(_data, GetGapBetweenLatestTwoWorkoutsInDays(ApiDataHandler.Instance.getHistoryData()), AchievementType.WorkoutInactivity, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.BuyItems:
+                    CheckAchievements(_data, ApiDataHandler.Instance.GetBuyedCloths(), AchievementType.BuyItems, trophyImages, progressText, descriptionText);
+                    break;
+                case AchievementType.WeightLifted:
+                    CheckAchievements(_data, GetTotalWeightInTons(ApiDataHandler.Instance.getHistoryData()), AchievementType.WeightLifted, trophyImages, progressText, descriptionText);
                     break;
             }
         }
         ApiDataHandler.Instance.SaveAchievementData();
         
+    }
+    public void CheckIndiviualAchievementStatus(AchievementTemplate _data, List<Image> trophyImages = null, TextMeshProUGUI progressText = null, TextMeshProUGUI descriptionText = null)
+    {
+        switch (_data.type)
+        {
+            case AchievementType.BodyweightMultiplier:
+                CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.WorkoutCount:
+                CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.ExerciseCount:
+                CheckExerciseCountAchievements(_data, GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.Specialist:
+                CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.CardioTime:
+                CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.Streak:
+                CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.LevelUp:
+                CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.CompleteAllAchievements:
+                CheckCompleteAllAchivements(_data, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.LongSession:
+                CheckLongSessionAchivements(_data, GetHighestCompletedTimeInHours(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.ExercisesInSingleSession:
+                CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.ChangeTrainingBadge:
+                ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.AddFriends:
+                CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.RemoveFriend:
+                CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.AddPersonBest:
+                CheckAchievements(_data, ApiDataHandler.Instance.getPersonalBestData().exercises.Count, AchievementType.AddPersonBest, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.CreateWorkout:
+                CheckAchievements(_data, ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount(), AchievementType.CreateWorkout, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.WorkoutInactivity:
+                CheckAchievements(_data, GetGapBetweenLatestTwoWorkoutsInDays(ApiDataHandler.Instance.getHistoryData()), AchievementType.WorkoutInactivity, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.BuyItems:
+                CheckAchievements(_data, ApiDataHandler.Instance.GetBuyedCloths(), AchievementType.BuyItems, trophyImages, progressText, descriptionText);
+                break;
+            case AchievementType.WeightLifted:
+                CheckAchievements(_data, GetTotalWeightInTons(ApiDataHandler.Instance.getHistoryData()), AchievementType.WeightLifted, trophyImages, progressText, descriptionText);
+                break;
+        }
+     
+        ApiDataHandler.Instance.SaveAchievementData();
+
     }
 
     public void CheckBodyWeightAchievements(AchievementTemplate data, PersonalBestData personalBest,List<Image> trophyImages,TextMeshProUGUI progressText,TextMeshProUGUI descriptionText)
@@ -433,6 +530,175 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
+    public void CheckCompleteAllAchivements(AchievementTemplate data, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            int totalAchievements = ApiDataHandler.Instance.GetTotalAchievements() - 1;
+            int completeAchievements = ApiDataHandler.Instance.GetCompletedAchievements();
+            if (completeAchievements==totalAchievements)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = completeAchievements + " / " + totalAchievements.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
+        }
+    }
+
+    public void CheckLongSessionAchivements(AchievementTemplate data, int longestSession, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (longestSession >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = longestSession + "H / " + achievementDataItem.value.ToString()+"H";
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
+        }
+    }
+    public void ChangeTrainingBadgeAchievements(AchievementTemplate data, string currentBadgeName, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (currentBadgeName != "TheGorillaBadge")
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    progressText.text = "0 / " + achievementDataItem.value.ToString();
+                    descriptionText.text = achievementDataItem.description;
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
+        }
+    }
+    public void CheckAchievements(AchievementTemplate data, int performedExercises, AchievementType type, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText)
+    {
+        for (int i = 0; i < data.achievementData.Count; i++)
+        {
+            AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
+
+            if (achievementDataItem.isCompleted)
+            {
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                continue; // Skip if it's already completed
+            }
+            if (performedExercises >= achievementDataItem.value)
+            {
+                achievementDataItem.isCompleted = true;
+                if (trophyImages != null)
+                    trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
+                else
+                {
+                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                }
+            }
+            else
+            {
+                if (progressText != null && descriptionText != null)
+                {
+                    switch (type)
+                    {
+                        case AchievementType.WeightLifted:
+                            progressText.text = performedExercises.ToString() + "T / " + achievementDataItem.value.ToString()+"T";
+                            descriptionText.text = achievementDataItem.description;
+                            break;
+                        default:
+                            progressText.text = performedExercises.ToString() + " / " + achievementDataItem.value.ToString();
+                            descriptionText.text = achievementDataItem.description;
+                            break;
+                    }
+                    
+                }
+                return;
+            }
+        }
+        if (progressText != null && descriptionText != null)
+        {
+            progressText.gameObject.SetActive(false);
+            descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
+        }
+        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
+    }
+
+    //------------------------------------------------------Helper Functions--------------------------------------------------------------
 
     public int GetUniqueExerciseCount(HistoryModel historyModel)
     {
@@ -513,6 +779,63 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
         return resultList;
     }
+
+    public int GetHighestCompletedTimeInHours(HistoryModel history)
+    {
+        if (history.exerciseTempleteModel.Count < 2)
+            return 0;
+        int highestCompletedTimeInHours = history.exerciseTempleteModel
+            .Max(template => template.completedTime / 3600); // Divide seconds by 3600 to get hours
+
+        return highestCompletedTimeInHours;
+    }
+    public int GetHighestExerciseInSingleSession(HistoryModel history)
+    {
+        if (history.exerciseTempleteModel.Count < 2)
+            return 0;
+        // Get the highest count of exerciseTypeModel in the list
+        int highestCount = history.exerciseTempleteModel
+            .Max(template => template.exerciseTypeModel.Count);
+
+        return highestCount;
+    }
+    public int GetTotalWeightInTons(HistoryModel history)
+    {
+        float totalWeightInTons = history.exerciseTempleteModel
+            .Sum(template => template.totalWeight) / 1000f;
+
+        return (int)totalWeightInTons;
+    }
+    public int GetGapBetweenLatestTwoWorkoutsInDays(HistoryModel history)
+    {
+        try
+        {
+            // Parse and sort the dateTime strings into DateTime objects
+            var sortedDates = history.exerciseTempleteModel
+                .Where(template => DateTime.TryParse(template.dateTime, out _))
+                .Select(template => DateTime.Parse(template.dateTime))
+                .OrderByDescending(date => date)
+                .ToList();
+
+            // Ensure there are at least two valid dates
+            if (sortedDates.Count < 2)
+            {
+                Debug.LogWarning("Not enough valid dates to calculate the gap.");
+                return 0;
+            }
+
+            // Calculate the gap in days between the two latest dates
+            int gapInDays = (sortedDates[0] - sortedDates[1]).Days;
+
+            return gapInDays;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error calculating gap: {ex.Message}");
+            return 0; // Return -1 to indicate an error
+        }
+    }
+
 
     public float ConvertLbsToKg(float pounds)
     {

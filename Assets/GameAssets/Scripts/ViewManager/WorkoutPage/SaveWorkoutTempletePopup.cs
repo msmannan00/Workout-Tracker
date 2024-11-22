@@ -50,15 +50,18 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
         if (isEdit)
         {
             ApiDataHandler.Instance.SaveTemplateData();
-            PopupController.Instance.ClosePopup("DeleteWorkoutPopup");
+            PopupController.Instance.ClosePopup("SaveWorkoutTempletePopup");
             StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);
         }
         else
         {
+            int createdWorkoutCount = ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount();
+            createdWorkoutCount++;
+            ApiDataHandler.Instance.SetCreatedWorkoutTempleteCount(createdWorkoutCount);
             ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Add(templeteModel);
             ApiDataHandler.Instance.SaveTemplateData();
-            PopupController.Instance.ClosePopup("DeleteWorkoutPopup");
+            PopupController.Instance.ClosePopup("SaveWorkoutTempletePopup");
             StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);
         }

@@ -32,6 +32,33 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
             if (sp != null)
                 exerciseImage.sprite = sp;
         }
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                SetExerciseText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightPlaceholder);
+                break;
+            case Theme.Dark:
+                SetExerciseText(userSessionManager.Instance.darkPrimaryFont, Color.white);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, new Color32(255, 255, 255, 150));
+                break;
+        }
+    }
+    public void SetExerciseText(TMP_FontAsset font, Color color)
+    {
+        if (exerciseNameText != null)
+        {
+            exerciseNameText.font = font;
+            exerciseNameText.color = color;
+        }
+    }
+    public void SetCategoryText(TMP_FontAsset font, Color color)
+    {
+        if (categoryNameText != null)
+        {
+            categoryNameText.font = font;
+            categoryNameText.color = color;
+        }
     }
 
 }

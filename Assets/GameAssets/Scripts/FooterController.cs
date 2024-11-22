@@ -9,6 +9,7 @@ public class FooterController : MonoBehaviour
     public GameObject selfButtonObject;
     public Image body, sharing, dashboard, history, profile;
     public FooterButtons currentButton;
+    public bool pageAnimationComplete;
     //public List<Image> footerButtonImages = new List<Image>();
 
     private void Start()
@@ -25,6 +26,7 @@ public class FooterController : MonoBehaviour
         dashboard.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
         history.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
         profile.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
+        pageAnimationComplete = true;
 
         BottomButtonSelectionSeter(FooterButtons.Dashboard);
     }
@@ -35,7 +37,9 @@ public class FooterController : MonoBehaviour
 
     public void BottomButtonSelectionSeter(FooterButtons button)
     {
-        if(currentButton == button) return;  
+        if(currentButton == button) return;
+        if (!pageAnimationComplete) return;
+        pageAnimationComplete = false;
         switch (button)
         {
             case FooterButtons.Body:
@@ -117,22 +121,27 @@ public class FooterController : MonoBehaviour
     }
     public void OnDashboard()
     {
-        StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,isfooter:true);
+        StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,callback: OnPageAnimationComplete, isfooter:true);
     }
     public void OnHistory()
     {
-        StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, callback: OnPageAnimationComplete, isfooter: true);
     }
     public void OnProfile()
     {
-        StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, callback: OnPageAnimationComplete, isfooter: true);
     }
     public void OnSocial()
     {
-        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, callback: OnPageAnimationComplete, isfooter: true);
     }
     public void OnBody()
     {
-        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, callback:OnPageAnimationComplete, isfooter: true);
+    }
+
+    void OnPageAnimationComplete(object data)
+    {
+        pageAnimationComplete = true;
     }
 }

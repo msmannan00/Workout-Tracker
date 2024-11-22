@@ -90,8 +90,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
             //prefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewSubItems");
         }
-        GameObject newSubItem = Instantiate(prefab, transform);
-        int childCount = transform.childCount;
+        GameObject newSubItem = Instantiate(prefab, transform.GetChild(0));
+        int childCount = transform.GetChild(0).childCount;
         newSubItem.transform.SetSiblingIndex(childCount - 3);
         WorkoutLogSubItem newSubItemScript = newSubItem.GetComponent<WorkoutLogSubItem>();
         workoutLogSubItems.Add(newSubItemScript);

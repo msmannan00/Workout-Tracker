@@ -115,13 +115,17 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         if (_container.childCount != _previousPageCount)
         {
             // Update the page count and positions
-            _pageCount = _container.childCount;
-            SetPagePositions();
-            InitPageSelection();
-            SetPageSelection(_currentPage);
-            SetSelectedNumberText();
+            if (_container.childCount > 0)
+            {
+                _pageCount = _container.childCount;
+                SetPagePositions();
+                SetPage(startingPage);
+                InitPageSelection();
+                SetPageSelection(_currentPage);
+                SetSelectedNumberText();
 
-            _previousPageCount = _pageCount; // Update the previous page count
+                _previousPageCount = _pageCount; // Update the previous page count
+            }
         }
 
         // Lerp to target page if necessary
@@ -240,18 +244,20 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         if (_previousPageSelectionIndex == aPageIndex) {
             return;
         }
-        
-        // unselect old
-        if (_previousPageSelectionIndex >= 0) {
-            _pageSelectionImages[_previousPageSelectionIndex].sprite = unselectedPage;
-            _pageSelectionImages[_previousPageSelectionIndex].SetNativeSize();
-        }
+        if (_container.childCount > 0)
+        {
+            // unselect old
+            if (_previousPageSelectionIndex >= 0)
+            {
+                _pageSelectionImages[_previousPageSelectionIndex].sprite = unselectedPage;
+                _pageSelectionImages[_previousPageSelectionIndex].SetNativeSize();
+            }
 
-        // select new
-        _pageSelectionImages[aPageIndex].sprite = selectedPage;
-        _pageSelectionImages[aPageIndex].SetNativeSize();
-
+            // select new
+            _pageSelectionImages[aPageIndex].sprite = selectedPage;
+            _pageSelectionImages[aPageIndex].SetNativeSize();
         _previousPageSelectionIndex = aPageIndex;
+        }
     }
 
     //------------------------------------------------------------------------
@@ -290,7 +296,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         selectedPageText.text = $"{_currentPage+1} / {_pageCount}";}
         //if (!_container.GetChild(_currentPage).gameObject.GetComponent<DashboardItemController>().isCreator)
         //{
-       
+        if(_container.childCount>0)
             userSessionManager.Instance.selectedTemplete = _container.GetChild(_currentPage).gameObject.GetComponent<DashboardItemController>().defaultTempleteModel;
         //}
         //else

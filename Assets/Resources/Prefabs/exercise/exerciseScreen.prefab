@@ -200,7 +200,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6955337289079760501
 RectTransform:
   m_ObjectHideFlags: 0
@@ -212,8 +212,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 9176326020080748917}
+  m_Children: []
   m_Father: {fileID: 665608827459765792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
@@ -2314,8 +2313,9 @@ GameObject:
   - component: {fileID: 8425105077960609087}
   - component: {fileID: 2166510475768844954}
   - component: {fileID: 5592135142550376166}
+  - component: {fileID: 1768296273785088677}
   m_Layer: 5
-  m_Name: imaage
+  m_Name: add_new_exercise
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2335,11 +2335,11 @@ RectTransform:
   m_Children:
   - {fileID: 8038253303657712163}
   - {fileID: 8059678022911750743}
-  m_Father: {fileID: 6955337289079760501}
+  m_Father: {fileID: 665608827459765792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -20, y: -20}
   m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &8425105077960609087
@@ -2367,18 +2367,6 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 6549607682986420793}
-          m_TargetAssemblyTypeName: ExerciseController, Assembly-CSharp
-          m_MethodName: AddNewExercise
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
         - m_Target: {fileID: 7016577630594324701}
           m_TargetAssemblyTypeName: GlobalRawAnimator, Assembly-CSharp
           m_MethodName: WobbleObject
@@ -2421,6 +2409,50 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1768296273785088677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4520790301310173477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 5592135142550376166}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4895059319315012530
 GameObject:
   m_ObjectHideFlags: 0
@@ -2737,6 +2769,7 @@ RectTransform:
   m_Children:
   - {fileID: 3638710707499161173}
   - {fileID: 6389301370314444047}
+  - {fileID: 9176326020080748917}
   - {fileID: 6955337289079760501}
   - {fileID: 6279607479868034877}
   - {fileID: 314156099918491529}
@@ -3368,6 +3401,7 @@ MonoBehaviour:
   addExerciseButton: {fileID: 4209229277286761337}
   backButton: {fileID: 4470528658221398610}
   bodyPartButton: {fileID: 3136612306957946940}
+  addNewExercise: {fileID: 1768296273785088677}
   alphabetic: {fileID: 4079716896296720446}
   byRank: {fileID: 2145232652990360595}
   performed: {fileID: 1574619641618119326}
@@ -3386,6 +3420,7 @@ MonoBehaviour:
       exerciseTypeModel:
       - exerciseName: Cycling
         categoryName: 
+        exerciseNotes: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3396,6 +3431,7 @@ MonoBehaviour:
           mile: 0
       - exerciseName: Squat
         categoryName: 
+        exerciseNotes: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3406,6 +3442,7 @@ MonoBehaviour:
           mile: 0
       - exerciseName: Yoga
         categoryName: 
+        exerciseNotes: 
         index: 0
         exerciseType: 0
         exerciseModel:
@@ -3460,9 +3497,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 826902635060874435}
   playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
   primaryText:
   - {fileID: 2745453571052304715}
   secondaryText: []
+  historySubText: []
   buttonText: []
   inputFields:
   - {fileID: 6942226358134106078}
@@ -3478,14 +3520,19 @@ MonoBehaviour:
   button2: []
   workoutLogDropdownToggle: []
   line: []
+  shadow: []
   outlines: []
   dropdowns: []
+  achievementCountText: []
   switchButton1: {fileID: 0}
   switchButton2: {fileID: 0}
+  personlBestAndMeasurementExercise: []
   darkbackground: {fileID: 21300000, guid: 101f05261bd44e94aaf36498a3d6a3d9, type: 3}
   lightbackground: {fileID: 0}
   lightPlay: {fileID: 0}
   darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &7932671136403290416
 GameObject:
   m_ObjectHideFlags: 0

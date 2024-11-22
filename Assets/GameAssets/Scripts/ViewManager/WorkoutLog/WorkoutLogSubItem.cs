@@ -44,12 +44,16 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         ResetModel(exerciseModel);
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
+        if (!isWorkoutLog)
+        {
+            OffAllInteractables();
+            isComplete.transform.GetChild(1).gameObject.SetActive(true);
+        }
         switch (exerciseType)
         {
             case ExerciseType.RepsOnly:
                 reps.transform.parent.gameObject.SetActive(true);
-                if (!isWorkoutLog)
-                    OffAllInteractables();
+                
                 break;
             case ExerciseType.TimeBased:
                 timerText.transform.parent.gameObject.SetActive(true);
@@ -60,14 +64,11 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 
                     previous.text = $"{minutes:D2}:{seconds:D2}";
                 }
-                if (!isWorkoutLog)
-                    OffAllInteractables();
                 break;
             case ExerciseType.TimeAndMiles:
                 timerText.transform.parent.gameObject.SetActive(true);
                 mile.transform.parent.gameObject.SetActive(true);
-                if (!isWorkoutLog)
-                    OffAllInteractables();
+                
                 //print("Need to implement Time and Miles");
                 break;
             case ExerciseType.WeightAndReps:
@@ -88,8 +89,6 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                     }
                     
                 }
-                if (!isWorkoutLog)
-                    OffAllInteractables();
                 break;
         }
 
@@ -370,7 +369,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     public void ToggleShake()
     {
-        if (!isComplete.interactable && shake)
+        if (!isComplete.interactable && shake&&isWorkoutLog)
         {
             //shake = false;
             AudioController.Instance.OnError();

@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using System.Linq;
-using PlayFab.ClientModels;
 using UnityEditor;
 
 public class ExerciseController : MonoBehaviour, PageController
@@ -12,7 +11,7 @@ public class ExerciseController : MonoBehaviour, PageController
     public Transform content;
     public TextMeshProUGUI labelText;
     public TMP_InputField searchInputField;
-    public Button addExerciseButton, backButton,bodyPartButton;
+    public Button addExerciseButton, backButton,bodyPartButton,addNewExercise;
     public Button alphabetic, byRank, performed;
     public Color buttonUnselectColor;
     public GameObject bodyPartPrefab;
@@ -28,7 +27,6 @@ public class ExerciseController : MonoBehaviour, PageController
     private ExerciseAddOnPage exerciseAddOnPage;
 
     public HistoryModel testHistory = new HistoryModel();
-
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
@@ -48,7 +46,15 @@ public class ExerciseController : MonoBehaviour, PageController
                 LoadWeightAndRepsExercises();
                 addExerciseButton.onClick.AddListener(() => AddExerciseToPersonalBest());
                 break;
+            case ExerciseAddOnPage.HistoryPage:
+                LoadExercises();
+                addNewExercise.gameObject.SetActive(false);
+                bodyPartButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-40, bodyPartButton.GetComponent<RectTransform>().anchoredPosition.y);
+                searchInputField.GetComponent<RectTransform>().offsetMax = new Vector2(-80, searchInputField.GetComponent<RectTransform>().offsetMax.y);
+                break;
         }
+        addNewExercise.onClick.AddListener(AddNewExercise);
+        addNewExercise.onClick.AddListener(AudioController.Instance.OnButtonClick);
         addExerciseButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         bodyPartButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
@@ -324,10 +330,20 @@ public class ExerciseController : MonoBehaviour, PageController
                 Button button = newExerciseObject.GetComponent<Button>();
                 if (button != null)
                 {
-                    button.onClick.AddListener(() =>
+                    if (exerciseAddOnPage == ExerciseAddOnPage.HistoryPage)
                     {
-                        SelectAndDeselectExercise(newExerciseObject, exercise);
-                    });
+                        button.onClick.AddListener(() => {
+                            ShowExerciseHistory(exercise);
+                            AudioController.Instance.OnButtonClick();
+                        });
+                    }
+                    else
+                    {
+                        button.onClick.AddListener(() =>{
+                            SelectAndDeselectExercise(newExerciseObject, exercise);
+                            AudioController.Instance.OnButtonClick();
+                        });
+                    }
                 }
 
                 exerciseItems.Add(newExerciseObject);
@@ -521,10 +537,20 @@ public class ExerciseController : MonoBehaviour, PageController
                 Button button = newExerciseObject.GetComponent<Button>();
                 if (button != null)
                 {
-                    button.onClick.AddListener(() =>
+                    if (exerciseAddOnPage == ExerciseAddOnPage.HistoryPage)
                     {
-                        SelectAndDeselectExercise(newExerciseObject, exercise);
-                    });
+                        button.onClick.AddListener(() => { 
+                            ShowExerciseHistory(exercise);
+                            AudioController.Instance.OnButtonClick();
+                        });
+                    }
+                    else
+                    {
+                        button.onClick.AddListener(() =>{
+                            SelectAndDeselectExercise(newExerciseObject, exercise);
+                            AudioController.Instance.OnButtonClick();
+                        });
+                    }
                 }
 
                 exerciseItems.Add(newExerciseObject);
@@ -542,7 +568,15 @@ public class ExerciseController : MonoBehaviour, PageController
             }
         }
     }
-
+    void ShowExerciseHistory(ExerciseDataItem exercise)
+    {
+        Dictionary<string, object> initData = new Dictionary<string, object>
+        {
+                { "data", exercise },
+        };
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "exerciseHistoryScreen", initData, keepState: true);
+        StateManager.Instance.CloseFooter();
+    }
     public void CreateBodyPartChecks()
     {
         foreach (string text in selectedBodyParts)
@@ -589,6 +623,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 break;
             case ExerciseAddOnPage.PersonalBestPage:
                 LoadWeightAndRepsExercises(searchQuery);
+                break;
+            case ExerciseAddOnPage.HistoryPage:
+                LoadExercises(searchQuery);
                 break;
                 //case SearchButtonType.ByRank:
                 //    ByRankExercises(searchQuery);

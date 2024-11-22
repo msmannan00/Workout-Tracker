@@ -135,8 +135,9 @@ public class StateManager : GenericSingletonClass<StateManager>
                     Destroy(overlayBlocker);
                 });
             }
-
+            userSessionManager.Instance.currentScreen = lastPage;
             inactivePages.RemoveAt(inactivePages.Count - 1);
+
         }
     }
 

@@ -18,7 +18,7 @@ public class ProfileController : MonoBehaviour,PageController
     public Button settingButton;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        
+        callback?.Invoke(null);
     }
     private void Start()
     {

@@ -20,7 +20,8 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         //print(_data.type);
         bool isRank = (bool)data["rank"];
         titleText.text = _data.title;
-        CheckAchievement();
+        //CheckAchievement();
+        userSessionManager.Instance.CheckIndiviualAchievementStatus(_data,trophyImages, progressText, descriptionText);
     }
     void CheckAchievement()
     {

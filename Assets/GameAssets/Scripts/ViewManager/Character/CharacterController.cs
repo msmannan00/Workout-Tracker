@@ -11,7 +11,7 @@ public class CharacterController : MonoBehaviour,PageController
     public Button shopButton, emotesButton, achievementButton;
     public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
-
+        callback?.Invoke(null);
     }
     private void Start()
     {

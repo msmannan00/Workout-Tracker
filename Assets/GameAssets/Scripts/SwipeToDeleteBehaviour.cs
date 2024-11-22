@@ -69,7 +69,7 @@ public class SwipeToDeleteBehaviour : MonoBehaviour, IBeginDragHandler, IDragHan
             {
                 if (isSubItem)
                 {
-                    workoutLogScreenDataModel workoutModel = transform.parent.GetComponent<workoutLogScreenDataModel>();
+                    workoutLogScreenDataModel workoutModel = transform.parent.parent.GetComponent<workoutLogScreenDataModel>();
                     int index = workoutModel.workoutLogSubItems.IndexOf(this.GetComponent<WorkoutLogSubItem>());
                     workoutModel.workoutLogSubItems.Remove(this.GetComponent<WorkoutLogSubItem>());
                     workoutModel.exerciseTypeModel.exerciseModel.RemoveAt(index);

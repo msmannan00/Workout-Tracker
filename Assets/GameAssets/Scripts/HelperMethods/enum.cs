@@ -29,7 +29,8 @@ public enum ExerciseAddOnPage
 {
     WorkoutLogPage=1,
     CreateWorkoutPage=2,
-    PersonalBestPage=3
+    PersonalBestPage=3,
+    HistoryPage=4
 }
 public enum AchievementType
 {
@@ -41,7 +42,17 @@ public enum AchievementType
     ExerciseCount = 6,
     CardioTime = 7,
     WeightLifted = 8,
-    Specialist = 9
+    Specialist = 9,
+    CompleteAllAchievements=10,
+    AddFriends=11,
+    LongSession=12,
+    ExercisesInSingleSession=13,
+    ChangeTrainingBadge=14,
+    RemoveFriend=15,
+    AddPersonBest=16,
+    CreateWorkout=17,
+    WorkoutInactivity=18,
+    BuyItems=19
 }
 public enum WeightUnit
 {

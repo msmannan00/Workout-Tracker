@@ -334,8 +334,25 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public void SetCharacterLevel(int level)
     {
-        PreferenceManager.Instance.SetInt("CharacterLevel", 1);
+        PreferenceManager.Instance.SetInt("CharacterLevel", level);
     }
+    public void SetBuyedCloths(int count)
+    {
+        PreferenceManager.Instance.SetInt("BuyedCloths", count);
+    }
+    public void SetCreatedWorkoutTempleteCount(int count)
+    {
+        PreferenceManager.Instance.SetInt("CreatedWorkoutTempleteCount", count);
+    }
+    public void SetRemoveFriendCount(int count)
+    {
+        PreferenceManager.Instance.SetInt("RemoveFriendCount", count);
+    }
+    public void SetAddFriendCount(int count)
+    {
+        PreferenceManager.Instance.SetInt("AddFriendCount", count);
+    }
+
     //public void SetWeeklyGoalSetedDate(DateTime date)
     //{
     //    string dateInString = date.ToString("MMM dd, yyyy");
@@ -378,6 +395,22 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     public int GetCharacterLevel()
     {
         return PreferenceManager.Instance.GetInt("CharacterLevel", 1);
+    }
+    public int GetBuyedCloths()
+    {
+        return PreferenceManager.Instance.GetInt("BuyedCloths", 0);
+    }
+    public int GetCreatedWorkoutTempleteCount()
+    {
+        return PreferenceManager.Instance.GetInt("CreatedWorkoutTempleteCount", 0);
+    }
+    public int GetRemoveFriendCount()
+    {
+        return PreferenceManager.Instance.GetInt("RemoveFriendCount", 0);
+    }
+    public int GetAddFriendCount()
+    {
+        return PreferenceManager.Instance.GetInt("AddFriendCount", 0);
     }
     //public DateTime GetWeeklyGoalSetedDate()
     //{

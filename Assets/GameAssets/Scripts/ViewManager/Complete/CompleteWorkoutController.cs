@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
 {
@@ -93,20 +94,26 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowOnlyReps(HistoryExerciseTypeModel exercise,GameObject parent, GameObject prefab)
     {
-        foreach(HistoryExerciseModel data in exercise.exerciseModel)
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
+        foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text=textObj.GetComponent<TextMeshProUGUI>();
-            text.text = data.reps.ToString();
+            ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
+            text.enableAutoSizing = false;
             text.fontSize = 14;
+            text.text = data.reps.ToString();
         }
     }
     void ShowOnlyTime(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
+            ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
+            text.enableAutoSizing = false;
             text.fontSize = 14;
             if (data.time > 60)
             {
@@ -120,10 +127,14 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowWeightAndReps(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
+            ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
+            text.enableAutoSizing = false;
+            text.fontSize = 14;
             text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
             text.fontSize = 14;
             switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
@@ -139,10 +150,14 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowTimeAndMile(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
+            ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
+            text.enableAutoSizing = false;
+            text.fontSize = 14;
             string time = "";
             if (data.time > 60)
             {
@@ -155,6 +170,11 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             text.text = data.mile.ToString() + " mile x " + time;
             text.fontSize = 14;
         }
+    }
+    public void ChangeTextColorAndFount(TextMeshProUGUI text,Color col,TMP_FontAsset font)
+    {
+        text.color = col;
+        text.font = font;
     }
 
 }
