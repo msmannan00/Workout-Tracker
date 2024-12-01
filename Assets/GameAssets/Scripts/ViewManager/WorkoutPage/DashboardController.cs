@@ -23,8 +23,6 @@ public class DashboardController : MonoBehaviour, PageController
     bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        if (callback == null) print("NULL");
-        callback?.Invoke(null);
         onReloadData(null);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
         Workout();

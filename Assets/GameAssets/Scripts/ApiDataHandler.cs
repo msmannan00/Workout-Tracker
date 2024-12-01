@@ -20,6 +20,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     private HistoryModel historyData = new HistoryModel();
     [SerializeField]
     private MeasurementModel measurementData = new MeasurementModel();
+    [SerializeField]
+    private MeasurementHistory measurementHistory = new MeasurementHistory();
 
     [Header("Theme Settings")]
     public Theme gameTheme;
@@ -66,13 +68,21 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             CreateRandomDefaultEntry();
         }
     }
+    public void LoadMeasurementHistory()
+    {
+        if (PreferenceManager.Instance.HasKey("measurementHistory"))
+        {
+            string json = PreferenceManager.Instance.GetString("measurementHistory");
+            measurementHistory = JsonUtility.FromJson<MeasurementHistory>(json);
+        }
+    }
 
     public void CreateRandomDefaultEntry()
     {
         ExerciseTypeModel back1 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Deadlift (Barbell)",
+            name = "Deadlifts (Barbell)",
             categoryName = "Glutes",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
@@ -195,7 +205,16 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetString("measurementData", json);
         PreferenceManager.Instance.Save();
     }
-
+    public void SaveMeasurementHistory()
+    {
+        string json = JsonUtility.ToJson(measurementHistory);
+        PreferenceManager.Instance.SetString("measurementHistory", json);
+        PreferenceManager.Instance.Save();
+    }
+    public void SetMeasurementHistory(MeasurementHistoryItem item)
+    {
+        measurementHistory.measurmentHistory.Add(item);
+    }
     public void LoadHistory()
     {
         if (PreferenceManager.Instance.HasKey("historyData"))
@@ -226,6 +245,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return measurementData;
     }
+    public MeasurementHistory getMeasurementHistory()
+    {
+        return measurementHistory;
+    }
 
 
 
@@ -253,6 +276,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         LoadTemplateData();
 
         LoadMeasurementData();
+        LoadMeasurementHistory();
 
         gameTheme = LoadTheme();
     }
@@ -309,14 +333,17 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetString("personBestData", json);
         PreferenceManager.Instance.Save();
     }
-
+    public void RemovePersonalBestData(PersonalBestDataItem item)
+    {
+        personalBestData.exercises.Remove(item);
+    }
     public void SetPersonalBestData(PersonalBestDataItem item)
     {
         personalBestData.exercises.Add(item);
     }
     public void SetJoiningDate(DateTime date)
     {
-        string dateInString= date.ToString("MMM dd, yyyy");
+        string dateInString= date.ToString("MMM / yyyy");
         PreferenceManager.Instance.SetString("JoiningDate", dateInString);
     }
     public void SetWeeklyGoal(int goal)
@@ -331,6 +358,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         string badgeName= name.Replace(" ", "");
         PreferenceManager.Instance.SetString("BadgeName", badgeName);
+    }
+    public void SetCoins(int coin)
+    {
+        PreferenceManager.Instance.SetInt("Coins", coin);
     }
     public void SetCharacterLevel(int level)
     {
@@ -376,8 +407,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public string GetJoiningDate()
     {
-        DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate",DateTime.Now.ToString("MMM dd, yyyy")));
-        string formattedDate = parsedDateTime.ToString("MMM dd, yyyy");
+        DateTime parsedDateTime = DateTime.Parse(PreferenceManager.Instance.GetString("JoiningDate",DateTime.Now.ToString("MMM / yyyy")));
+        string formattedDate = parsedDateTime.ToString("MMM / yyyy");
         return formattedDate;
     }
     public int GetWeeklyGoal()
@@ -394,7 +425,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public int GetCharacterLevel()
     {
-        return PreferenceManager.Instance.GetInt("CharacterLevel", 1);
+        return PreferenceManager.Instance.GetInt("CharacterLevel", 0);
+    }
+    public int GetCoins()
+    {
+        return PreferenceManager.Instance.GetInt("Coins", 0);
     }
     public int GetBuyedCloths()
     {
@@ -583,6 +618,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     // Helper method to get the start date of the current week
     public DateTime GetStartOfCurrentWeek()
     {
+        return DateTime.Now;
         DateTime today = DateTime.Now;
         int daysSinceMonday = (int)today.DayOfWeek - (int)DayOfWeek.Monday;
         if (daysSinceMonday < 0) daysSinceMonday += 7;

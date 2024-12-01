@@ -37,7 +37,7 @@ public class HistorySubItem : MonoBehaviour,ItemController
             var maxExercise = exerciseModel.OrderByDescending(exercise => exercise.weight * exercise.reps).FirstOrDefault();
             if (maxExercise != null)
             {
-                return $"{maxExercise.weight}kg x {maxExercise.reps}";
+                return $"{maxExercise.weight}kg x {maxExercise.reps:F1}";
             }
         }
         else

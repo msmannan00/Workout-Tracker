@@ -10,6 +10,7 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
     public TextMeshProUGUI weightText;
     public TextMeshProUGUI repsText;
     public TextMeshProUGUI rirText;
+    public TextMeshProUGUI rpeText;
     public TextMeshProUGUI mileText;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI rmText;
@@ -38,32 +39,24 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
     }
     void RepsOnly()
     {
-        weightText.transform.parent.gameObject.SetActive(false);
         repsText.transform.parent.gameObject.SetActive(true);
-        rirText.transform.parent.gameObject.SetActive(false);
-        mileText.transform.parent.gameObject.SetActive(false);
-        timeText.transform.parent.gameObject.SetActive(false);
-        rmText.transform.parent.gameObject.SetActive(true);
-        repsText.text=exerciseModel.reps.ToString();
+        rirText.transform.parent.gameObject.SetActive(true);
+        repsText.text=exerciseModel.reps.ToString("F1");
+        rirText.text=exerciseModel.rir.ToString();
     }
     void TimeBased()
     {
-        weightText.transform.parent.gameObject.SetActive(false);
-        repsText.transform.parent.gameObject.SetActive(false);
-        rirText.transform.parent.gameObject.SetActive(false);
-        mileText.transform.parent.gameObject.SetActive(false);
+        rpeText.transform.parent.gameObject.SetActive(true);
         timeText.transform.parent.gameObject.SetActive(true);
-        rmText.transform.parent.gameObject.SetActive(true);
+        rpeText.text= exerciseModel.rpe.ToString();
         ShowTime();
     }
     void TimeAndMiles()
     {
-        weightText.transform.parent.gameObject.SetActive(false);
-        repsText.transform.parent.gameObject.SetActive(false);
-        rirText.transform.parent.gameObject.SetActive(false);
         mileText.transform.parent.gameObject.SetActive(true);
         timeText.transform.parent.gameObject.SetActive(true);
-        rmText.transform.parent.gameObject.SetActive(true);
+        rpeText.transform.parent.gameObject.SetActive(true);
+        rpeText.text = exerciseModel.rpe.ToString();
         mileText.text=exerciseModel.mile.ToString();
         ShowTime();
     }
@@ -73,25 +66,49 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
         weightText.transform.parent.gameObject.SetActive(true);
         repsText.transform.parent.gameObject.SetActive(true);
         rirText.transform.parent.gameObject.SetActive(true);
-        mileText.transform.parent.gameObject.SetActive(false);
-        timeText.transform.parent.gameObject.SetActive(false);
         rmText.transform.parent.gameObject.SetActive(true);
         rirText.text=exerciseModel.rir.ToString();
-        repsText.text=exerciseModel.reps.ToString();
+        repsText.text=exerciseModel.reps.ToString("F1");
         // calculating 1Rm
-        if (exerciseModel.reps == 1)
+        if ((int)exerciseModel.reps == 1)
         {
-            rmText.text = exerciseModel.weight % 1 == 0
+            switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+            {
+                case WeightUnit.kg:
+                    rmText.text = exerciseModel.weight % 1 == 0
                 ? exerciseModel.weight.ToString("F0")
                 : exerciseModel.weight.ToString("F1");
+                    break;
+                case WeightUnit.lbs:
+                    rmText.text = exerciseModel.weight % 1 == 0
+                ? Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(exerciseModel.weight)).ToString("F0")
+                : Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(exerciseModel.weight)).ToString("F1");
+                    break;
+            }
+            //rmText.text = exerciseModel.weight % 1 == 0
+            //    ? exerciseModel.weight.ToString("F0")
+            //    : exerciseModel.weight.ToString("F1");
         }
         else
         {
-            float result = exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps);
+            float result = exerciseModel.weight * (1 + 0.0333f * (int)exerciseModel.reps);
             float roundedResult = Mathf.Round(result * 2) / 2; // Rounds to the nearest 0.5
-            rmText.text = roundedResult % 1 == 0
+            switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+            {
+                case WeightUnit.kg:
+                    rmText.text = roundedResult % 1 == 0
                 ? roundedResult.ToString("F0")
                 : roundedResult.ToString("F1");
+                    break;
+                case WeightUnit.lbs:
+                    rmText.text = exerciseModel.weight % 1 == 0
+                ? Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F0")
+                : Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F1");
+                    break;
+            }
+            //rmText.text = roundedResult % 1 == 0
+            //    ? roundedResult.ToString("F0")
+            //    : roundedResult.ToString("F1");
         }
 
         //rmText.text = Mathf.RoundToInt((exerciseModel.weight * (1 + 0.0333f * exerciseModel.reps))).ToString();
@@ -101,7 +118,7 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
                 weightText.text=exerciseModel.weight.ToString();
                 break;
             case WeightUnit.lbs:
-                weightText.text = userSessionManager.Instance.ConvertKgToLbs(exerciseModel.weight).ToString("F2");
+                weightText.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(exerciseModel.weight)).ToString("F1");
                 break;
         }
     }

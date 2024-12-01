@@ -183,7 +183,7 @@ public class AuthController : MonoBehaviour, PageController
             };
             StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
             //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-            userSessionManager.Instance.AddGymVisit();
+            //userSessionManager.Instance.AddGymVisit();
             //if (ApiDataHandler.Instance.GetWeight() > 0)
             //{
             //    GlobalAnimator.Instance.FadeOutLoader();

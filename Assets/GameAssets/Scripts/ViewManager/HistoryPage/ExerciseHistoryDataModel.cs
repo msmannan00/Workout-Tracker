@@ -11,6 +11,7 @@ public class ExerciseHistoryDataModel : MonoBehaviour, ItemController
     public GameObject weight;
     public GameObject reps;
     public GameObject rir;
+    public GameObject rpe;
     public GameObject mile;
     public GameObject time;
     public GameObject rm;
@@ -29,35 +30,22 @@ public class ExerciseHistoryDataModel : MonoBehaviour, ItemController
         switch (exerciseInHistory.exerciseType)
         {
             case ExerciseType.RepsOnly:
-                weight.gameObject.SetActive(false);
                 reps.gameObject.SetActive(true);
-                rir.SetActive(false);
-                mile.SetActive(false);
-                time.SetActive(false);
-                rm.SetActive(true);
+                rir.SetActive(true);
                 break;
             case ExerciseType.TimeBased:
-                weight.gameObject.SetActive(false);
-                reps.gameObject.SetActive(false);
-                rir.SetActive(false);
-                mile.SetActive(false);
                 time.SetActive(true);
-                rm.SetActive(true);
+                rpe.SetActive(true);
                 break;
             case ExerciseType.TimeAndMiles:
-                weight.gameObject.SetActive(false);
-                reps.gameObject.SetActive(false);
-                rir.SetActive(false);
                 mile.SetActive(true);
                 time.SetActive(true);
-                rm.SetActive(true);
+                rpe.SetActive(true);
                 break;
             case ExerciseType.WeightAndReps:
                 weight.gameObject.SetActive(true);
                 reps.gameObject.SetActive(true);
                 rir.SetActive(true);
-                mile.SetActive(false);
-                time.SetActive(false);
                 rm.SetActive(true);
                 break;
         }

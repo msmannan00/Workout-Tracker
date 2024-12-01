@@ -10,7 +10,7 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
     public TextMeshProUGUI exerciseName;
     public TMP_InputField weight;
     public TMP_InputField rep;
-    PersonalBestDataItem _data;
+    public PersonalBestDataItem _data;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         _data = (PersonalBestDataItem)data["data"];

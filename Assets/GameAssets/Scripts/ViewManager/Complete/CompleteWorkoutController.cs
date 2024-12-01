@@ -22,7 +22,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
         workoutScreen = (GameObject)data[1];
         workoutNameText.text=historyWorkout.templeteName.ToUpper();
         string savedDate = historyWorkout.dateTime;
-        DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.InvariantCulture);
         string formattedDate = parsedDate.ToString("dddd, dd MMMM yyyy");
         dateText.text=formattedDate;
         if (historyWorkout.completedTime > 60)
@@ -94,7 +94,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowOnlyReps(HistoryExerciseTypeModel exercise,GameObject parent, GameObject prefab)
     {
-        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFontBold);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
@@ -107,7 +107,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowOnlyTime(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
-        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFontBold);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
@@ -127,7 +127,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     }
     void ShowWeightAndReps(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
-        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFontBold);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
@@ -135,22 +135,22 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
             text.enableAutoSizing = false;
             text.fontSize = 14;
-            text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
+            //text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
             text.fontSize = 14;
             switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
             {
                 case WeightUnit.kg:
-                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
+                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString("F1");
                     break;
                 case WeightUnit.lbs:
-                    text.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString();
+                    text.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString("F1");
                     break;
             }
         }
     }
     void ShowTimeAndMile(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
     {
-        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFont);
+        ChangeTextColorAndFount(prefab.GetComponent<TextMeshProUGUI>(), userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPrimaryFontBold);
         foreach (HistoryExerciseModel data in exercise.exerciseModel)
         {
             GameObject textObj = Instantiate(prefab, parent.transform);

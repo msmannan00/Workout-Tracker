@@ -9,6 +9,7 @@ public class SwipeToDeleteBehaviour : MonoBehaviour, IBeginDragHandler, IDragHan
 {
     public Transform topView;
     public bool isSubItem;
+    public SwipeToDeleteItem itemType;
     private float smoothSpeed = 10f; 
 
     private Vector3 mouseStartPosition;
@@ -67,23 +68,46 @@ public class SwipeToDeleteBehaviour : MonoBehaviour, IBeginDragHandler, IDragHan
 
             if (distance.x < -400.0f)
             {
-                if (isSubItem)
+                switch (itemType)
                 {
-                    workoutLogScreenDataModel workoutModel = transform.parent.parent.GetComponent<workoutLogScreenDataModel>();
-                    int index = workoutModel.workoutLogSubItems.IndexOf(this.GetComponent<WorkoutLogSubItem>());
-                    workoutModel.workoutLogSubItems.Remove(this.GetComponent<WorkoutLogSubItem>());
-                    workoutModel.exerciseTypeModel.exerciseModel.RemoveAt(index);
+                    case SwipeToDeleteItem.WorkoutLogSubItem:
+                        workoutLogScreenDataModel workoutModel = transform.parent.parent.GetComponent<workoutLogScreenDataModel>();
+                        int index = workoutModel.workoutLogSubItems.IndexOf(this.GetComponent<WorkoutLogSubItem>());
+                        workoutModel.workoutLogSubItems.Remove(this.GetComponent<WorkoutLogSubItem>());
+                        workoutModel.exerciseTypeModel.exerciseModel.RemoveAt(index);
 
-                    for (int i = 0; i < workoutModel.workoutLogSubItems.Count; i++)
-                    {
-                        workoutModel.workoutLogSubItems[i].sets.text = (i + 1).ToString();
-                    }
+                        for (int i = 0; i < workoutModel.workoutLogSubItems.Count; i++)
+                        {
+                            workoutModel.workoutLogSubItems[i].sets.text = (i + 1).ToString();
+                        }
+                        break;
+                    case SwipeToDeleteItem.WorkoutLogDataModel:
+                        workoutLogScreenDataModel workoutModel1 = this.GetComponent<workoutLogScreenDataModel>();
+                        workoutModel1.templeteModel.exerciseTemplete.Remove(workoutModel1.exerciseTypeModel);
+                        break;
+                    case SwipeToDeleteItem.PersonBestSubItem:
+                        PersonalBestDataItem item= this.GetComponent<PersonalBestSubItem>()._data;
+                        FindObjectOfType<PersonalBestController>().haveExercises.Remove(item.exerciseName.ToLower());
+                        ApiDataHandler.Instance.RemovePersonalBestData(item);
+                        break;
                 }
-                else
-                {
-                    workoutLogScreenDataModel workoutModel = this.GetComponent<workoutLogScreenDataModel>();
-                    workoutModel.templeteModel.exerciseTemplete.Remove(workoutModel.exerciseTypeModel);
-                }
+                //if (isSubItem)
+                //{
+                //    workoutLogScreenDataModel workoutModel = transform.parent.parent.GetComponent<workoutLogScreenDataModel>();
+                //    int index = workoutModel.workoutLogSubItems.IndexOf(this.GetComponent<WorkoutLogSubItem>());
+                //    workoutModel.workoutLogSubItems.Remove(this.GetComponent<WorkoutLogSubItem>());
+                //    workoutModel.exerciseTypeModel.exerciseModel.RemoveAt(index);
+
+                //    for (int i = 0; i < workoutModel.workoutLogSubItems.Count; i++)
+                //    {
+                //        workoutModel.workoutLogSubItems[i].sets.text = (i + 1).ToString();
+                //    }
+                //}
+                //else
+                //{
+                //    workoutLogScreenDataModel workoutModel = this.GetComponent<workoutLogScreenDataModel>();
+                //    workoutModel.templeteModel.exerciseTemplete.Remove(workoutModel.exerciseTypeModel);
+                //}
                 Destroy(gameObject);
             }
             else

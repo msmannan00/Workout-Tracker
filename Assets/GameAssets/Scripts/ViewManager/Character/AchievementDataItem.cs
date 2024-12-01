@@ -21,32 +21,38 @@ public class AchievementDataItem : MonoBehaviour,ItemController
         bool isRank = (bool)data["rank"];
         titleText.text = _data.title;
         //CheckAchievement();
-        userSessionManager.Instance.CheckIndiviualAchievementStatus(_data,trophyImages, progressText, descriptionText);
+        userSessionManager.Instance.CheckIndiviualAchievementStatus(_data,trophyImages, progressText, descriptionText,coinText);
+    }
+
+    public void ShowStarData(int index)
+    {
+        List<object> initialData = new List<object> { _data.achievementData[index].description, _data.achievementData[index].coins.ToString() };
+        PopupController.Instance.OpenPopup("character", "StarDetailPopup", null, initialData);
     }
     void CheckAchievement()
     {
         switch (_data.type)
         {
             case AchievementType.BodyweightMultiplier:
-                userSessionManager.Instance.CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckBodyWeightAchievements(_data, ApiDataHandler.Instance.getPersonalBestData(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.WorkoutCount:
-                userSessionManager.Instance.CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckWorkoutCountAchievements(_data, ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.ExerciseCount:
-                userSessionManager.Instance.CheckExerciseCountAchievements(_data, userSessionManager.Instance.GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckExerciseCountAchievements(_data, userSessionManager.Instance.GetUniqueExerciseCount(ApiDataHandler.Instance.getHistoryData()), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.Specialist:
-                userSessionManager.Instance.CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckSpecialistAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.CardioTime:
-                userSessionManager.Instance.CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.Streak:
-                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.LevelUp:
-                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText);
+                userSessionManager.Instance.CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText, coinText);
                 break;
         }
     }

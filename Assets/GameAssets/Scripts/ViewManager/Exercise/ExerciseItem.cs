@@ -35,12 +35,12 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
         switch (ApiDataHandler.Instance.gameTheme)
         {
             case Theme.Light:
-                SetExerciseText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
-                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightPlaceholder);
+                SetExerciseText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightPlaceholder);
                 break;
             case Theme.Dark:
                 SetExerciseText(userSessionManager.Instance.darkPrimaryFont, Color.white);
-                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, new Color32(255, 255, 255, 150));
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, new Color32(255, 255, 255, 150));
                 break;
         }
     }

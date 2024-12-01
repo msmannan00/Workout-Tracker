@@ -9,7 +9,7 @@ public class FooterController : MonoBehaviour
     public GameObject selfButtonObject;
     public Image body, sharing, dashboard, history, profile;
     public FooterButtons currentButton;
-    public bool pageAnimationComplete;
+    bool isFirstTime = true;
     //public List<Image> footerButtonImages = new List<Image>();
 
     private void Start()
@@ -20,13 +20,6 @@ public class FooterController : MonoBehaviour
         history.gameObject.GetComponent<Button>().onClick.AddListener(()=>BottomButtonSelectionSeter(FooterButtons.History));
         profile.gameObject.GetComponent<Button>().onClick.AddListener(()=>BottomButtonSelectionSeter(FooterButtons.Profile));
 
-        // add sound
-        body.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
-        sharing.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
-        dashboard.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
-        history.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
-        profile.gameObject.GetComponent<Button>().onClick.AddListener(()=>AudioController.Instance.OnButtonClick());
-        pageAnimationComplete = true;
 
         BottomButtonSelectionSeter(FooterButtons.Dashboard);
     }
@@ -38,34 +31,27 @@ public class FooterController : MonoBehaviour
     public void BottomButtonSelectionSeter(FooterButtons button)
     {
         if(currentButton == button) return;
-        if (!pageAnimationComplete) return;
-        pageAnimationComplete = false;
         switch (button)
         {
             case FooterButtons.Body:
-                OnBody();
-                currentButton = button;
-                SetCollors(body.gameObject);
+                if (!StateManager.Instance.isProcessing)
+                    OnBody(button);
                 break;
             case FooterButtons.History:
-                OnHistory();
-                currentButton = button;
-                SetCollors(history.gameObject);
+                if (!StateManager.Instance.isProcessing)
+                    OnHistory(button);
                 break;
             case FooterButtons.Profile:
-                currentButton = button;
-                OnProfile();
-                SetCollors(profile.gameObject);
+                if (!StateManager.Instance.isProcessing)
+                    OnProfile(button);
                 break;
             case FooterButtons.Dashboard:
-                OnDashboard();
-                currentButton = button;
-                SetCollors(dashboard.gameObject);
+                if (!StateManager.Instance.isProcessing)
+                    OnDashboard(button);
                 break;
             case FooterButtons.Share:
-                OnSocial();
-                currentButton = button;
-                SetCollors(sharing.gameObject);
+                if (!StateManager.Instance.isProcessing)
+                    OnSocial(button);
                 break;
         }
     }
@@ -119,29 +105,49 @@ public class FooterController : MonoBehaviour
                 break;
         }
     }
-    public void OnDashboard()
+    public void OnDashboard(FooterButtons button)
     {
-        StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null,callback: OnPageAnimationComplete, isfooter:true);
+        StateManager.Instance.OpenStaticScreen("dashboard", userSessionManager.Instance.currentScreen, "dashboardScreen", null, isfooter:true);
+        currentButton = button;
+        SetCollors(dashboard.gameObject);
+        if (!isFirstTime)
+        {
+            AudioController.Instance.OnButtonClick();
+            this.GetComponent<GlobalRawAnimator>().WobbleObject(dashboard.gameObject);
+        }
+        isFirstTime= false;
     }
-    public void OnHistory()
+    public void OnHistory(FooterButtons button)
     {
-        StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, callback: OnPageAnimationComplete, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("history", userSessionManager.Instance.currentScreen, "historyScreen", null, isfooter: true);
+        currentButton = button;
+        SetCollors(history.gameObject);
+        AudioController.Instance.OnButtonClick();
+        this.GetComponent<GlobalRawAnimator>().WobbleObject(history.gameObject);
     }
-    public void OnProfile()
+    public void OnProfile(FooterButtons button)
     {
-        StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, callback: OnPageAnimationComplete, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("profile", userSessionManager.Instance.currentScreen, "profileScreen", null, isfooter: true);
+        currentButton = button;
+        SetCollors(profile.gameObject);
+        AudioController.Instance.OnButtonClick();
+        this.GetComponent<GlobalRawAnimator>().WobbleObject(profile.gameObject);
     }
-    public void OnSocial()
+    public void OnSocial(FooterButtons button)
     {
-        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, callback: OnPageAnimationComplete, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "socialScreen", null, isfooter: true);
+        currentButton = button;
+        SetCollors(sharing.gameObject);
+        AudioController.Instance.OnButtonClick();
+        this.GetComponent<GlobalRawAnimator>().WobbleObject(sharing.gameObject);
     }
-    public void OnBody()
+    public void OnBody(FooterButtons button)
     {
-        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, callback:OnPageAnimationComplete, isfooter: true);
+        StateManager.Instance.OpenStaticScreen("character", userSessionManager.Instance.currentScreen, "characterScreen", null, isfooter: true);
+        currentButton = button;
+        SetCollors(body.gameObject);
+        AudioController.Instance.OnButtonClick();
+        this.GetComponent<GlobalRawAnimator>().WobbleObject(body.gameObject);
     }
 
-    void OnPageAnimationComplete(object data)
-    {
-        pageAnimationComplete = true;
-    }
 }

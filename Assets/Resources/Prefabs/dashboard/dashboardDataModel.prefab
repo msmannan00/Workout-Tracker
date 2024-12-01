@@ -226,7 +226,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   workoutNameText: {fileID: 8228771854172273581}
-  editWorkoutName: {fileID: 7863471734266586805}
   exerciseParent: {fileID: 691016211496210575}
   playButton: {fileID: 3967167124217961917}
   editButton: {fileID: 3817677687655011896}
@@ -307,11 +306,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 1073455097264210998}
   playButton: {fileID: 7426482890950774195}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
   primaryText:
   - {fileID: 8228771854172273581}
   - {fileID: 2337434305212511981}
   - {fileID: 5191952501688398472}
+  primaryBoldText:
+  - {fileID: 8228771854172273581}
+  primarySemiBoldText: []
+  primaryMediumBoldText: []
   secondaryText: []
+  historySubText: []
   buttonText: []
   inputFields:
   - {fileID: 7863471734266586805}
@@ -323,14 +331,19 @@ MonoBehaviour:
   workoutLogDropdownToggle: []
   line:
   - {fileID: 1029026138725541468}
+  shadow: []
   outlines: []
   dropdowns: []
+  achievementCountText: []
   switchButton1: {fileID: 0}
   switchButton2: {fileID: 0}
+  personlBestAndMeasurementExercise: []
   darkbackground: {fileID: 21300000, guid: ddb72a0bd93c705419c78cf7f1ce01ce, type: 3}
   lightbackground: {fileID: 21300000, guid: 38e51f40b8560214da653575cf3cb383, type: 3}
   lightPlay: {fileID: 21300000, guid: 9eceee96715bb424c92a399ed71fec1c, type: 3}
   darkPlay: {fileID: 21300000, guid: 9ad1be2ced3f32044b866f9a0903c270, type: 3}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &1492938643171576292
 GameObject:
   m_ObjectHideFlags: 0

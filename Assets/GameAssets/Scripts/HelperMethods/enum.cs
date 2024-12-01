@@ -66,3 +66,9 @@ public enum HistoryPerformance
     BestSet = 2,
     Estimate1RM = 3
 }
+public enum SwipeToDeleteItem
+{
+    WorkoutLogSubItem=1,
+    WorkoutLogDataModel=2,
+    PersonBestSubItem=3
+}

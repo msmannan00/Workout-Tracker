@@ -173,7 +173,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: weight
+  m_text: Weight
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
   m_sharedMaterial: {fileID: -5371140736701394580, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -485,13 +485,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 23.6
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontSizeMax: 24
+  m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -831,7 +831,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: rep
+  m_text: Rep
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
   m_sharedMaterial: {fileID: -5371140736701394580, guid: 11c95f92206000c42a2f7eec4ed332f9, type: 2}
@@ -864,7 +864,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1467,13 +1467,13 @@ MonoBehaviour:
     m_Top: 10
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 100
+  m_Spacing: 75
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
 --- !u!114 &2017057674697634093
 MonoBehaviour:
@@ -2006,6 +2006,12 @@ MonoBehaviour:
   - {fileID: 7646895467095237178}
   - {fileID: 8381113819537623438}
   - {fileID: 124897630400165128}
+  primaryBoldText:
+  - {fileID: 7646895467095237178}
+  primarySemiBoldText:
+  - {fileID: 8381113819537623438}
+  - {fileID: 124897630400165128}
+  primaryMediumBoldText: []
   secondaryText:
   - {fileID: 4550006497316420350}
   historySubText: []

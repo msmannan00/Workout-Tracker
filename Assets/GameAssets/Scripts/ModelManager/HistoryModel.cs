@@ -31,9 +31,10 @@ public class HistoryExerciseTypeModel
 public class HistoryExerciseModel
 {
     public float weight;
-    public int reps;
+    public float reps;
     public int time;
     public int rir;
+    public int rpe = 0;
     public float mile;
 }
 
@@ -55,7 +56,7 @@ public class ExerciseWithDate
     public HistoryExerciseModel GetBestSet()
     {
         return exercise
-       .OrderByDescending(e => e.reps == 1 ? e.weight : e.weight * (1 + 0.0333f * e.reps))
+       .OrderByDescending(e => (int)e.reps == 1 ? e.weight : e.weight * (1 + 0.0333f * (int)e.reps))
        .FirstOrDefault();
     }
 }

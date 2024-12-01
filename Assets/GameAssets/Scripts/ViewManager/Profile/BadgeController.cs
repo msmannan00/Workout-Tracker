@@ -36,5 +36,6 @@ public class BadgeController : MonoBehaviour,PageController
     public void Back()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+        StateManager.Instance.OpenFooter(null,null,false);
     }
 }

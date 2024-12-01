@@ -81,6 +81,14 @@ public class WeightController : MonoBehaviour,PageController
                         save = true;
                         ApiDataHandler.Instance.getMeasurementData().weight = Mathf.RoundToInt(result);
                         ApiDataHandler.Instance.SaveMeasurementData();
+                        MeasurementHistoryItem item = new MeasurementHistoryItem
+                        {
+                            name = "weight",
+                            dateTime = DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"),
+                            value = Mathf.RoundToInt(result)
+                        };
+                        ApiDataHandler.Instance.SetMeasurementHistory(item);
+                        ApiDataHandler.Instance.SaveMeasurementHistory();
                         //ApiDataHandler.Instance.SaveWeight(Mathf.RoundToInt(result));
                     }
                     break;
@@ -88,8 +96,16 @@ public class WeightController : MonoBehaviour,PageController
                     if (result > 22  && result<331)
                     {
                         save = true;
-                        ApiDataHandler.Instance.getMeasurementData().weight = Mathf.RoundToInt(result);
+                        ApiDataHandler.Instance.getMeasurementData().weight = Mathf.RoundToInt(userSessionManager.Instance.ConvertKgToLbs(result));
                         ApiDataHandler.Instance.SaveMeasurementData();
+                        MeasurementHistoryItem item = new MeasurementHistoryItem
+                        {
+                            name = "weight",
+                            dateTime = DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"),
+                            value = Mathf.RoundToInt(userSessionManager.Instance.ConvertLbsToKg(result))
+                        };
+                        ApiDataHandler.Instance.SetMeasurementHistory(item);
+                        ApiDataHandler.Instance.SaveMeasurementHistory();
                         //ApiDataHandler.Instance.SaveWeight(Mathf.RoundToInt(result));
                     }
                     break;
@@ -100,7 +116,7 @@ public class WeightController : MonoBehaviour,PageController
         {
             ApiDataHandler.Instance.SetWeightUnit((int)weightUnit);
             if (isFirstTime)
-                StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
             else
                 Back();
         }

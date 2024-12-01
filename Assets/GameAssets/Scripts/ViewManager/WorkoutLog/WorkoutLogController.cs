@@ -359,7 +359,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         var historyTemplate = new HistoryTempleteModel
         {
             templeteName = templeteModel.templeteName,
-            dateTime = currentDateTime.ToString("MMM dd, yyyy"),
+            dateTime = currentDateTime.ToString("MMM dd, yyyy hh:mm tt"),
             completedTime = (int)elapsedTime,
             totalWeight = totalWeightInKgs,
             prs = 0 // Assuming PRs are not tracked here. Adjust as needed.
@@ -397,7 +397,10 @@ public class WorkoutLogController : MonoBehaviour, PageController
                     {
                         weight = weightInKgs,
                         reps = exercise.reps,
-                        time = exercise.time
+                        time = exercise.time,
+                        rpe = exercise.rpe,
+                        mile = exercise.mile,
+                        rir = exercise.rir
                     };
 
                     historyExerciseType.exerciseModel.Add(historyExercise);
@@ -564,38 +567,38 @@ public class WorkoutLogController : MonoBehaviour, PageController
     }
     public void UpdateExerciseNotesFromHistory(HistoryModel historyModel, DefaultTempleteModel defaultTemplateModel)
     {
-        // Step 1: Filter history models with matching template names
-        var matchingHistoryTemplates = historyModel.exerciseTempleteModel
-            .Where(ht => ht.templeteName == defaultTemplateModel.templeteName)
-            .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by latest date first
-            .ToList();
+    //    // Step 1: Filter history models with matching template names
+    //    var matchingHistoryTemplates = historyModel.exerciseTempleteModel
+    //        .Where(ht => ht.templeteName == defaultTemplateModel.templeteName)
+    //        .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by latest date first
+    //        .ToList();
 
-        // Step 2: Iterate through the exercise templates in the default template model
-        foreach (var exercise in defaultTemplateModel.exerciseTemplete)
-        {
-            bool noteAssigned = false;
+    //    // Step 2: Iterate through the exercise templates in the default template model
+    //    foreach (var exercise in defaultTemplateModel.exerciseTemplete)
+    //    {
+    //        bool noteAssigned = false;
 
-            // Step 3: Check through each matching history template
-            foreach (var historyTemplate in matchingHistoryTemplates)
-            {
-                // Check if the exercise name exists in the history template
-                var matchingExercise = historyTemplate.exerciseTypeModel
-                    .FirstOrDefault(e => e.exerciseName == exercise.name);
+    //        // Step 3: Check through each matching history template
+    //        foreach (var historyTemplate in matchingHistoryTemplates)
+    //        {
+    //            // Check if the exercise name exists in the history template
+    //            var matchingExercise = historyTemplate.exerciseTypeModel
+    //                .FirstOrDefault(e => e.exerciseName == exercise.name);
 
-                if (matchingExercise != null)
-                {
-                    // Assign the notes from the history template to the default template
-                    exercise.exerciseNotes = matchingExercise.exerciseNotes;
-                    noteAssigned = true;
-                    break; // Exit loop once note is assigned
-                }
-            }
+    //            if (matchingExercise != null)
+    //            {
+    //                // Assign the notes from the history template to the default template
+    //                exercise.exerciseNotes = matchingExercise.exerciseNotes;
+    //                noteAssigned = true;
+    //                break; // Exit loop once note is assigned
+    //            }
+    //        }
 
-            // If no matching exercise found in any history template, the notes remain unchanged
-            if (!noteAssigned)
-            {
-                exercise.exerciseNotes = string.Empty; // Optional: Reset to empty if needed
-            }
-        }
+    //        // If no matching exercise found in any history template, the notes remain unchanged
+    //        if (!noteAssigned)
+    //        {
+    //            exercise.exerciseNotes = string.Empty; // Optional: Reset to empty if needed
+    //        }
+    //    }
     }
 }

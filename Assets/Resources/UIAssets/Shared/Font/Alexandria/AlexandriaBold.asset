@@ -58,11 +58,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Alexandria
+  m_Name: AlexandriaBold
   m_EditorClassIdentifier: 
-  hashCode: 1120040763
+  hashCode: -934596063
   material: {fileID: 3604901933614619074}
-  materialHashCode: 1392943163
+  materialHashCode: 629192033
   m_Version: 1.1.0
   m_SourceFontFileGUID: dd6938f6b35585544b560966c3e808e8
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: dd6938f6b35585544b560966c3e808e8, type: 3}
@@ -2675,7 +2675,22 @@ MonoBehaviour:
   m_KerningTable:
     kerningPairs: []
   m_FontFeatureTable:
-    m_GlyphPairAdjustmentRecords: []
+    m_GlyphPairAdjustmentRecords:
+    - m_FirstAdjustmentRecord:
+        m_GlyphIndex: 0
+        m_GlyphValueRecord:
+          m_XPlacement: 0
+          m_YPlacement: 0
+          m_XAdvance: 0
+          m_YAdvance: 0
+      m_SecondAdjustmentRecord:
+        m_GlyphIndex: 0
+        m_GlyphValueRecord:
+          m_XPlacement: 0
+          m_YPlacement: 0
+          m_XAdvance: 0
+          m_YAdvance: 0
+      m_FeatureLookupFlags: 0
   fallbackFontAssets: []
   m_FallbackFontAssetTable: []
   m_CreationSettings:
@@ -2719,8 +2734,8 @@ MonoBehaviour:
   fontWeights: []
   normalStyle: 0
   normalSpacingOffset: 0
-  boldStyle: 0.75
-  boldSpacing: 7
+  boldStyle: 1.5
+  boldSpacing: 0
   italicStyle: 35
   tabSize: 10
 --- !u!21 &3604901933614619074
@@ -2797,8 +2812,8 @@ Material:
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333
-    - _ScaleRatioB: 0.6770833
-    - _ScaleRatioC: 0.6770833
+    - _ScaleRatioB: 0.5208333
+    - _ScaleRatioC: 0.5208333
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -2817,7 +2832,7 @@ Material:
     - _UnderlaySoftness: 0
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
-    - _WeightBold: 0.75
+    - _WeightBold: 1.5
     - _WeightNormal: 0
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}

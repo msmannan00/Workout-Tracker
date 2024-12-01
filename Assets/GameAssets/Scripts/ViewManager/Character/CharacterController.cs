@@ -7,21 +7,25 @@ using UnityEngine.UI;
 
 public class CharacterController : MonoBehaviour,PageController
 {
-    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI levelText,coinText,messageText;
     public Button shopButton, emotesButton, achievementButton;
     public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
-        callback?.Invoke(null);
+        
     }
     private void Start()
     {
         levelText.text = "level " + ApiDataHandler.Instance.GetCharacterLevel().ToString();
         shopButton.onClick.AddListener(ShopeButtonClick);
-        //emotesButton.onClick.AddListener(EmotesButtonClick);
+        emotesButton.onClick.AddListener(EmotesButtonClick);
         achievementButton.onClick.AddListener(AchievementButtonClick);
         shopButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         emotesButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         achievementButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void OnEnable()
+    {
+        coinText.text=ApiDataHandler.Instance.GetCoins().ToString();
     }
     public void ShopeButtonClick()
     {
@@ -30,8 +34,9 @@ public class CharacterController : MonoBehaviour,PageController
     }
     public void EmotesButtonClick()
     {
-        StateManager.Instance.OpenStaticScreen("character", gameObject, "emotesScreen", null, true);
-        StateManager.Instance.CloseFooter();
+        GlobalAnimator.Instance.ShowTextMessage(messageText, "Comming Soon...", 2);
+        //StateManager.Instance.OpenStaticScreen("character", gameObject, "emotesScreen", null, true);
+        //StateManager.Instance.CloseFooter();
     }
     public void AchievementButtonClick()
     {

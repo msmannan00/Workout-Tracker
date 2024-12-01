@@ -115,7 +115,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                         {
                             { "data", typeModel },
                             { "isWorkoutLog", false },
-                            { "isTemplateCreator", true }
+                            { "isTemplateCreator", true },
+                            {"templeteModel", templeteModel}
                         };
 
                         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
@@ -141,7 +142,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                 {
                     { "data", typeModel },
                     { "isWorkoutLog", false },
-                    {"isTemplateCreator",true }
+                    {"isTemplateCreator",true },
+                    {"templeteModel", templeteModel}
                 };
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");

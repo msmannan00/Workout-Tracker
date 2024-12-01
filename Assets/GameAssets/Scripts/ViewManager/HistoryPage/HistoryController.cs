@@ -17,7 +17,7 @@ public class HistoryController : MonoBehaviour, PageController
     private bool isCompleted;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        callback?.Invoke(null);
+
     }
     private void Start()
     {
@@ -46,6 +46,7 @@ public class HistoryController : MonoBehaviour, PageController
         vlg.spacing = 30;
         vlg.childAlignment = TextAnchor.UpperCenter;
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -85f, 0.25f);
+        list.Reverse();
         Workout(list);
     }
     public void Exercise()
@@ -122,6 +123,7 @@ public class HistoryController : MonoBehaviour, PageController
             { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.HistoryPage}
         };
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, null);
+        StateManager.Instance.CloseFooter();
     }
 
     void AllExercises()

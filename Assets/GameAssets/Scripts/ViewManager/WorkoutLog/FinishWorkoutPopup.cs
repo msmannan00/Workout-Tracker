@@ -61,6 +61,7 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
                 ApiDataHandler.Instance.SaveTemplateData();
             }
         }
+        StreakAndCharacterManager.Instance.AddVisit(DateTime.Now.ToString("yyyy-MM-dd"));
         //int index = GetIndexByTempleteName(modifiedModel.templeteName);
         //ApiDataHandler.Instance.RemoveItemFromTempleteData(index);
         //ApiDataHandler.Instance.InsertItemToTemplateData(index, modifiedModel);//.exerciseTemplete.Insert(index, modifiedModel);
@@ -71,6 +72,8 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
 
         List<object> initialData = new List<object> { historyData, workoutScreen };
         PopupController.Instance.OpenPopup("complete", "completeWorkoutPopup", null, initialData);
+        if(workoutScreen!=null)
+            Destroy(workoutScreen);
         //StateManager.Instance.onRemoveBackHistory();
         //Dictionary<string, object> mData = new Dictionary<string, object>
         //        {

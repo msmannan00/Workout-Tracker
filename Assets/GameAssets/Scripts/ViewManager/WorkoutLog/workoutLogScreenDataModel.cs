@@ -12,7 +12,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public TMP_InputField exerciseNotes;
     public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
     public Button threeDots;
-    public GameObject timer, mile, weight, reps, rir;
+    public GameObject timer, mile, weight, reps, rir,rpe;
     public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
@@ -28,8 +28,9 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         isTemplateCreator = (bool)data["isTemplateCreator"];
-        if (data.ContainsKey("templeteModel"))
+        //if (data.ContainsKey("templeteModel"))
         {
+            print("in");
             templeteModel = (DefaultTempleteModel)data["templeteModel"];
         }
         if (templeteModel != null)
@@ -43,19 +44,18 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             case ExerciseType.RepsOnly:
                 reps.gameObject.SetActive(true);
+                rir.gameObject.SetActive(true);
                 break;
             case ExerciseType.TimeBased:
                 timer.gameObject.SetActive(true);
-                weight.gameObject.SetActive(false);
-                rir.gameObject.SetActive(false);
-                reps.gameObject.SetActive(false);
+                rpe.gameObject.SetActive(true);
                 break;
             case ExerciseType.TimeAndMiles:
                 timer.gameObject.SetActive(true);
                 mile.gameObject.SetActive(true);
+                rpe.gameObject.SetActive(true);
                 break;
             case ExerciseType.WeightAndReps:
-                timer.gameObject.SetActive(false);
                 weight.gameObject.SetActive(true);
                 rir.gameObject.SetActive(true);
                 reps.gameObject.SetActive(true);
@@ -200,18 +200,18 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
 
     public  void UpdateExerciseNotes(HistoryModel historyModel, ExerciseTypeModel exerciseToCheck, string templateName)
     {
-        // Step 1: Filter history models with matching template names
-        var matchingHistoryTemplates = historyModel.exerciseTempleteModel
-            .Where(ht => ht.templeteName == templateName)
-            .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by date
+        // Step 1: Sort history templates by date and time in descending order
+        var sortedHistoryTemplates = historyModel.exerciseTempleteModel
+            .OrderByDescending(ht => DateTime.Parse(ht.dateTime))
             .ToList();
-
-        // Step 2: Check each matching history template
-        foreach (var historyTemplate in matchingHistoryTemplates)
+        
+        // Step 2: Iterate through sorted history templates
+        foreach (var historyTemplate in sortedHistoryTemplates)
         {
+            print(historyTemplate.dateTime + "      " + historyTemplate.templeteName);
             // Check if the exercise exists in the current history template
             var matchingExercise = historyTemplate.exerciseTypeModel
-                .FirstOrDefault(e => e.exerciseName == exerciseToCheck.name);
+                .FirstOrDefault(e => e.exerciseName.ToLower() == exerciseToCheck.name.ToLower());
 
             if (matchingExercise != null)
             {
@@ -221,7 +221,31 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             }
         }
 
-        // Step 3: If no match is found, leave the notes unchanged
-        exerciseToCheck.exerciseNotes = string.Empty; // Optional: reset to empty if required
+        // Step 3: If no match is found, leave the notes empty
+        exerciseToCheck.exerciseNotes = string.Empty;
+
+        //// Step 1: Filter history models with matching template names
+        //var matchingHistoryTemplates = historyModel.exerciseTempleteModel
+        //    .Where(ht => ht.templeteName == templateName)
+        //    .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by date
+        //    .ToList();
+
+        //// Step 2: Check each matching history template
+        //foreach (var historyTemplate in matchingHistoryTemplates)
+        //{
+        //    // Check if the exercise exists in the current history template
+        //    var matchingExercise = historyTemplate.exerciseTypeModel
+        //        .FirstOrDefault(e => e.exerciseName == exerciseToCheck.name);
+
+        //    if (matchingExercise != null)
+        //    {
+        //        // If a match is found, update the notes and exit the method
+        //        exerciseToCheck.exerciseNotes = matchingExercise.exerciseNotes;
+        //        return;
+        //    }
+        //}
+
+        //// Step 3: If no match is found, leave the notes unchanged
+        //exerciseToCheck.exerciseNotes = string.Empty; // Optional: reset to empty if required
     }
 }

@@ -33,7 +33,8 @@ public class ExerciseModel
     public string previous = "-";
     public float weight = 0;
     public int rir = 0;
-    public int reps = 0;
+    public int rpe = 0;
+    public float  reps = 0;
     public bool toggle;
     public int time;
     public float mile;

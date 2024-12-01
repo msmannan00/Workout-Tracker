@@ -49,8 +49,9 @@ public class StateManager : GenericSingletonClass<StateManager>
         {
             isProcessing = false;
         }
-        //if(isfooter)
-            userSessionManager.Instance.currentScreen = prefab.gameObject;
+        if (isfooter)
+            callback?.Invoke(null);
+        userSessionManager.Instance.currentScreen = prefab.gameObject;
     }
 
     public void openSidebar(string folderPath, GameObject currentPage, string newPage)

@@ -46,7 +46,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
                 { "isFirstTime", true }
             };
             StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-            userSessionManager.Instance.AddGymVisit();
+            //userSessionManager.Instance.AddGymVisit();
         }
         else
         {

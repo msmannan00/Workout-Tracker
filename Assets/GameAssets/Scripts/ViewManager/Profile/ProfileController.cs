@@ -18,7 +18,7 @@ public class ProfileController : MonoBehaviour,PageController
     public Button settingButton;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
-        callback?.Invoke(null);
+        
     }
     private void Start()
     {
@@ -54,6 +54,11 @@ public class ProfileController : MonoBehaviour,PageController
     {
         AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "measurementScreen", null,true);
+        StateManager.Instance.CloseFooter();
+    }
+    public void BadgeSelection()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", null, true);
         StateManager.Instance.CloseFooter();
     }
     public void WeeklyGoal()

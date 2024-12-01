@@ -20,7 +20,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
         HistoryTempleteModel historyWorkout = (HistoryTempleteModel)data["workout"];
         workoutNameText.text = historyWorkout.templeteName.ToUpper();
         string savedDate = historyWorkout.dateTime;
-        DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.InvariantCulture);
         string formattedDate = parsedDate.ToString("dddd, dd MMMM yyyy");
         dateText.text = formattedDate;
         if (historyWorkout.completedTime > 60)
@@ -87,7 +87,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
-            text.text = data.reps.ToString();
+            text.text = data.reps.ToString("F1");
             text.fontSize = 14;
             SetFontAndColor(text);
         }
@@ -122,7 +122,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
                     text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
                     break;
                 case WeightUnit.lbs:
-                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString();
+                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString("F1");
                     break;
             }
             //text.text = data.weight.ToString() + " kg x " + data.reps.ToString();

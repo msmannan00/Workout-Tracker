@@ -98,7 +98,10 @@ public class SelectBodyParts : MonoBehaviour,PageController
         // Iterate over each HistoryTempleteModel in the historyData
         foreach (var template in excerciseData.exercises)
         {
-            uniqueExercises.Add(template.category);
+            if (!template.category.Contains("/"))
+            {
+                uniqueExercises.Add(template.category);
+            }
         }
 
         // Convert HashSet to List and return it
@@ -112,10 +115,25 @@ public class SelectBodyParts : MonoBehaviour,PageController
         // Iterate over each ExerciseDataItem in the exerciseData
         foreach (var template in exerciseData.exercises)
         {
-            // Check if the template's category matches the provided category string
-            if (template.category.Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase))
+            // Check if the template's category contains "/"
+            if (template.category.Contains("/"))
             {
-                matchingCount++; // Increment the counter if there's a match
+                // Split the category into parts using "/"
+                var categories = template.category.Split('/');
+
+                // Trim each part and check if any matches the provided category string
+                if (categories.Any(cat => cat.Trim().Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase)))
+                {
+                    matchingCount++; // Increment the counter if there's a match
+                }
+            }
+            else
+            {
+                // Check if the template's category matches the provided category string
+                if (template.category.Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase))
+                {
+                    matchingCount++; // Increment the counter if there's a match
+                }
             }
         }
 

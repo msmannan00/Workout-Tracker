@@ -18,15 +18,15 @@ public class SubGUISetting : MonoBehaviour
             case Theme.Light:
                 if (shadow != null)
                     shadow.enabled = true;
-                SetExerciseText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
-                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightPlaceholder);
+                SetExerciseText(userSessionManager.Instance.lightPrimaryFontMediumBold, userSessionManager.Instance.lightButtonTextColor);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightPlaceholder);
                 SetHistoryText(userSessionManager.Instance.lightSecondaryFont, new Color32(92, 59, 28, 155));
                 break;
             case Theme.Dark:
                 if (shadow != null)
                     shadow.enabled = false;
                 SetExerciseText(userSessionManager.Instance.darkPrimaryFont, Color.white);
-                SetCategoryText(userSessionManager.Instance.lightPrimaryFont, new Color32(255, 255, 255, 150));
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, new Color32(255, 255, 255, 150));
                 SetHistoryText(userSessionManager.Instance.darkSecondaryFont, new Color32(217, 217, 217, 127));
                 break;
         }

@@ -8,6 +8,7 @@ public class AchievementTemplateDataItem
     public bool isCompleted;
 
     public float value;
+    public int coins;
 
 }
 

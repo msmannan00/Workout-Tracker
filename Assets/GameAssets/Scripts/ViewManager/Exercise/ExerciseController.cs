@@ -48,9 +48,9 @@ public class ExerciseController : MonoBehaviour, PageController
                 break;
             case ExerciseAddOnPage.HistoryPage:
                 LoadExercises();
-                addNewExercise.gameObject.SetActive(false);
-                bodyPartButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-40, bodyPartButton.GetComponent<RectTransform>().anchoredPosition.y);
-                searchInputField.GetComponent<RectTransform>().offsetMax = new Vector2(-80, searchInputField.GetComponent<RectTransform>().offsetMax.y);
+                //addNewExercise.gameObject.SetActive(false);
+                //bodyPartButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-40, bodyPartButton.GetComponent<RectTransform>().anchoredPosition.y);
+                //searchInputField.GetComponent<RectTransform>().offsetMax = new Vector2(-80, searchInputField.GetComponent<RectTransform>().offsetMax.y);
                 break;
         }
         addNewExercise.onClick.AddListener(AddNewExercise);
@@ -98,7 +98,7 @@ public class ExerciseController : MonoBehaviour, PageController
             switch (ApiDataHandler.Instance.gameTheme)
             {
                 case Theme.Light:
-                    textMeshPro.font = userSessionManager.Instance.lightPrimaryFont;
+                    textMeshPro.font = userSessionManager.Instance.lightPrimaryFontBold;
                     textMeshPro.color = userSessionManager.Instance.lightButtonTextColor;
                     line.color = userSessionManager.Instance.lightPlaceholder;
                     break;

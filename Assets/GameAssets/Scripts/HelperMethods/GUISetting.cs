@@ -14,6 +14,12 @@ public class GUISetting : MonoBehaviour
     [SerializeField]
     private List<TextMeshProUGUI> primaryText = new List<TextMeshProUGUI>();
     [SerializeField]
+    private List<TextMeshProUGUI> primaryBoldText = new List<TextMeshProUGUI>();
+    [SerializeField]
+    private List<TextMeshProUGUI> primarySemiBoldText = new List<TextMeshProUGUI>();
+    [SerializeField]
+    private List<TextMeshProUGUI> primaryMediumBoldText = new List<TextMeshProUGUI>();
+    [SerializeField]
     private List<TextMeshProUGUI> secondaryText = new List<TextMeshProUGUI>();
     [SerializeField]
     private List<TextMeshProUGUI> historySubText = new List<TextMeshProUGUI>();
@@ -68,16 +74,19 @@ public class GUISetting : MonoBehaviour
                     //characterScreenOffOn.enabled = true;
 
                 SetShadow(true);
-                SetPersonalBestAndMeasurementText(userSessionManager.Instance.lightPrimaryFont, new Color32(92,59,28,255));
+                SetPersonalBestAndMeasurementText(userSessionManager.Instance.lightPrimaryFontSemiBold, new Color32(92,59,28,255));
                 setBackground(lightbackground);
-                SetPrimaryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
+                //SetPrimaryText(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor);
+                SetPrimaryBoldText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor);
+                SetPrimaryMediumBoldText(userSessionManager.Instance.lightPrimaryFontMediumBold, userSessionManager.Instance.lightButtonTextColor);
+                SetPrimarySemiBoldText(userSessionManager.Instance.lightPrimaryFontSemiBold, userSessionManager.Instance.lightButtonTextColor);
                 SetSecondaryText(userSessionManager.Instance.lightSecondaryFont, userSessionManager.Instance.lightButtonTextColor);
                 SetHistorySubText(userSessionManager.Instance.lightSecondaryFont, new Color32(92, 59, 28, 155));
                 SetButtonColor(userSessionManager.Instance.lightButtonColor);
                 SetButtonTextColor(Color.white);
                 SetButton2Color(userSessionManager.Instance.lightInputFieldColor);
-                SetInputFields(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
-                SetDropdowns(userSessionManager.Instance.lightPrimaryFont, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetInputFields(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetDropdowns(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
                 SetOutlines(userSessionManager.Instance.lightButtonColor);
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.lightInputFieldColor);
                 SetLineColor(userSessionManager.Instance.lightPlaceholder);
@@ -129,6 +138,30 @@ public class GUISetting : MonoBehaviour
     public void SetPrimaryText(TMP_FontAsset font, Color col)
     {
         foreach (TextMeshProUGUI text in primaryText)
+        {
+            text.font = font;
+            text.color = col;
+        }
+    }
+    public void SetPrimaryBoldText(TMP_FontAsset font, Color col)
+    {
+        foreach (TextMeshProUGUI text in primaryBoldText)
+        {
+            text.font = font;
+            text.color = col;
+        }
+    }
+    public void SetPrimarySemiBoldText(TMP_FontAsset font, Color col)
+    {
+        foreach (TextMeshProUGUI text in primarySemiBoldText)
+        {
+            text.font = font;
+            text.color = col;
+        }
+    }
+    public void SetPrimaryMediumBoldText(TMP_FontAsset font, Color col)
+    {
+        foreach (TextMeshProUGUI text in primaryMediumBoldText)
         {
             text.font = font;
             text.color = col;

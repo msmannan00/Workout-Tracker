@@ -25,7 +25,7 @@ public class MeasurementController : MonoBehaviour,PageController
     public TMP_InputField leftCalf;
     public TMP_InputField rightCalf;
 
-    //private MeasurementModel measurementModel;
+    public List<MeasurementHistoryItem> historyItems=new List<MeasurementHistoryItem>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         InitializeInputFields();
@@ -46,26 +46,26 @@ public class MeasurementController : MonoBehaviour,PageController
         switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
         {
             case WeightUnit.kg:
-                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg", weight));
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg", weight, "weight"));
                 break;
             case WeightUnit.lbs:
-                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "lbs",weight));
+                weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "lbs",weight, "weight"));
                 break;
         }
         //weight.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().weight, "kg"));
-        bodyFat.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().bodyFat, "%", bodyFat));
-        chest.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().chest, "cm", chest));
-        shoulder.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().shoulder, "cm", shoulder));
-        hips.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().hips, "cm", hips));
-        waist.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().waist, "cm", waist));
-        leftThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftThigh, "cm", leftThigh));
-        rightThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightThigh, "cm", rightThigh));
-        leftBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftBicep, "cm", leftBicep));
-        rightBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightBicep, "cm", rightBicep));
-        leftForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftForearm, "cm", leftForearm));
-        rightForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightForearm, "cm", rightForearm));
-        leftCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftCalf, "cm", leftCalf));
-        rightCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightCalf, "cm", rightCalf));
+        bodyFat.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().bodyFat, "%", bodyFat, "body fat"));
+        chest.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().chest, "cm", chest, "chest"));
+        shoulder.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().shoulder, "cm", shoulder, "shoulder"));
+        hips.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().hips, "cm", hips, "hips"));
+        waist.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().waist, "cm", waist, "waist"));
+        leftThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftThigh, "cm", leftThigh, "left thigh"));
+        rightThigh.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightThigh, "cm", rightThigh, "right thigh"));
+        leftBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftBicep, "cm", leftBicep, "left bicep"));
+        rightBicep.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightBicep, "cm", rightBicep, "right bicep"));
+        leftForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftForearm, "cm", leftForearm, "left forearm"));
+        rightForearm.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightForearm, "cm", rightForearm, "right forearm"));
+        leftCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().leftCalf, "cm", leftCalf, "left calf"));
+        rightCalf.onEndEdit.AddListener(value => OnInputEditEnd(value, targetField: ref ApiDataHandler.Instance.getMeasurementData().rightCalf, "cm", rightCalf, "right calf"));
     }
 
     // Initialize input fields with values from the MeasurementModel and add units
@@ -97,12 +97,12 @@ public class MeasurementController : MonoBehaviour,PageController
     }
 
     // Generic function to handle input editing and update the MeasurementModel
-    public void OnInputEditEnd(string value, ref int targetField, string unit,TMP_InputField text)
+    public void OnInputEditEnd(string value, ref float targetField, string unit,TMP_InputField text, string name)
     {
         // Remove the unit from the input string before parsing
         string cleanedValue = value.Replace(unit, "").Trim();
 
-        if (int.TryParse(cleanedValue, out int result))
+        if (float.TryParse(cleanedValue, out float result))
         {
             targetField = result;  // Update the corresponding field in the MeasurementModel
         }
@@ -113,10 +113,21 @@ public class MeasurementController : MonoBehaviour,PageController
 
         // Update the input field to reflect the value with the unit
         UpdateInputFieldWithUnit(targetField, unit, text);
+
+        foreach(MeasurementHistoryItem item in historyItems)
+        {
+            if(item.name== name)
+            {
+                historyItems.Remove(item);
+                break;
+            }
+        }
+        MeasurementHistoryItem newItem = new MeasurementHistoryItem { name = name, dateTime=DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"), value=result};
+        historyItems.Add(newItem);
     }
 
     // Helper method to update the input field text with the value and unit
-    private void UpdateInputFieldWithUnit(int value, string unit, TMP_InputField text)
+    private void UpdateInputFieldWithUnit(float value, string unit, TMP_InputField text)
     {
         // Check which input field needs to be updated by comparing the original text value
         if (unit.Contains("kg"))
@@ -131,7 +142,21 @@ public class MeasurementController : MonoBehaviour,PageController
     public void Save()
     {
         ApiDataHandler.Instance.SaveMeasurementData();
+        foreach(MeasurementHistoryItem item in historyItems)
+        {
+            ApiDataHandler.Instance.SetMeasurementHistory(item);
+        }
+        historyItems.Clear();
+        ApiDataHandler.Instance.SaveMeasurementHistory();
         AudioController.Instance.OnButtonClick();
+    }
+    public void OpenHistory(string name)
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            {  "name", name  }
+        };
+        StateManager.Instance.OpenStaticScreen("profile", null, "MeasurementHistoryScreen", mData, true);
     }
     public void Back()
     {
