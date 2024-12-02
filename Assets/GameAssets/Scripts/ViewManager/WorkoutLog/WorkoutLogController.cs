@@ -376,6 +376,30 @@ public class WorkoutLogController : MonoBehaviour, PageController
                 exerciseType = exerciseType.exerciseType,
                 exerciseModel = new List<HistoryExerciseModel>()
             };
+            if (exerciseType.exerciseNotes != string.Empty)
+            {
+                bool exerciseExist = false;
+                foreach(ExerciseNotesHistoryItem item in ApiDataHandler.Instance.getNotesHistory().exercises)
+                {
+                    if (item.exerciseName.ToLower() == exerciseType.name.ToLower())
+                    {
+                        item.notes = exerciseType.exerciseNotes;
+                        ApiDataHandler.Instance.SaveNotesHistory();
+                        exerciseExist = true;
+                        break;
+                    }
+                }
+                if (!exerciseExist)
+                {
+                    var newExercise = new ExerciseNotesHistoryItem
+                    {
+                        exerciseName = exerciseType.name,
+                        notes = exerciseType.exerciseNotes
+                    };
+                    ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
+                    ApiDataHandler.Instance.SaveNotesHistory();
+                }
+            }
             //print(historyExerciseType.categoryName + "/" + exerciseType.categoryName);
             // Populate HistoryExerciseModel list but only add exercises where toggle is true
             foreach (var exercise in exerciseType.exerciseModel)

@@ -24,6 +24,7 @@ public class ExerciseController : MonoBehaviour, PageController
     private List<GameObject> exerciseItems = new List<GameObject>();
     private Action<List<ExerciseDataItem>> callback;
     private bool isWorkoutLog;
+    private bool isHistory;
     private ExerciseAddOnPage exerciseAddOnPage;
 
     public HistoryModel testHistory = new HistoryModel();
@@ -32,6 +33,10 @@ public class ExerciseController : MonoBehaviour, PageController
         this.callback = callback;
         exerciseAddOnPage = (ExerciseAddOnPage)data["ExerciseAddOnPage"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
+        if (data.ContainsKey("isHistory"))
+        {
+            isHistory = (bool)data["isHistory"];
+        }
         switch (exerciseAddOnPage)
         {
             case ExerciseAddOnPage.WorkoutLogPage:
@@ -640,6 +645,10 @@ public class ExerciseController : MonoBehaviour, PageController
     public void OnClose()
     {
         StateManager.Instance.HandleBackAction(gameObject);
+        if (isHistory)
+        {
+            StateManager.Instance.OpenFooter(null, null, false);
+        }
     }
     public void AddNewExercise()
     {

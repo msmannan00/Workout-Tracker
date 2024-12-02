@@ -47,8 +47,11 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
     }
     public void YesButton()
     {
+        List<object> obj = new List<object>();
+        obj.Add(templeteModel.exerciseTemplete);
         if (isEdit)
         {
+            callback?.Invoke(obj);
             ApiDataHandler.Instance.SaveTemplateData();
             PopupController.Instance.ClosePopup("SaveWorkoutTempletePopup");
             StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
@@ -56,6 +59,7 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
         }
         else
         {
+            callback?.Invoke(obj);
             int createdWorkoutCount = ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount();
             createdWorkoutCount++;
             ApiDataHandler.Instance.SetCreatedWorkoutTempleteCount(createdWorkoutCount);

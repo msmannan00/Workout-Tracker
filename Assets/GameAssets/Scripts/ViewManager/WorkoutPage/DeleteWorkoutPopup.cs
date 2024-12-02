@@ -21,7 +21,7 @@ public class DeleteWorkoutPopup : MonoBehaviour, IPrefabInitializer
         yesButton.onClick.AddListener(YesButton);
         noButton.onClick.AddListener(NoButton);
         fade.onClick.AddListener(NoButton);
-        yesButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        yesButton.onClick.AddListener(AudioController.Instance.OnDelete);
         noButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     public void YesButton()
@@ -31,6 +31,7 @@ public class DeleteWorkoutPopup : MonoBehaviour, IPrefabInitializer
         PopupController.Instance.ClosePopup("DeleteWorkoutPopup");
         StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
         StateManager.Instance.OpenFooter(null, null, false);
+        //AudioController.Instance.OnDelete();
     }
     public void NoButton()
     {

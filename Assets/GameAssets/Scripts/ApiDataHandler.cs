@@ -22,6 +22,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     private MeasurementModel measurementData = new MeasurementModel();
     [SerializeField]
     private MeasurementHistory measurementHistory = new MeasurementHistory();
+    [SerializeField]
+    private ExerciseNotesHistory notesHistory = new ExerciseNotesHistory();
 
     [Header("Theme Settings")]
     public Theme gameTheme;
@@ -66,6 +68,14 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             templateData = new TemplateData();
             CreateRandomDefaultEntry();
+        }
+    }
+    public void LoadNotesHistory()
+    {
+        if (PreferenceManager.Instance.HasKey("notesHistory"))
+        {
+            string json = PreferenceManager.Instance.GetString("notesHistory");
+            notesHistory = JsonUtility.FromJson<ExerciseNotesHistory>(json);
         }
     }
     public void LoadMeasurementHistory()
@@ -211,6 +221,12 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetString("measurementHistory", json);
         PreferenceManager.Instance.Save();
     }
+    public void SaveNotesHistory()
+    {
+        string json = JsonUtility.ToJson(notesHistory);
+        PreferenceManager.Instance.SetString("notesHistory", json);
+        PreferenceManager.Instance.Save();
+    }
     public void SetMeasurementHistory(MeasurementHistoryItem item)
     {
         measurementHistory.measurmentHistory.Add(item);
@@ -249,7 +265,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return measurementHistory;
     }
-
+    public ExerciseNotesHistory getNotesHistory()
+    {
+        return notesHistory;
+    }
 
 
 
@@ -277,6 +296,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
         LoadMeasurementData();
         LoadMeasurementHistory();
+        LoadNotesHistory();
 
         gameTheme = LoadTheme();
     }

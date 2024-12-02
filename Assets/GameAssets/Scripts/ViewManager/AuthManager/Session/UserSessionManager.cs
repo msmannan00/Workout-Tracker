@@ -882,5 +882,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     {
         return kilograms * kgToLbsFactor;
     }
+    public void ActiveInput(TMP_InputField input)
+    {
+        input.Select();
+        input.ActivateInputField();
+    }
 
 }

@@ -33,9 +33,10 @@ public class SelectBodyParts : MonoBehaviour,PageController
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
             newTextObj.transform.GetChild(1).gameObject.SetActive(false);
             textComponent.text = text;
-            textComponent.color = userSessionManager.Instance.lightButtonColor;
+            textComponent.color = Color.white;
+            textComponent.font = userSessionManager.Instance.lightPrimaryFontBold;
             newTextObj.GetComponent<Button>().onClick.AddListener(() => SelectAndDeselect(text, newTextObj, controller, itemColor));
-            newTextObj.GetComponent<Image>().color = itemColor;
+            newTextObj.GetComponent<Image>().color = userSessionManager.Instance.lightButtonColor;
             LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
             float textWidth = textComponent.preferredWidth+15;
             if (currentX + textWidth > maxRowWidth)
@@ -69,7 +70,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
             int matchingCount = GetMatchingCategoryCount(ApiDataHandler.Instance.getExerciseData(), text);
             globalCounter -= matchingCount;
             controller.selectedBodyParts.Remove(text);
-            obj.GetComponent<Image>().color = col;
+            obj.GetComponent<Image>().color = userSessionManager.Instance.lightButtonColor;
             label.text = "Filter(" + globalCounter.ToString() + ")";
         }
         else
@@ -77,7 +78,7 @@ public class SelectBodyParts : MonoBehaviour,PageController
             controller.selectedBodyParts.Add(text);
             int matchingCount = GetMatchingCategoryCount(ApiDataHandler.Instance.getExerciseData(), text);
             globalCounter += matchingCount;
-            obj.GetComponent<Image>().color = new Color32(51, 23, 23,255);
+            obj.GetComponent<Image>().color = new Color32(150, 0, 0,255);
             label.text = "Filter(" + globalCounter.ToString() + ")";
         }
     }

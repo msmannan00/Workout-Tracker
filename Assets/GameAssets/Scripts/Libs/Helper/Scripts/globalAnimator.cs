@@ -204,7 +204,7 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
         messageText.alpha = 1;
 
         // Hide the text after 1 second using a fade-out animation
-        messageText.DOFade(0, 1f).SetDelay(duration);  // Wait for 1 second, then fade out over 1 second
+        messageText.DOFade(0, 1f).SetDelay(duration).SetId(messageText);  // Wait for 1 second, then fade out over 1 second
     }
     public void ApplyShakeEffect(RectTransform transform, Action onComplete)
     {

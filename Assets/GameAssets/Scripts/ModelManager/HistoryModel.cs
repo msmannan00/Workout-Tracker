@@ -60,3 +60,14 @@ public class ExerciseWithDate
        .FirstOrDefault();
     }
 }
+[Serializable]
+public class ExerciseNotesHistory
+{
+    public List<ExerciseNotesHistoryItem> exercises = new List<ExerciseNotesHistoryItem>();
+}
+[Serializable]
+public class ExerciseNotesHistoryItem
+{
+    public string exerciseName;
+    public string notes;
+}

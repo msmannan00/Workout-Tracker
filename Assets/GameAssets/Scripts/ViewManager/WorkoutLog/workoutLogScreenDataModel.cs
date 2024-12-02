@@ -12,7 +12,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public TMP_InputField exerciseNotes;
     public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
     public Button threeDots;
-    public GameObject timer, mile, weight, reps, rir,rpe;
+    public GameObject timer, mile, weight, reps, rir, rpe;
     public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
@@ -22,6 +22,11 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public List<WorkoutLogSubItem> workoutLogSubItems;
     //InputFieldManager inputFieldManager;
 
+    private void Start()
+    {
+        exerciseNotes.transform.GetComponentInChildren<Button>().onClick.AddListener(() => userSessionManager.Instance.ActiveInput(exerciseNotes));
+        exerciseNotes.transform.GetComponentInChildren<Button>().transform.parent = exerciseNotes.transform.parent;
+    }
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
@@ -33,8 +38,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             print("in");
             templeteModel = (DefaultTempleteModel)data["templeteModel"];
         }
-        if (templeteModel != null)
-            UpdateExerciseNotes(ApiDataHandler.Instance.getHistoryData(), this.exerciseTypeModel, templeteModel.templeteName);
+        //if (templeteModel != null)
+        GetExerciseNotes(this.exerciseTypeModel);
         //if (data.ContainsKey("inputManager"))
         //    inputFieldManager = (InputFieldManager)data["inputManager"];
         //inputFieldManager.inputFields.Add(exerciseNotes);
@@ -83,7 +88,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
         GameObject prefab;
-        if(isWorkoutLog)
+        if (isWorkoutLog)
             prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
         else
         {
@@ -96,7 +101,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         WorkoutLogSubItem newSubItemScript = newSubItem.GetComponent<WorkoutLogSubItem>();
         workoutLogSubItems.Add(newSubItemScript);
         HistoryExerciseModel history = null;
-        if(exerciseHistory.Count > 0)
+        if (exerciseHistory.Count > 0)
         {
             history = exerciseHistory[0];
             exerciseHistory.RemoveAt(0);
@@ -109,7 +114,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
             {"isWorkoutLog",isWorkoutLog }
             //{"inputManager",inputFieldManager}
         };
-        newSubItemScript.onInit(initData,callback);
+        newSubItemScript.onInit(initData, callback);
     }
 
     public void OnAddSet(bool addMore)
@@ -130,7 +135,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public void OnRemoveExercisePopup(RectTransform transform)
     {
         List<object> initialData = new List<object> { this.gameObject, this.callback, isTemplateCreator };
-        PopupController.Instance.OpenSidePopup("workoutLog", "RemoveExercisePopup", OnRemoveExerciseCallBack, initialData,transform);
+        PopupController.Instance.OpenSidePopup("workoutLog", "RemoveExercisePopup", OnRemoveExerciseCallBack, initialData, transform);
     }
     void OnRemoveExerciseCallBack(List<object> data)
     {
@@ -198,13 +203,13 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         return exerciseDataList;
     }
 
-    public  void UpdateExerciseNotes(HistoryModel historyModel, ExerciseTypeModel exerciseToCheck, string templateName)
+    public void UpdateExerciseNotes(HistoryModel historyModel, ExerciseTypeModel exerciseToCheck, string templateName)
     {
         // Step 1: Sort history templates by date and time in descending order
         var sortedHistoryTemplates = historyModel.exerciseTempleteModel
             .OrderByDescending(ht => DateTime.Parse(ht.dateTime))
             .ToList();
-        
+
         // Step 2: Iterate through sorted history templates
         foreach (var historyTemplate in sortedHistoryTemplates)
         {
@@ -223,29 +228,16 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
 
         // Step 3: If no match is found, leave the notes empty
         exerciseToCheck.exerciseNotes = string.Empty;
-
-        //// Step 1: Filter history models with matching template names
-        //var matchingHistoryTemplates = historyModel.exerciseTempleteModel
-        //    .Where(ht => ht.templeteName == templateName)
-        //    .OrderByDescending(ht => DateTime.Parse(ht.dateTime)) // Sort by date
-        //    .ToList();
-
-        //// Step 2: Check each matching history template
-        //foreach (var historyTemplate in matchingHistoryTemplates)
-        //{
-        //    // Check if the exercise exists in the current history template
-        //    var matchingExercise = historyTemplate.exerciseTypeModel
-        //        .FirstOrDefault(e => e.exerciseName == exerciseToCheck.name);
-
-        //    if (matchingExercise != null)
-        //    {
-        //        // If a match is found, update the notes and exit the method
-        //        exerciseToCheck.exerciseNotes = matchingExercise.exerciseNotes;
-        //        return;
-        //    }
-        //}
-
-        //// Step 3: If no match is found, leave the notes unchanged
-        //exerciseToCheck.exerciseNotes = string.Empty; // Optional: reset to empty if required
+    }
+    public void GetExerciseNotes(ExerciseTypeModel exercise)
+    {
+        foreach(var item in ApiDataHandler.Instance.getNotesHistory().exercises)
+        {
+            if(item.exerciseName.ToLower() == exercise.name.ToLower())
+            {
+                exercise.exerciseNotes = item.notes;
+                break;
+            }
+        }
     }
 }

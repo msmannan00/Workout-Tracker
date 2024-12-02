@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 public class SwipeToDeleteBehaviour : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Transform topView;
-    public bool isSubItem;
     public SwipeToDeleteItem itemType;
-    private float smoothSpeed = 10f; 
+    private float smoothSpeed = 5f;
 
     private Vector3 mouseStartPosition;
     private Vector3 topViewStartPosition;
@@ -108,6 +108,7 @@ public class SwipeToDeleteBehaviour : MonoBehaviour, IBeginDragHandler, IDragHan
                 //    workoutLogScreenDataModel workoutModel = this.GetComponent<workoutLogScreenDataModel>();
                 //    workoutModel.templeteModel.exerciseTemplete.Remove(workoutModel.exerciseTypeModel);
                 //}
+                AudioController.Instance.OnDelete();
                 Destroy(gameObject);
             }
             else

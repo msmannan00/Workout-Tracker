@@ -120,7 +120,7 @@ public class HistoryController : MonoBehaviour, PageController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.HistoryPage}
+            { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.HistoryPage},{"isHistory",true}
         };
         StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, null);
         StateManager.Instance.CloseFooter();

@@ -11,14 +11,14 @@ public class DateController : MonoBehaviour,PageController
     public TextMeshProUGUI messageText;
     public TMP_InputField monthInput;
     public TMP_InputField yearInput;
-    public Button continouButton;
+    public Button continueButton;
     int month;
     int year=DateTime.Now.Year;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         monthInput.onEndEdit.AddListener(OnMonthInputEditEnd);
         yearInput.onEndEdit.AddListener(OnYearInputEditEnd);
-        continouButton.onClick.AddListener(ContinouButton);
+        continueButton.onClick.AddListener(ContinueButton);
     }
     public void OnMonthInputEditEnd(string input)
     {
@@ -46,7 +46,7 @@ public class DateController : MonoBehaviour,PageController
             Debug.LogError($"Invalid year. Please enter a value greater than 1980 and less than or equal to {DateTime.Now.Year}.");
         }
     }
-    public void ContinouButton()
+    public void ContinueButton()
     {
         if ( month >= 1 && month <= 12 && year > 1980 && year <= DateTime.Now.Year)
         {

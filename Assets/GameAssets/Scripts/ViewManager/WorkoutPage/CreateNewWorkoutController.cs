@@ -41,7 +41,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
            
             labelText.text = "EDIT WORKOUT";
             workoutName.text = templeteModel.templeteName;
-            workoutName.onEndEdit.AddListener(OnTempleteNameChange);
+            
             List<ExerciseTypeModel> list = new List<ExerciseTypeModel>();
             foreach (var exerciseType in templeteModel.exerciseTemplete)
             {
@@ -56,6 +56,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         }
         this.callback = callback;
         //saveTemplate.interactable = false;
+        workoutName.onEndEdit.AddListener(OnTempleteNameChange);
         addExercise.onClick.AddListener(() => AddExerciseButton());
         saveTemplate.onClick.AddListener(() => SaveNewWorkout()); 
         addExercise.onClick.AddListener(() => AudioController.Instance.OnButtonClick());
@@ -181,7 +182,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         if (editWorkout)
         {
             CopyAndPast(templeteModel, orignalTempleteModel);
-            ValidateTemplate(orignalTempleteModel);
+            ValidateTemplate(templeteModel);
             //orignalTempleteModel = templeteModel;
         }
         else 
@@ -215,14 +216,14 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         {
             string message = "Are you sure you want to save workout templete.";
             List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message };
-            PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", null, initialData);
+            PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", SaveExerciseNotesHistory, initialData);
             //Debug.Log("All exercise templates have at least one exercise model.");
         }
         else
         {
             string message = "Exercises with 0 sets will be discard. Are you sure you want to save it.";
             List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message };
-            PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", null, initialData);
+            PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", SaveExerciseNotesHistory, initialData);
             Debug.Log("Some exercise templates have models, and some do not.");
         }
     }
@@ -296,6 +297,40 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
             }
             if(exerciseCopy.exerciseModel.Count>0)
                 _old.exerciseTemplete.Add(exerciseCopy);
+        }
+    }
+    public void SaveExerciseNotesHistory(List<object> data)
+    {
+        if (data[0] is List<ExerciseTypeModel> templeteModel)
+        {
+            foreach (object item in templeteModel)
+            {
+                ExerciseTypeModel exerciseType = (ExerciseTypeModel)item;
+                if (exerciseType.exerciseNotes != string.Empty)
+                {
+                    bool exerciseExist = false;
+                    foreach (ExerciseNotesHistoryItem noteItem in ApiDataHandler.Instance.getNotesHistory().exercises)
+                    {
+                        if (noteItem.exerciseName.ToLower() == exerciseType.name.ToLower())
+                        {
+                            noteItem.notes = exerciseType.exerciseNotes;
+                            ApiDataHandler.Instance.SaveNotesHistory();
+                            exerciseExist = true;
+                            break;
+                        }
+                    }
+                    if (!exerciseExist)
+                    {
+                        var newExercise = new ExerciseNotesHistoryItem
+                        {
+                            exerciseName = exerciseType.name,
+                            notes = exerciseType.exerciseNotes
+                        };
+                        ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
+                        ApiDataHandler.Instance.SaveNotesHistory();
+                    }
+                }
+            }
         }
     }
 }

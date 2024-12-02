@@ -36,7 +36,14 @@ public class AudioController : GenericSingletonClass<AudioController>
         rootAudioSource.clip = clip;
         rootAudioSource.Play();
     }
-
+    public void OnDelete()
+    {
+        string soundName = "delete";
+        AudioClip clip = Resources.Load<AudioClip>("SoundAssets/" + soundName);
+        AudioSource rootAudioSource = GetRootAudioSource();
+        rootAudioSource.clip = clip;
+        rootAudioSource.Play();
+    }
     public void OnSetComplete()
     {
         //if (GameController.Instance.isAudioMute) return;

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 public class MeasurementController : MonoBehaviour,PageController
 {
     public Button saveButton;
+    public TextMeshProUGUI messageText;
     public Button backButton;
 
     public TMP_InputField weight;
@@ -30,6 +32,10 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         InitializeInputFields();
         AddListeners();
+    }
+    private void OnEnable()
+    {
+        messageText.text = "";
     }
     private void Update()
     {
@@ -141,13 +147,23 @@ public class MeasurementController : MonoBehaviour,PageController
     }
     public void Save()
     {
-        ApiDataHandler.Instance.SaveMeasurementData();
-        foreach(MeasurementHistoryItem item in historyItems)
+        if (historyItems.Count > 0)
         {
-            ApiDataHandler.Instance.SetMeasurementHistory(item);
+            ApiDataHandler.Instance.SaveMeasurementData();
+            foreach (MeasurementHistoryItem item in historyItems)
+            {
+                ApiDataHandler.Instance.SetMeasurementHistory(item);
+            }
+            historyItems.Clear();
+            ApiDataHandler.Instance.SaveMeasurementHistory();
+            DOTween.Kill(messageText);
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Saved Successfully!", 2);
         }
-        historyItems.Clear();
-        ApiDataHandler.Instance.SaveMeasurementHistory();
+        else
+        {
+            DOTween.Kill(messageText);
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Nothing new to save!", 2);
+        }
         AudioController.Instance.OnButtonClick();
     }
     public void OpenHistory(string name)

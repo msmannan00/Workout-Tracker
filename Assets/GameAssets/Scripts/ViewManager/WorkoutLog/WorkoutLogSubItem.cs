@@ -161,6 +161,10 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnEnable()
     {
+        reps.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=>userSessionManager.Instance.ActiveInput(reps));
+        mile.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(mile));
+        weight.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(weight));
+        timerText.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(timerText));
         //TMP_FontAsset textFont = null;
         //Color color = Color.white;
         //switch (userSessionManager.Instance.gameTheme)
@@ -210,6 +214,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //        break;
         //}
     }
+    
     void ChangeInputFieldFount_Color(TMP_InputField inputField,TMP_FontAsset fontAsset,Color color)
     {
         TextMeshProUGUI placeholder=inputField.placeholder as TextMeshProUGUI;
@@ -372,7 +377,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 isComplete.isOn = false;
                 exerciseModel.toggle = false;
-                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+                //isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
         }
 
