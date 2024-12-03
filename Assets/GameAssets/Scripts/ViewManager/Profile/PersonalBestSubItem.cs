@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -14,11 +14,15 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         _data = (PersonalBestDataItem)data["data"];
-        exerciseName.text = _data.exerciseName;
+        exerciseName.text = userSessionManager.Instance.FormatStringAbc(_data.exerciseName);
         rep.text = _data.rep.ToString();
         weight.text = _data.weight.ToString() + " kg";
         weight.onEndEdit.AddListener(WeightValueChange);
         rep.onEndEdit.AddListener(RepValueChange);
+        if (new[] { "bench press (barbell)", "squat (barbell)", "deadlifts (barbell)" }.Contains(_data.exerciseName.ToLower()))
+        {
+            transform.SetAsFirstSibling();
+        }
     }
     void RepValueChange(string value)
     {

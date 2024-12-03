@@ -35,7 +35,6 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         isTemplateCreator = (bool)data["isTemplateCreator"];
         //if (data.ContainsKey("templeteModel"))
         {
-            print("in");
             templeteModel = (DefaultTempleteModel)data["templeteModel"];
         }
         //if (templeteModel != null)
@@ -43,7 +42,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         //if (data.ContainsKey("inputManager"))
         //    inputFieldManager = (InputFieldManager)data["inputManager"];
         //inputFieldManager.inputFields.Add(exerciseNotes);
-        exerciseNameText.text = exerciseTypeModel.name.ToUpper();
+        exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseTypeModel.name);
         exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
         {

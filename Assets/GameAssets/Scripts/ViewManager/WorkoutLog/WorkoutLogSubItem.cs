@@ -383,71 +383,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 
         UpdateToggleInteractableState();
     }
-    //private void OnTimerInput(string input)
-    //{
-    //    print(input);
-    //    input = input.Replace(":", "").Trim();
-
-    //    if (input.Length > 4) input = input.Substring(0, 4);
-
-    //    // Format the input to "00:00"
-    //    string formattedInput = input.PadLeft(4, '0');
-    //    formattedInput = formattedInput.Insert(2, ":");
-
-    //    timerText.text = formattedInput;
-
-
-
-    //    // Convert formatted time to seconds
-    //    string[] timeParts = formattedInput.Split(':');
-    //    int minutes = int.Parse(timeParts[0]);
-    //    int seconds = int.Parse(timeParts[1]);
-    //    int enteredTimeInSeconds = (minutes * 60) + seconds;
-    //    exerciseModel.time = enteredTimeInSeconds;
-
-
-    //    if (enteredTimeInSeconds > userEnteredTimeInSeconds)
-    //    {
-    //        // If user enters a greater time, restart the timer
-    //        currentTimeInSeconds = enteredTimeInSeconds;
-    //        userEnteredTimeInSeconds = enteredTimeInSeconds;
-    //        //if (isComplete != null)
-    //        //{
-    //        //    isComplete.isOn = false;
-    //        //    exerciseModel.toggle = false;
-    //        //    isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
-    //        //}
-
-    //        // Stop the previous coroutine if it's running
-    //        if (timerCoroutine != null)
-    //        {
-    //            StopCoroutine(timerCoroutine);
-    //        }
-
-    //        // Start the timer coroutine again
-    //        timerCoroutine = StartCoroutine(StartTimer());
-    //    }
-    //    else if (enteredTimeInSeconds == userEnteredTimeInSeconds)
-    //    {
-    //        // If the same time is re-entered, do nothing
-    //        return;
-    //    }
-    //    else if (enteredTimeInSeconds < userEnteredTimeInSeconds)
-    //    {
-    //        // If a lesser time is entered, the bool stays the same
-    //        userEnteredTimeInSeconds = enteredTimeInSeconds;
-    //    }
-    //    else if (enteredTimeInSeconds == 0)
-    //    {
-    //        if (isComplete != null)
-    //        {
-    //            isComplete.isOn = false;
-    //            exerciseModel.toggle = false;
-    //            isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
-    //        }
-    //    }
-    //    UpdateToggleInteractableState();
-    //}
+    
     private IEnumerator StartTimer()
     {
         float timer = 0;
@@ -473,7 +409,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
         //{
             exerciseModel.toggle=value;
-        this.callBack?.Invoke(value);
+        //this.callBack?.Invoke(value);
             if (value)
             {
             AudioController.Instance.OnSetComplete();
@@ -516,6 +452,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         {
             //shake = false;
             AudioController.Instance.OnError();
+            callBack?.Invoke(null);
             //GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
         }
     }

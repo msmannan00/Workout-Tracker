@@ -22,7 +22,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
         this.callback = callback;
         defaultTempleteModel = (DefaultTempleteModel)data["data"];
         parent = (GameObject)data["parent"];
-        workoutNameText.text = defaultTempleteModel.templeteName.ToUpper();
+        workoutNameText.text = userSessionManager.Instance.FormatStringAbc(defaultTempleteModel.templeteName);
         //editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
         //editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         playButton.onClick.AddListener(PlayButton);

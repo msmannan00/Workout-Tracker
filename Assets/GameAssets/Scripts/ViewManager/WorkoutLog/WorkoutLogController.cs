@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
             OnExerciseAdd(list);
             if (workoutNameText != null)
             {
-                workoutNameText.text = dataTemplate.templeteName;
+                workoutNameText.text = userSessionManager.Instance.FormatStringAbc(dataTemplate.templeteName);
                 editWorkoutName.textComponent.text = dataTemplate.templeteNotes; 
                 float textWidth = workoutNameText.preferredWidth;
                 workoutNameText.transform.GetComponent<RectTransform>().sizeDelta=new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
@@ -219,14 +220,14 @@ public class WorkoutLogController : MonoBehaviour, PageController
                         Dictionary<string, object> mData = new Dictionary<string, object>
                         {
                             { "data", typeModel }, { "isWorkoutLog", true },{ "isTemplateCreator", isTemplateCreator },
-                            {"templeteModel",templeteModel},{"inputManager",this.GetComponent<ScrollRect>()}
+                            {"templeteModel",templeteModel},{"messageText",this.GetComponent<ScrollRect>()}
                         };
 
                         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
                         GameObject exerciseObject = Instantiate(exercisePrefab, content);
                         int childCount = content.childCount;
                         //exerciseObject.transform.SetSiblingIndex(childCount - 2);
-                        exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
+                        exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, ShowMessage);
                         print("1");
                     }
                 }
@@ -252,13 +253,15 @@ public class WorkoutLogController : MonoBehaviour, PageController
 
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
-                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, SaveButtonInteractable);
-                print("2");
+                exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, ShowMessage);
             }
         }
         else { print("null"); }
     }
-
+    private void ShowMessage(object data)
+    {
+        GlobalAnimator.Instance.ShowTextMessage(messageText, "<b>Set incomplete:</b> Please add details first", 2f);
+    }
     private void SaveButtonInteractable(object data)
     {
         //bool check = (bool)data;

@@ -6,6 +6,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -193,7 +194,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.AddPersonBest:
-                    CheckAchievements(_data, ApiDataHandler.Instance.getPersonalBestData().exercises.Count, AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
+                    CheckAchievements(_data, GetExercisesWithWeightGreaterThanZero(ApiDataHandler.Instance.getPersonalBestData()), AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.CreateWorkout:
                     CheckAchievements(_data, ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount(), AchievementType.CreateWorkout, trophyImages, progressText, descriptionText, coinText);
@@ -258,7 +259,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.AddPersonBest:
-                CheckAchievements(_data, ApiDataHandler.Instance.getPersonalBestData().exercises.Count, AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
+                CheckAchievements(_data, GetGapBetweenLatestTwoWorkoutsInDays(ApiDataHandler.Instance.getHistoryData()), AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.CreateWorkout:
                 CheckAchievements(_data, ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount(), AchievementType.CreateWorkout, trophyImages, progressText, descriptionText, coinText);
@@ -867,6 +868,13 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             return 0; // Return -1 to indicate an error
         }
     }
+    public int GetExercisesWithWeightGreaterThanZero(PersonalBestData personalBestData)
+    {
+        if(personalBestData.exercises.Count>0)
+            return personalBestData.exercises.Count(exercise => exercise.weight > 0);
+        else 
+            return 0;
+    }
     public void SetCoins(int coins)
     {
         int currentCoins = ApiDataHandler.Instance.GetCoins();
@@ -886,6 +894,20 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     {
         input.Select();
         input.ActivateInputField();
+    }
+    public string FormatStringAbc(string input)
+    {
+        TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
+
+        string normalizedInput = input.Replace("(", " (").Replace(")", ") ");
+
+        string[] words = normalizedInput.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < words.Length; i++)
+        {
+            words[i] = textInfo.ToTitleCase(words[i].ToLower());
+        }
+        string result = string.Join(" ", words).Trim();
+        return result.Replace(" (", " (").Replace(") ", ")");
     }
 
 }

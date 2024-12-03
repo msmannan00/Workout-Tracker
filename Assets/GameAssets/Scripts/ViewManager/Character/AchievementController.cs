@@ -144,7 +144,7 @@ public class AchievementController : MonoBehaviour, PageController
     void SetCompleteAndTrophiesTextForRank()
     {
         (int completeTrophies, int totalTrophies) = ApiDataHandler.Instance.GetRankedCompletedTrophys();
-        trophysText.text = "Trophies " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
+        trophysText.text = "Stars " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
         (int completeAchievemet, int totalAchievement) = ApiDataHandler.Instance.GetRankedCompletedAchievements();
         completedText.text = "Completed " + completeAchievemet.ToString() + " / " + totalAchievement.ToString();
     }

@@ -20,7 +20,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     {
         HistoryTempleteModel historyWorkout = (HistoryTempleteModel)data[0];
         workoutScreen = (GameObject)data[1];
-        workoutNameText.text=historyWorkout.templeteName.ToUpper();
+        workoutNameText.text=userSessionManager.Instance.FormatStringAbc(historyWorkout.templeteName);
         string savedDate = historyWorkout.dateTime;
         DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.InvariantCulture);
         string formattedDate = parsedDate.ToString("dddd, dd MMMM yyyy");
@@ -47,7 +47,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
         {
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/complete/completeScreenDataModel");
             GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-            newExerciseObject.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = exercise.exerciseName.ToUpper();
+            newExerciseObject.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = userSessionManager.Instance.FormatStringAbc(exercise.exerciseName);
             switch (exercise.exerciseType)
             {
                 case ExerciseType.RepsOnly:

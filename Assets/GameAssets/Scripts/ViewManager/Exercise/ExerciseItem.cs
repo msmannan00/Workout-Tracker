@@ -26,7 +26,7 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     {
         if (data.TryGetValue("data", out object exerciseDataObj) && exerciseDataObj is ExerciseDataItem exerciseData)
         {
-            exerciseNameText.text = exerciseData.exerciseName;
+            exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseData.exerciseName);
             categoryNameText.text = exerciseData.category;
             Sprite sp= Resources.Load<Sprite>("UIAssets/ExcerciseIcons/"+exerciseData.exerciseName+"-1");
             if (sp != null)

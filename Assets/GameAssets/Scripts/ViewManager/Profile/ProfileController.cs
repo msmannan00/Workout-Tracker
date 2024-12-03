@@ -31,7 +31,7 @@ public class ProfileController : MonoBehaviour,PageController
     }
     private void OnEnable()
     {
-        levelText.text= "level "+ApiDataHandler.Instance.GetCharacterLevel().ToString();
+        levelText.text= "Level "+ApiDataHandler.Instance.GetCharacterLevel().ToString();
         streakText.text = "Streak: " + ApiDataHandler.Instance.GetUserStreak().ToString();
         goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString();
         string badgeName = ApiDataHandler.Instance.GetBadgeName();

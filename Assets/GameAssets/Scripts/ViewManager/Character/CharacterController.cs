@@ -15,7 +15,7 @@ public class CharacterController : MonoBehaviour,PageController
     }
     private void Start()
     {
-        levelText.text = "level " + ApiDataHandler.Instance.GetCharacterLevel().ToString();
+        levelText.text = "Level " + ApiDataHandler.Instance.GetCharacterLevel().ToString();
         shopButton.onClick.AddListener(ShopeButtonClick);
         emotesButton.onClick.AddListener(EmotesButtonClick);
         achievementButton.onClick.AddListener(AchievementButtonClick);

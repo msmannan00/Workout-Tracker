@@ -18,7 +18,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
         HistoryTempleteModel historyWorkout = (HistoryTempleteModel)data["workout"];
-        workoutNameText.text = historyWorkout.templeteName.ToUpper();
+        workoutNameText.text = userSessionManager.Instance.FormatStringAbc(historyWorkout.templeteName);
         string savedDate = historyWorkout.dateTime;
         DateTime parsedDate = DateTime.ParseExact(savedDate, "MMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.InvariantCulture);
         string formattedDate = parsedDate.ToString("dddd, dd MMMM yyyy");

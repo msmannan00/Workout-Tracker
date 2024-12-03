@@ -18,7 +18,7 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
     {
         this.historyWorkout = (HistoryTempleteModel)data["data"];
         mainParent = (GameObject)data["mainParent"];
-        workoutNameText.text = historyWorkout.templeteName.ToUpper();
+        workoutNameText.text = userSessionManager.Instance.FormatStringAbc(historyWorkout.templeteName);
         int completeTime = historyWorkout.completedTime;
         if(completeTime > 60) 
         { 

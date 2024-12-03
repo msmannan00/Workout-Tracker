@@ -199,6 +199,7 @@ public class GlobalAnimator : GenericSingletonClass<GlobalAnimator>
     }
     public void ShowTextMessage(TextMeshProUGUI messageText, string message, float duration)
     {
+        DOTween.Kill(messageText);
         // Set the text and ensure it's fully visible (alpha = 1)
         messageText.text = message;
         messageText.alpha = 1;
