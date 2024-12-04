@@ -14,6 +14,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     public TMP_InputField weight;
     public TMP_InputField reps;
     public TMP_Dropdown rir;
+    public TMP_Dropdown rpe;
     public Toggle isComplete;
     public ExerciseType exerciseType;
     public Image previousImage,dropDownArrow;
@@ -25,84 +26,130 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     private float timer;
     private bool timerRunning = false;
     private Coroutine timerCoroutine;
+    private Action<object> callBack;
+    bool shake = true;
+    bool isWorkoutLog;
 
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
+        this.callBack = callback;
         exerciseModel = (ExerciseModel)data["data"];
         exerciseType = (ExerciseType)data["exerciseType"];
         HistoryExerciseModel exerciseHistory = (HistoryExerciseModel)data["exerciseHistory"];
+        isWorkoutLog = (bool)data["isWorkoutLog"];
+        //InputFieldManager inputFieldManager = (InputFieldManager)data["inputManager"];
+        //inputFieldManager.inputFields.Add(mile);
+        //inputFieldManager.inputFields.Add(timerText);
+        //inputFieldManager.inputFields.Add(weight);
+        //inputFieldManager.inputFields.Add(reps);
         ResetModel(exerciseModel);
         sets.text = exerciseModel.setID.ToString();
         previous.text = exerciseModel.previous;
+        if (!isWorkoutLog)
+        {
+            OffAllInteractables();
+            isComplete.transform.GetChild(1).gameObject.SetActive(true);
+        }
         switch (exerciseType)
         {
             case ExerciseType.RepsOnly:
                 reps.transform.parent.gameObject.SetActive(true);
+                rir.transform.parent.gameObject.SetActive(true);
+                if (exerciseHistory != null && isWorkoutLog)
+                {
+                    previous.text = $"{exerciseHistory.reps:F1} @ {exerciseHistory.rir}";
+                }
                 break;
             case ExerciseType.TimeBased:
                 timerText.transform.parent.gameObject.SetActive(true);
-                if (exerciseHistory != null)
+                rpe.transform.parent.gameObject.SetActive(true);
+                if (exerciseHistory != null && isWorkoutLog)
                 {
-                    int minutes = exerciseHistory.time / 60;
-                    int seconds = exerciseHistory.time % 60;
+                    int totalSeconds = exerciseHistory.time;
+                    int hours = totalSeconds / 3600;          // Calculate hours
+                    int minutes = (totalSeconds % 3600) / 60; // Calculate remaining minutes
+                    int seconds = totalSeconds % 60;          // Calculate remaining seconds
 
-                    previous.text = $"{minutes:D2}:{seconds:D2}";
+                    if (hours > 0)
+                    {
+                        // Show time in hours, minutes, and seconds
+                        previous.text = $"{hours:D2}:{minutes:D2}:{seconds:D2} @ {exerciseHistory.rir}";
+                    }
+                    else
+                    {
+                        // Show time in minutes and seconds
+                        previous.text = $"{minutes:D2}:{seconds:D2} @ {exerciseHistory.rir}";
+                    }
                 }
                 break;
             case ExerciseType.TimeAndMiles:
                 timerText.transform.parent.gameObject.SetActive(true);
                 mile.transform.parent.gameObject.SetActive(true);
-                print("Need to implement Time and Miles");
+                rpe.transform.parent.gameObject.SetActive(true);
+                if (exerciseHistory != null && isWorkoutLog)
+                {
+                    int totalSeconds = exerciseHistory.time;
+                    int hours = totalSeconds / 3600;          // Calculate hours
+                    int minutes = (totalSeconds % 3600) / 60; // Calculate remaining minutes
+                    int seconds = totalSeconds % 60;          // Calculate remaining seconds
+
+                    if (hours > 0)
+                    {
+                        // Show time in hours, minutes, and seconds
+                        previous.text = $"{hours:D2}:{minutes:D2}:{seconds:D2} x {exerciseHistory.mile} @ {exerciseHistory.rir}";
+                    }
+                    else
+                    {
+                        // Show time in minutes and seconds
+                        previous.text = $"{minutes:D2}:{seconds:D2} x {exerciseHistory.mile} @ {exerciseHistory.rir}";
+                    }
+                }
+                //print("Need to implement Time and Miles");
                 break;
             case ExerciseType.WeightAndReps:
                 timerText.transform.parent.gameObject.SetActive(false);
                 weight.transform.parent.gameObject.SetActive(true);
                 rir.transform.parent.gameObject.SetActive(true);
                 reps.transform.parent.gameObject.SetActive(true);
-                if (exerciseHistory != null)
-                    previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString();
+                if (exerciseHistory != null && isWorkoutLog)
+                {
+                    switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
+                    {
+                        case WeightUnit.kg:
+                            previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString("F1") + " @ " + exerciseHistory.rir;
+                            break;
+                        case WeightUnit.lbs:
+                            previous.text = (userSessionManager.Instance.ConvertKgToLbs(exerciseHistory.weight)).ToString() + "lbs " + "x " + exerciseHistory.reps.ToString("F1") + " @ " + exerciseHistory.rir;
+                            break;
+                    }
+                    
+                }
                 break;
         }
 
-        //if (exerciseModel.weight != 0)
-        //{
-        //    weight.text = exerciseModel.weight.ToString();
-        //}
-        //else
-        //{
-        //    weight.text = "";
-        //}
-
-        //if (exerciseModel.lbs != 0)
-        //{
-        //    lbs.text = exerciseModel.lbs.ToString();
-        //}
-        //else
-        //{
-        //    lbs.text = "";
-        //}
-
-
-        //if (exerciseModel.reps > 0)
-        //{
-        //    reps.value = exerciseModel.reps - 1;
-        //}
-        //else
-        //{
-        //    reps.value = 0;
-        //}
-
         InitializeRirDropdown();
+        InitializeRpeDropdown();
 
         weight.onEndEdit.AddListener(OnWeightChanged);
         rir.onValueChanged.AddListener(OnRIRChanged);
+        rpe.onValueChanged.AddListener(OnRpeChanged);
         reps.onEndEdit.AddListener(OnREPSChanged);
-        timerText.onValueChanged.AddListener(OnTimerInput);
+        timerText.onEndEdit.AddListener(OnTimerInput);
         mile.onValueChanged.AddListener(OnMileChanges);
         if(isComplete!=null)
             isComplete.onValueChanged.AddListener(OnToggleValueChange);
         UpdateToggleInteractableState();
         OnRIRChanged(0);
+        OnRpeChanged(0);
+    }
+    void OffAllInteractables()
+    {
+        weight.interactable = false;
+        rir.interactable= false;
+        reps.interactable= false;
+        timerText.interactable= false;
+        mile.interactable= false;
+        isComplete.interactable= false;
     }
     void ResetModel(ExerciseModel model)
     {
@@ -114,6 +161,10 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnEnable()
     {
+        reps.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=>userSessionManager.Instance.ActiveInput(reps));
+        mile.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(mile));
+        weight.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(weight));
+        timerText.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(timerText));
         //TMP_FontAsset textFont = null;
         //Color color = Color.white;
         //switch (userSessionManager.Instance.gameTheme)
@@ -163,6 +214,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //        break;
         //}
     }
+    
     void ChangeInputFieldFount_Color(TMP_InputField inputField,TMP_FontAsset fontAsset,Color color)
     {
         TextMeshProUGUI placeholder=inputField.placeholder as TextMeshProUGUI;
@@ -181,13 +233,22 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     {
         rir.ClearOptions();
         List<string> options = new List<string>();
-        for (int i = 1; i <= 5; i++)
+        for (int i = 0; i <= 5; i++)
         {
             options.Add(i.ToString());
         }
         rir.AddOptions(options);
     }
-
+    private void InitializeRpeDropdown()
+    {
+        rpe.ClearOptions();
+        List<string> options = new List<string>();
+        for (int i = 1; i <= 10; i++)
+        {
+            options.Add(i.ToString());
+        }
+        rpe.AddOptions(options);
+    }
     private void OnMileChanges(string newMile)
     {
         if (float.TryParse(newMile, out float mileValue))
@@ -231,71 +292,98 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         exerciseModel.rir = newRepsIndex;
         UpdateToggleInteractableState();
     }
+    private void OnRpeChanged(int newRepsIndex)
+    {
+        exerciseModel.rpe = newRepsIndex+1;
+        UpdateToggleInteractableState();
+    }
     private void OnTimerInput(string input)
     {
         print(input);
+
+        // Remove colons and trim the input
         input = input.Replace(":", "").Trim();
 
-        if (input.Length > 4) input = input.Substring(0, 4);
+        // Remove all leading zeros by converting to an integer and back to string
+        if (!string.IsNullOrEmpty(input))
+        {
+            input = int.Parse(input).ToString();
+        }
+        else
+        {
+            input = "0"; // Handle empty input
+        }
 
-        // Format the input to "00:00"
-        string formattedInput = input.PadLeft(4, '0');
-        formattedInput = formattedInput.Insert(2, ":");
+        // Limit the input to 6 characters (HHMMSS format)
+        if (input.Length > 6) input = input.Substring(0, 6);
 
+        // Format the input based on its length
+        string formattedInput = "";
+        if (input.Length <= 2)
+        {
+            // SS
+            formattedInput = input.PadLeft(2, '0'); // Ensure at least "00"
+            formattedInput = "00:" + formattedInput;
+        }
+        else if (input.Length <= 4)
+        {
+            // MM:SS
+            formattedInput = input.PadLeft(4, '0'); // Ensure at least "0000"
+            formattedInput = formattedInput.Insert(2, ":");
+        }
+        else
+        {
+            // HH:MM:SS
+            formattedInput = input.PadLeft(6, '0'); // Ensure at least "000000"
+            formattedInput = formattedInput.Insert(2, ":").Insert(5, ":");
+        }
+
+        // Update the timer text
         timerText.text = formattedInput;
 
-
-
-        // Convert formatted time to seconds
+        // Convert formatted time to total seconds
         string[] timeParts = formattedInput.Split(':');
-        int minutes = int.Parse(timeParts[0]);
-        int seconds = int.Parse(timeParts[1]);
-        int enteredTimeInSeconds = (minutes * 60) + seconds;
+        int hours = timeParts.Length == 3 ? int.Parse(timeParts[0]) : 0;
+        int minutes = timeParts.Length >= 2 ? int.Parse(timeParts[timeParts.Length - 2]) : 0;
+        int seconds = int.Parse(timeParts[timeParts.Length - 1]);
+        int enteredTimeInSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+        // Update exercise model
         exerciseModel.time = enteredTimeInSeconds;
 
-
+        // Restart or adjust the timer based on entered time
         if (enteredTimeInSeconds > userEnteredTimeInSeconds)
         {
-            // If user enters a greater time, restart the timer
+            // Restart timer if greater time is entered
             currentTimeInSeconds = enteredTimeInSeconds;
             userEnteredTimeInSeconds = enteredTimeInSeconds;
-            //if (isComplete != null)
-            //{
-            //    isComplete.isOn = false;
-            //    exerciseModel.toggle = false;
-            //    isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
-            //}
 
-            // Stop the previous coroutine if it's running
+            // Stop previous coroutine and start a new one
             if (timerCoroutine != null)
             {
                 StopCoroutine(timerCoroutine);
             }
-
-            // Start the timer coroutine again
             timerCoroutine = StartCoroutine(StartTimer());
-        }
-        else if (enteredTimeInSeconds == userEnteredTimeInSeconds)
-        {
-            // If the same time is re-entered, do nothing
-            return;
         }
         else if (enteredTimeInSeconds < userEnteredTimeInSeconds)
         {
-            // If a lesser time is entered, the bool stays the same
+            // Update the entered time if less time is entered
             userEnteredTimeInSeconds = enteredTimeInSeconds;
         }
         else if (enteredTimeInSeconds == 0)
         {
+            // Handle special case for zero time
             if (isComplete != null)
             {
                 isComplete.isOn = false;
                 exerciseModel.toggle = false;
-                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+                //isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
             }
         }
+
         UpdateToggleInteractableState();
     }
+    
     private IEnumerator StartTimer()
     {
         float timer = 0;
@@ -321,15 +409,16 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //if (exerciseModel.weight > 0 && exerciseModel.reps > 0)
         //{
             exerciseModel.toggle=value;
+        //this.callBack?.Invoke(value);
             if (value)
             {
+            AudioController.Instance.OnSetComplete();
                 isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
             }
             else
             {
-                isComplete.targetGraphic.color = new Color32(81, 14, 14, 255);
+                isComplete.targetGraphic.color = new Color32(246, 236, 220, 255);
             }
-            print("toggle");
         //}
     }
     private void UpdateToggleInteractableState()
@@ -340,7 +429,6 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             {
                 case ExerciseType.RepsOnly:
                     isComplete.interactable = (exerciseModel.reps > 0);
-                    print("reps");
                     break;
                 case ExerciseType.TimeBased:
                     isComplete.interactable = (exerciseModel.time > 0);
@@ -358,4 +446,15 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
             //    isComplete.interactable = false;
         }
     }
+    public void ToggleShake()
+    {
+        if (!isComplete.interactable && shake&&isWorkoutLog)
+        {
+            //shake = false;
+            AudioController.Instance.OnError();
+            callBack?.Invoke(null);
+            //GlobalAnimator.Instance.ApplyShakeEffect(isComplete.gameObject.GetComponent<RectTransform>(), () => shake = true);
+        }
+    }
+
 }

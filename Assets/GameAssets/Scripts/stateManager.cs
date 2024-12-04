@@ -7,7 +7,7 @@ public class StateManager : GenericSingletonClass<StateManager>
 {
     public List<GameObject> inactivePages = new List<GameObject>();
     public GameObject footer;
-    private bool isProcessing = false;
+    public bool isProcessing = false;
 
     public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null,bool isfooter=false)
     {
@@ -49,8 +49,9 @@ public class StateManager : GenericSingletonClass<StateManager>
         {
             isProcessing = false;
         }
-        if(isfooter)
-            userSessionManager.Instance.currentScreen = prefab.gameObject;
+        if (isfooter)
+            callback?.Invoke(null);
+        userSessionManager.Instance.currentScreen = prefab.gameObject;
     }
 
     public void openSidebar(string folderPath, GameObject currentPage, string newPage)
@@ -80,9 +81,14 @@ public class StateManager : GenericSingletonClass<StateManager>
         else
         {
             footer.SetActive(true);
+            footer.transform.parent.SetAsLastSibling();
         }
 
         //GlobalAnimator.Instance.openSidebar(prefab);
+    }
+    public void SetSpecificFooterButton(FooterButtons button)
+    {
+        footer.GetComponent<FooterController>().BottomButtonSelectionSeter(button);
     }
     public void CloseFooter()
     {
@@ -130,8 +136,9 @@ public class StateManager : GenericSingletonClass<StateManager>
                     Destroy(overlayBlocker);
                 });
             }
-
+            userSessionManager.Instance.currentScreen = lastPage;
             inactivePages.RemoveAt(inactivePages.Count - 1);
+
         }
     }
 

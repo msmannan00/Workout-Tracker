@@ -11,40 +11,55 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     public TextMeshProUGUI exerciseNameText;
     public TMP_InputField exerciseNotes;
     public List<TextMeshProUGUI> labelText = new List<TextMeshProUGUI>();
-    public Image addSet, line;
-
-    public GameObject timer, mile, weight, reps, rir;
+    public Button threeDots;
+    public GameObject timer, mile, weight, reps, rir, rpe;
     public ExerciseTypeModel exerciseTypeModel;
     Action<object> callback;
     bool isWorkoutLog;
     public bool isTemplateCreator;
     List<HistoryExerciseModel> exerciseHistory;
+    public DefaultTempleteModel templeteModel;
+    public List<WorkoutLogSubItem> workoutLogSubItems;
+    //InputFieldManager inputFieldManager;
 
+    private void Start()
+    {
+        exerciseNotes.transform.GetComponentInChildren<Button>().onClick.AddListener(() => userSessionManager.Instance.ActiveInput(exerciseNotes));
+        exerciseNotes.transform.GetComponentInChildren<Button>().transform.parent = exerciseNotes.transform.parent;
+    }
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         this.callback = callback;
         this.exerciseTypeModel = (ExerciseTypeModel)data["data"];
         isWorkoutLog = (bool)data["isWorkoutLog"];
         isTemplateCreator = (bool)data["isTemplateCreator"];
-        exerciseNameText.text = exerciseTypeModel.name.ToUpper();
-        exerciseHistory = GetExerciseData(userSessionManager.Instance.historyData, exerciseTypeModel.name, exerciseTypeModel.exerciseType);
+        //if (data.ContainsKey("templeteModel"))
+        {
+            templeteModel = (DefaultTempleteModel)data["templeteModel"];
+        }
+        //if (templeteModel != null)
+        GetExerciseNotes(this.exerciseTypeModel);
+        //if (data.ContainsKey("inputManager"))
+        //    inputFieldManager = (InputFieldManager)data["inputManager"];
+        //inputFieldManager.inputFields.Add(exerciseNotes);
+        exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseTypeModel.name);
+        exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
         switch (exerciseTypeModel.exerciseType)
         {
             case ExerciseType.RepsOnly:
                 reps.gameObject.SetActive(true);
+                rir.gameObject.SetActive(true);
                 break;
             case ExerciseType.TimeBased:
                 timer.gameObject.SetActive(true);
-                weight.gameObject.SetActive(false);
-                rir.gameObject.SetActive(false);
-                reps.gameObject.SetActive(false);
+                rpe.gameObject.SetActive(true);
                 break;
             case ExerciseType.TimeAndMiles:
                 timer.gameObject.SetActive(true);
                 mile.gameObject.SetActive(true);
+                rpe.gameObject.SetActive(true);
                 break;
             case ExerciseType.WeightAndReps:
-                timer.gameObject.SetActive(false);
                 weight.gameObject.SetActive(true);
                 rir.gameObject.SetActive(true);
                 reps.gameObject.SetActive(true);
@@ -52,8 +67,11 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         }
         if (exerciseTypeModel.exerciseModel.Count > 0)
         {
+            int setCount = 0;
             foreach (var exerciseModel in exerciseTypeModel.exerciseModel)
             {
+                setCount++;
+                exerciseModel.setID = setCount;
                 AddSetFromModel(exerciseModel);
             }
         }
@@ -61,70 +79,28 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             OnAddSet(false);
         }
-    }
-    private void OnEnable()
-    {
-        switch (userSessionManager.Instance.gameTheme)
-        {
-            case Theme.Dark:
-                exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;
-                exerciseNameText.color = Color.white;
-                exerciseNotes.gameObject.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                TextMeshProUGUI placeholde= exerciseNotes.placeholder as TextMeshProUGUI;
-                TextMeshProUGUI text = exerciseNotes.textComponent as TextMeshProUGUI;
-                placeholde.color= new Color32(255,255,255,150);
-                placeholde.font = userSessionManager.Instance.darkTextFont;
-                text.font = userSessionManager.Instance.darkTextFont;
-                text.color = Color.white;
-                foreach(TextMeshProUGUI _text in labelText)
-                {
-                    _text.font=userSessionManager.Instance.darkHeadingFont;
-                    _text.color= Color.white;
-                }
-                line.color = Color.white;
-                addSet.color = Color.white;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font=userSessionManager.Instance.darkHeadingFont;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color=userSessionManager.Instance.darkBgColor;
-                break;
-            case Theme.Light:
-                exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;
-                exerciseNameText.color = userSessionManager.Instance.lightHeadingColor;
-                exerciseNotes.gameObject.GetComponent<Image>().color = new Color32(246, 236, 220, 255);
-                TextMeshProUGUI _placeholde_ = exerciseNotes.placeholder as TextMeshProUGUI;
-                TextMeshProUGUI _text_ = exerciseNotes.textComponent as TextMeshProUGUI;
-                _placeholde_.color = new Color32(92, 59, 28, 150);
-                _placeholde_.font = userSessionManager.Instance.lightTextFont;
-                _text_.font = userSessionManager.Instance.lightTextFont;
-                _text_.color = userSessionManager.Instance.lightTextColor;
-                foreach (TextMeshProUGUI _text in labelText)
-                {
-                    _text.font = userSessionManager.Instance.lightHeadingFont;
-                    _text.color = userSessionManager.Instance.darkBgColor;
-                }
-                line.color = new Color32(218,52,52,150);
-                addSet.color = userSessionManager.Instance.lightButtonColor;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().font = userSessionManager.Instance.lightHeadingFont;
-                addSet.transform.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-                break;
-        }
+        //if (isTemplateCreator) threeDots.gameObject.SetActive(true);
+        //else threeDots.gameObject.SetActive(false);
+        exerciseNotes.text = this.exerciseTypeModel.exerciseNotes;
+        exerciseNotes.onEndEdit.AddListener(OnExerciseNotesChange);
     }
     private void AddSetFromModel(ExerciseModel exerciseModel)
     {
         GameObject prefab;
-        if(isWorkoutLog)
+        if (isWorkoutLog)
             prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
         else
         {
             prefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogSubItems");
             //prefab = Resources.Load<GameObject>("Prefabs/createWorkout/createNewSubItems");
         }
-        GameObject newSubItem = Instantiate(prefab, transform);
-        int childCount = transform.childCount;
+        GameObject newSubItem = Instantiate(prefab, transform.GetChild(0));
+        int childCount = transform.GetChild(0).childCount;
         newSubItem.transform.SetSiblingIndex(childCount - 3);
         WorkoutLogSubItem newSubItemScript = newSubItem.GetComponent<WorkoutLogSubItem>();
-
+        workoutLogSubItems.Add(newSubItemScript);
         HistoryExerciseModel history = null;
-        if(exerciseHistory.Count > 0)
+        if (exerciseHistory.Count > 0)
         {
             history = exerciseHistory[0];
             exerciseHistory.RemoveAt(0);
@@ -133,28 +109,47 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         {
             {  "data", exerciseModel   },
             {"exerciseType", exerciseTypeModel.exerciseType  },
-            {"exerciseHistory",history}
+            {"exerciseHistory",history},
+            {"isWorkoutLog",isWorkoutLog }
+            //{"inputManager",inputFieldManager}
         };
-        newSubItemScript.onInit(initData);
+        newSubItemScript.onInit(initData, callback);
     }
 
     public void OnAddSet(bool addMore)
     {
         if (isWorkoutLog && !isTemplateCreator)
         {
-            FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
+            //FindAnyObjectByType<WorkoutLogController>().addSets = addMore;
+        }
+        if (addMore)
+        {
+            AudioController.Instance.OnButtonClick();
         }
         ExerciseModel exerciseModel = new ExerciseModel();
         exerciseTypeModel.exerciseModel.Add(exerciseModel);
+        exerciseModel.setID = exerciseTypeModel.exerciseModel.Count;
         AddSetFromModel(exerciseModel);
     }
-
+    public void OnRemoveExercisePopup(RectTransform transform)
+    {
+        List<object> initialData = new List<object> { this.gameObject, this.callback, isTemplateCreator };
+        PopupController.Instance.OpenSidePopup("workoutLog", "RemoveExercisePopup", OnRemoveExerciseCallBack, initialData, transform);
+    }
+    void OnRemoveExerciseCallBack(List<object> data)
+    {
+        templeteModel.exerciseTemplete.Remove(exerciseTypeModel);
+        Destroy(this.gameObject);
+    }
     public void onRemoveSet()
     {
         this.callback.Invoke(this.exerciseTypeModel.index);
         GameObject.Destroy(gameObject);
     }
-
+    public void OnExerciseNotesChange(string name)
+    {
+        exerciseTypeModel.exerciseNotes = name.ToUpper();
+    }
     public void SaveExercisePreferences(string exerciseName, HistoryExerciseModel exercisedata)
     {
         string json = JsonUtility.ToJson(exercisedata);
@@ -205,5 +200,43 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
                 break;
         }
         return exerciseDataList;
+    }
+
+    public void UpdateExerciseNotes(HistoryModel historyModel, ExerciseTypeModel exerciseToCheck, string templateName)
+    {
+        // Step 1: Sort history templates by date and time in descending order
+        var sortedHistoryTemplates = historyModel.exerciseTempleteModel
+            .OrderByDescending(ht => DateTime.Parse(ht.dateTime))
+            .ToList();
+
+        // Step 2: Iterate through sorted history templates
+        foreach (var historyTemplate in sortedHistoryTemplates)
+        {
+            print(historyTemplate.dateTime + "      " + historyTemplate.templeteName);
+            // Check if the exercise exists in the current history template
+            var matchingExercise = historyTemplate.exerciseTypeModel
+                .FirstOrDefault(e => e.exerciseName.ToLower() == exerciseToCheck.name.ToLower());
+
+            if (matchingExercise != null)
+            {
+                // If a match is found, update the notes and exit the method
+                exerciseToCheck.exerciseNotes = matchingExercise.exerciseNotes;
+                return;
+            }
+        }
+
+        // Step 3: If no match is found, leave the notes empty
+        exerciseToCheck.exerciseNotes = string.Empty;
+    }
+    public void GetExerciseNotes(ExerciseTypeModel exercise)
+    {
+        foreach(var item in ApiDataHandler.Instance.getNotesHistory().exercises)
+        {
+            if(item.exerciseName.ToLower() == exercise.name.ToLower())
+            {
+                exercise.exerciseNotes = item.notes;
+                break;
+            }
+        }
     }
 }

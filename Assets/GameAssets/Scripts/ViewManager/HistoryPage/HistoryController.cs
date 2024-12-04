@@ -14,6 +14,7 @@ public class HistoryController : MonoBehaviour, PageController
     public RectTransform selectionLine;
     public List<GameObject> templeteHistory = new List<GameObject>();
     public List<GameObject> exerciseHistory = new List<GameObject>();
+    private bool isCompleted;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
 
@@ -26,13 +27,17 @@ public class HistoryController : MonoBehaviour, PageController
         //    list.Add(workouts);
         //}
         Completed();
+        isCompleted = true;
         //OnExerciseAdd(list);
     }
 
     public void Completed()
     {
+        if (isCompleted) return;
+        isCompleted = true;
+        AudioController.Instance.OnButtonClick();
         List<HistoryTempleteModel> list = new List<HistoryTempleteModel>();
-        foreach (var workouts in userSessionManager.Instance.historyData.exerciseTempleteModel)
+        foreach (var workouts in ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel)
         {
             list.Add(workouts);
         }
@@ -41,16 +46,21 @@ public class HistoryController : MonoBehaviour, PageController
         vlg.spacing = 30;
         vlg.childAlignment = TextAnchor.UpperCenter;
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -85f, 0.25f);
+        list.Reverse();
         Workout(list);
     }
     public void Exercise()
     {
-        VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
-        vlg.childControlHeight = false;
-        vlg.spacing = 5;
-        vlg.childAlignment = TextAnchor.UpperLeft;
-        GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
-        AllExercises();
+        OpenExerciseScreen();
+        //if (!isCompleted) return;
+        //isCompleted = false;
+        //AudioController.Instance.OnButtonClick();
+        //VerticalLayoutGroup vlg = content.gameObject.GetComponent<VerticalLayoutGroup>();
+        //vlg.childControlHeight = false;
+        //vlg.spacing = 5;
+        //vlg.childAlignment = TextAnchor.UpperLeft;
+        //GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 85f, 0.25f);
+        //AllExercises();
     }
     public void Workout(object data)
     {
@@ -86,7 +96,7 @@ public class HistoryController : MonoBehaviour, PageController
 
                     Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "data", typeModel } //, { "isWorkoutLog", true }
+                    { "data", typeModel } , { "mainParent", gameObject }
                 };
 
                     GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/history/historyScreenDataModel");
@@ -106,6 +116,15 @@ public class HistoryController : MonoBehaviour, PageController
             }
         }
     }
+    public void OpenExerciseScreen()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "isWorkoutLog", true }, {"ExerciseAddOnPage",ExerciseAddOnPage.HistoryPage},{"isHistory",true}
+        };
+        StateManager.Instance.OpenStaticScreen("exercise", gameObject, "exerciseScreen", mData, true, null);
+        StateManager.Instance.CloseFooter();
+    }
 
     void AllExercises()
     {
@@ -119,7 +138,7 @@ public class HistoryController : MonoBehaviour, PageController
         }
         if (exerciseHistory.Count == 0)
         {
-            ExerciseData exerciseData = DataManager.Instance.getExerciseData();
+            ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
 
             foreach (ExerciseDataItem exercise in exerciseData.exercises)
             {
@@ -161,8 +180,8 @@ public class HistoryController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-        ExerciseData exerciseData = DataManager.Instance.getExerciseData();
-        HistoryModel historyData = userSessionManager.Instance.historyData;
+        ExerciseData exerciseData = ApiDataHandler.Instance.getExerciseData();
+        HistoryModel historyData = ApiDataHandler.Instance.getHistoryData();
         List<string> filterExercises = GetUniqueExercises(historyData);
         //string lowerFilter = filter.ToLower(); // Convert filter to lowercase for case-insensitive comparison
 

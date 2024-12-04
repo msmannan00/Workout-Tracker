@@ -16,10 +16,6 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     [SerializeField]
     public GameObject selected;
 
-    void Start()
-    {
-    }
-
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -30,23 +26,38 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
     {
         if (data.TryGetValue("data", out object exerciseDataObj) && exerciseDataObj is ExerciseDataItem exerciseData)
         {
-            exerciseNameText.text = exerciseData.exerciseName;
+            exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseData.exerciseName);
             categoryNameText.text = exerciseData.category;
-            switch (userSessionManager.Instance.gameTheme)
-            {
-                case Theme.Light:
-                    exerciseNameText.font = userSessionManager.Instance.lightHeadingFont;
-                    categoryNameText.font=userSessionManager.Instance.lightTextFont;
-                    exerciseNameText.color = userSessionManager.Instance.lightHeadingColor;
-                    categoryNameText.color=userSessionManager.Instance.lightTextColor;
-                    break;
-                case Theme.Dark:
-                    exerciseNameText.font = userSessionManager.Instance.darkHeadingFont;
-                    categoryNameText.font = userSessionManager.Instance.darkTextFont;
-                    exerciseNameText.color = Color.white;
-                    categoryNameText.color = new Color32(255, 255, 255, 153);
-                    break;
-            }
+            Sprite sp= Resources.Load<Sprite>("UIAssets/ExcerciseIcons/"+exerciseData.exerciseName+"-1");
+            if (sp != null)
+                exerciseImage.sprite = sp;
+        }
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                SetExerciseText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightPlaceholder);
+                break;
+            case Theme.Dark:
+                SetExerciseText(userSessionManager.Instance.darkPrimaryFont, Color.white);
+                SetCategoryText(userSessionManager.Instance.lightPrimaryFontBold, new Color32(255, 255, 255, 150));
+                break;
+        }
+    }
+    public void SetExerciseText(TMP_FontAsset font, Color color)
+    {
+        if (exerciseNameText != null)
+        {
+            exerciseNameText.font = font;
+            exerciseNameText.color = color;
+        }
+    }
+    public void SetCategoryText(TMP_FontAsset font, Color color)
+    {
+        if (categoryNameText != null)
+        {
+            categoryNameText.font = font;
+            categoryNameText.color = color;
         }
     }
 

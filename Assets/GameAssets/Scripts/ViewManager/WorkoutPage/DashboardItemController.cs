@@ -3,32 +3,35 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
-using System.Linq;
-using System.Collections;
-using Unity.VisualScripting;
-using UnityEngine.EventSystems;
 
 public class DashboardItemController : MonoBehaviour, ItemController
 {
-    public TMP_Text templateName;
+    public TMP_Text workoutNameText;
+    //public TMP_InputField editWorkoutName;
     public Transform exerciseParent;
-    public Image line, edit;
     public Button playButton;
+    public Button editButton;
     public Image spriteImage;
     public Sprite darkTheme, lightTheme;
     public DefaultTempleteModel defaultTempleteModel;
     private Action<object> callback;
-    TMP_FontAsset exerciseFont = null;
-    Color exerciseColor = Color.white;
     List<TextMeshProUGUI> exerciseText=new List<TextMeshProUGUI>();
+    private GameObject parent;
     public void onInit(Dictionary<string, object> data, Action<object> callback = null)
     {
         this.callback = callback;
         defaultTempleteModel = (DefaultTempleteModel)data["data"];
-        templateName.text = defaultTempleteModel.templeteName.ToUpper();
+        parent = (GameObject)data["parent"];
+        workoutNameText.text = userSessionManager.Instance.FormatStringAbc(defaultTempleteModel.templeteName);
+        //editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
+        //editWorkoutName.onEndEdit.AddListener(OnNameChanged);
         playButton.onClick.AddListener(PlayButton);
-        
-        
+        playButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        //editButton.onClick.AddListener(EditWorkoutName);
+        editButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        editButton.onClick.AddListener(EditWorkout);
+
+
         foreach (var exercise in defaultTempleteModel.exerciseTemplete)
         {
             ExerciseTypeModel exerciseData = exercise;
@@ -42,62 +45,76 @@ public class DashboardItemController : MonoBehaviour, ItemController
             //TextMeshProUGUI textMeshPro = textLabelObject.GetComponent<TextMeshProUGUI>();
             textMeshPro.text = exerciseData.name + " x " + exerciseData.exerciseModel.Count.ToString();
             textMeshPro.fontSize = 16;
-            textMeshPro.color = exerciseColor;
-            textMeshPro.font = exerciseFont;
             textMeshPro.fontStyle = FontStyles.Normal;
             textMeshPro.alignment = TextAlignmentOptions.Left;
             exerciseText.Add(textMeshPro);
+            SetColor(textMeshPro);
             // textMeshPro.margin = new Vector4(20, 0, 0, 0); // Optional
         }
         transform.SetSiblingIndex(transform.parent.childCount - 1);
     }
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        foreach(TextMeshProUGUI text in exerciseText)
         {
-            case Theme.Dark:
-                exerciseFont = userSessionManager.Instance.darkTextFont;
-                exerciseColor = Color.white;
-                spriteImage.sprite = darkTheme;
-                templateName.font = userSessionManager.Instance.darkHeadingFont;
-                templateName.color = Color.white;
-                line.color = Color.white;
-                edit.color = Color.white;
-                playButton.GetComponent<Image>().color = Color.white;
-                playButton.transform.GetChild(0).GetComponent<Image>().color = new Color32(51, 23, 23, 255);
-                if (exerciseText.Count > 0)
-                {
-                    foreach (TextMeshProUGUI text in exerciseText)
-                    {
-                        text.font = exerciseFont;
-                        text.color = exerciseColor;
-                    }
-                }
-                break;
-            case Theme.Light:
-                exerciseFont = userSessionManager.Instance.lightTextFont;
-                exerciseColor = userSessionManager.Instance.lightTextColor;
-                spriteImage.sprite = lightTheme;
-                templateName.font = userSessionManager.Instance.lightHeadingFont;
-                templateName.color = userSessionManager.Instance.lightHeadingColor;
-                line.color = userSessionManager.Instance.lightTextColor;
-                edit.color = Color.red;
-                playButton.GetComponent<Image>().color = Color.red;
-                playButton.transform.GetChild(0).GetComponent<Image>().color = Color.white;
-                if (exerciseText.Count > 0)
-                {
-                    foreach (TextMeshProUGUI text in exerciseText)
-                    {
-                        text.font = exerciseFont;
-                        text.color = exerciseColor;
-                    }
-                }
-                break;
+            SetColor(text);
         }
+    }
+    public void EditWorkout()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+                { "templeteModel", defaultTempleteModel},
+                { "editWorkout", true }
+            };
+        StateManager.Instance.OpenStaticScreen("createWorkout", parent, "createNewWorkoutScreen", mData, true, null, true);
+        StateManager.Instance.CloseFooter();
     }
     public void PlayButton()
     {
         callback?.Invoke(defaultTempleteModel);
         StateManager.Instance.CloseFooter();
+    }
+    //public void EditWorkoutName()
+    //{
+    //    workoutNameText.gameObject.SetActive(false);
+    //    editWorkoutName.gameObject.SetActive(true);
+    //    editWorkoutName.ActivateInputField();
+    //    editWorkoutName.text = workoutNameText.text;
+    //    editButton.gameObject.SetActive(false);
+    //}
+    //public void OnNameChanged(string name)
+    //{
+    //    if (string.IsNullOrWhiteSpace(name))
+    //    {
+    //        workoutNameText.gameObject.SetActive(true);
+    //        editWorkoutName.gameObject.SetActive(false);
+    //        editButton.gameObject.SetActive(true);
+    //    }
+    //    else
+    //    {
+    //        defaultTempleteModel.templeteName = name.ToUpper();
+    //        workoutNameText.text = name.ToUpper();
+    //        //float textWidth = workoutNameText.preferredWidth;
+    //        //workoutNameText.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth, workoutNameText.transform.GetComponent<RectTransform>().sizeDelta.y);
+    //        workoutNameText.gameObject.SetActive(true);
+    //        editWorkoutName.gameObject.SetActive(false);
+    //        editButton.gameObject.SetActive(true);
+    //        ApiDataHandler.Instance.SaveTemplateData();
+    //    }
+    //}
+    public void SetColor(TextMeshProUGUI text)
+    {
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                text.color = new Color(150, 0, 0, 255);
+                text.font = userSessionManager.Instance.lightSecondaryFont;
+                break;
+            case Theme.Dark:
+                text.color = new Color(255, 255, 255, 255);
+                text.font = userSessionManager.Instance.darkSecondaryFont;
+                break;
+        }
     }
 }

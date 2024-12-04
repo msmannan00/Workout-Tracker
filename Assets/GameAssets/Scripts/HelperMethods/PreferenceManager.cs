@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PreferenceManager : GenericSingletonClass<PreferenceManager>
@@ -34,6 +35,30 @@ public class PreferenceManager : GenericSingletonClass<PreferenceManager>
     public int GetInt(string pKey, int pDefaultValue = 0)
     {
         return PlayerPrefs.GetInt(pKey, pDefaultValue);
+    }
+
+    public void SetStringList(string key, List<string> stringList)
+    {
+        // Join the list into a single string, using '|' as a delimiter
+        string serializedList = string.Join("|", stringList);
+        PlayerPrefs.SetString(key, serializedList);
+        PlayerPrefs.Save(); // Save changes
+    }
+
+    // Get a list of strings from preferences by splitting the stored string
+    public List<string> GetStringList(string key)
+    {
+        // Retrieve the serialized list
+        string serializedList = PlayerPrefs.GetString(key, "");
+
+        // If the stored string is empty, return an empty list
+        if (string.IsNullOrEmpty(serializedList))
+        {
+            return new List<string>();
+        }
+
+        // Split the string back into a list using '|' as a delimiter
+        return new List<string>(serializedList.Split('|'));
     }
     public void DeleteKey(string key)
     {

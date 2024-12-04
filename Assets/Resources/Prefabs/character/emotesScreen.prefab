@@ -323,7 +323,7 @@ MonoBehaviour:
   m_SelectionColor: {r: 0.28235295, g: 0.26666668, b: 0.33333334, a: 1}
   m_Text: 
   m_CaretBlinkRate: 0.85
-  m_CaretWidth: 1
+  m_CaretWidth: 2
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -893,6 +893,7 @@ GameObject:
   - component: {fileID: 7194996536913643373}
   - component: {fileID: 8176068172392638648}
   - component: {fileID: 2891383504543283548}
+  - component: {fileID: 2564071856967119355}
   m_Layer: 5
   m_Name: emotesScreen
   m_TagString: emotesScreen
@@ -997,6 +998,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6000f1d9588c414c803252c4a4309c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backButton: {fileID: 2788581799765131044}
+--- !u!114 &2564071856967119355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6666442771827670211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e04d6184b5a0149a857e9231ab1784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 8176068172392638648}
+  playButton: {fileID: 0}
+  character: {fileID: 0}
+  xpBar: {fileID: 0}
+  xpButton: {fileID: 0}
+  characterScreenOffOn: {fileID: 0}
+  primaryText:
+  - {fileID: 6699290021460847504}
+  secondaryText: []
+  historySubText: []
+  buttonText: []
+  inputFields:
+  - {fileID: 5211420805717580505}
+  inputFieldSearchIcon:
+  - {fileID: 1124763983027689726}
+  - {fileID: 5265501910291067811}
+  buttons:
+  - {fileID: 4909393762749137950}
+  button2: []
+  workoutLogDropdownToggle: []
+  line:
+  - {fileID: 6790465814203532920}
+  shadow: []
+  outlines: []
+  dropdowns: []
+  switchButton1: {fileID: 0}
+  switchButton2: {fileID: 0}
+  personlBestExercise: {fileID: 0}
+  darkbackground: {fileID: 21300000, guid: d5f0f0431d75f054aae12b2d639505e3, type: 3}
+  lightbackground: {fileID: 0}
+  lightPlay: {fileID: 0}
+  darkPlay: {fileID: 0}
+  lightCharacter: {fileID: 0}
+  darkCharacter: {fileID: 0}
 --- !u!1 &8948761986812879832
 GameObject:
   m_ObjectHideFlags: 0

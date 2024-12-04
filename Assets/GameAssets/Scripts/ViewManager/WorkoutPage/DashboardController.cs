@@ -8,98 +8,63 @@ using UnityEngine.UI;
 
 public class DashboardController : MonoBehaviour, PageController
 {
-    public List<TextMeshProUGUI> headingTexts;
-    public TextMeshProUGUI headingColorText;
-    public List<Image> footerButtonImages;
-    public List<Image> headerButtonImages;
-    public GameObject bottomMiddelObject;
+    //public List<TextMeshProUGUI> headingTexts;
+    //public TextMeshProUGUI headingColorText;
+    //public List<Image> footerButtonImages;
+    //public List<Image> headerButtonImages;
+    //public GameObject bottomMiddelObject;
     public TMP_InputField searchInputField;
-    public Image searchIcon1, searchIcon2, topButtonBar;
+    //public Image searchIcon1, searchIcon2, topButtonBar;
     public Transform content;
+    public RectTransform switchButton;
+    public TextMeshProUGUI switchWorkout, switchSplit;
+    public Button createNewWorkout, startNewWorkout, workout, split;
+    List<GameObject> items = new List<GameObject>();
+    bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
         searchInputField.onValueChanged.AddListener(OnSearchChanged);
-        
+        Workout();
+        isWorkout = true;
+        createNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        startNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        workout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        split.onClick.AddListener(AudioController.Instance.OnButtonClick);
     }
     private void OnEnable()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        foreach(GameObject go in items)
         {
-            case Theme.Dark:
-               // this.GetComponent<Image>().color = userSessionManager.Instance.darkBgColor;
-                headingColorText.color = Color.white;
-                topButtonBar.color = new Color32(51, 23, 23, 255);
-                searchIcon1.color = userSessionManager.Instance.darkSearchIconColor;
-                searchIcon2.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.textComponent.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.placeholder.color = userSessionManager.Instance.darkSearchIconColor;
-                searchInputField.GetComponent<Image>().color = userSessionManager.Instance.darkSearchBarColor;
-                foreach (TextMeshProUGUI text in headingTexts)
-                {
-                    text.font = userSessionManager.Instance.darkHeadingFont;
-                }
-                foreach (Image image in footerButtonImages)
-                {
-                    image.color = Color.red;
-                    foreach(Transform child in image.gameObject.transform)
-                    {
-                        if(child.GetComponent<Image>() != null)
-                            child.GetComponent<Image>().color = Color.white;
-                    }
-                }
-                BottomButtonSelectionSeter(bottomMiddelObject);
-                foreach (Image image in headerButtonImages)
-                {
-                    image.color = Color.white;
-                }
-                break;
-            case Theme.Light:
-                topButtonBar.color = Color.white;
-              //  this.GetComponent<Image>().color = userSessionManager.Instance.lightBgColor;
-                headingColorText.color = userSessionManager.Instance.lightHeadingColor;
-                searchIcon1.color = userSessionManager.Instance.lightTextColor;
-                searchIcon2.color = userSessionManager.Instance.lightTextColor;
-                searchInputField.GetComponent<Image>().color = Color.white;
-                searchInputField.textComponent.color = userSessionManager.Instance.lightTextColor;
-                searchInputField.placeholder.color = userSessionManager.Instance.lightTextColor;
-                foreach (TextMeshProUGUI text in headingTexts)
-                {
-                    text.font = userSessionManager.Instance.lightHeadingFont;
-                }
-                foreach (Image image in footerButtonImages)
-                {
-                    image.color = Color.white;
-                    foreach (Transform child in image.gameObject.transform)
-                    {
-                        if (child.GetComponent<Image>() != null)
-                            child.GetComponent<Image>().color = Color.red;
-                    }
-                }
-                BottomButtonSelectionSeter(bottomMiddelObject);
-                foreach (Image image in headerButtonImages)
-                {
-                    image.color = userSessionManager.Instance.lightButtonColor;
-                }
-                break;
+            go.SetActive(false);
+            go.SetActive(true);
         }
+        Workout();
+        isWorkout = true;
     }
-    public void EditTemplete()
-    {
-    }
+
 
     public void Play()
     {
         if (userSessionManager.Instance.selectedTemplete != null)
         {
+            AudioController.Instance.OnButtonClick();
             StartEmptyWorkoutWithTemplate(userSessionManager.Instance.selectedTemplete);
         }
     }
     public void CreateNewWorkout()
     {
+        int number = content.childCount;
+        string templeteName = "Workout " + number;
+        while(ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Any(t => t.templeteName == templeteName))
+        {
+            number++;
+            templeteName = "Workout " + number;
+        }
         Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "workoutName", "Workout " + content.childCount }
+                { "workoutName", templeteName },
+                {"editWorkout", false}
             };
         StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData,true);
         StateManager.Instance.CloseFooter();
@@ -124,12 +89,13 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-        foreach (var exercise in userSessionManager.Instance.excerciseData.exerciseTemplete)
+        foreach (var exercise in ApiDataHandler.Instance.getTemplateData().exerciseTemplete)
         {
             DefaultTempleteModel templeteData = exercise;
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "data", templeteData }
+                { "data", templeteData },
+                {"parent",gameObject }
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
@@ -163,7 +129,7 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject) ;
         }
-        ExcerciseData exerciseData = userSessionManager.Instance.excerciseData;
+        TemplateData exerciseData = ApiDataHandler.Instance.getTemplateData();
 
         bool showAll = string.IsNullOrEmpty(filter);
 
@@ -186,7 +152,8 @@ public class DashboardController : MonoBehaviour, PageController
             // Initialize data for the dashboard item
             Dictionary<string, object> initData = new Dictionary<string, object>
             {
-                { "data", template }
+                { "data", template },
+                {"parent",gameObject }
             };
 
             // Initialize the DashboardItemController
@@ -201,39 +168,42 @@ public class DashboardController : MonoBehaviour, PageController
     {
         StateManager.Instance.OpenStaticScreen("history", gameObject, "historyScreen", null, true, null);
     }
-    public void BottomButtonSelectionSeter(GameObject clickedObject)
+
+    public void Workout()
     {
-        switch (userSessionManager.Instance.gameTheme)
+        if (isWorkout) return;
+        isWorkout = true;
+        //AudioController.Instance.OnButtonClick();
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, -3, 0.25f);
+        switch(ApiDataHandler.Instance.gameTheme)
         {
-            case Theme.Dark:
-                foreach(Image img in footerButtonImages)
-                {
-                    if (img.gameObject == clickedObject)
-                        img.enabled = true;
-                    else
-                        img.enabled = false;
-                }
-                break;
             case Theme.Light:
-                foreach (Image img in footerButtonImages)
-                {
-                    if (img.gameObject == clickedObject)
-                    {
-                        foreach(Transform child in img.gameObject.transform)
-                        {
-                            child.GetComponent<Image>().color = Color.red;
-                        }
-                    }
-                        
-                    else
-                    {
-                        foreach (Transform child in img.gameObject.transform)
-                        {
-                            child.GetComponent<Image>().color = Color.white;
-                        }
-                    }
-                }       
+                switchWorkout.color = new Color32(255, 255, 255, 255);
+                switchSplit.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchWorkout.color = new Color32(51, 23, 23, 255);
+                switchSplit.color = new Color32(171, 162, 162, 255);
                 break;
         }
     }
+    public void Splits()
+    {
+        if(!isWorkout) return;
+        isWorkout = false;
+        //AudioController.Instance.OnButtonClick();
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, 141, 0.25f);
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                switchSplit.color = new Color32(255, 255, 255, 255);
+                switchWorkout.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchSplit.color = new Color32(51, 23, 23, 255);
+                switchWorkout.color = new Color32(171, 162, 162, 255);
+                break;
+        }
+    }
+
 }
