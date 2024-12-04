@@ -19,7 +19,7 @@ This repository contains the source code for a gym-based workout tracker app bui
 1. **Clone the Repository**  
    Clone the repository to your local machine:  
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/msmannan00/Workout-Tracker
    ```
 
 2. **Open in Unity**  
