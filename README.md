@@ -1,22 +1,68 @@
-# Food-Tracker
-Food Tracker Health App
 
-This repository contains the code for a food tracker health app designed to help users maintain a healthy diet and lifestyle. The app allows users to track their meals, keep a food diary, discover traditional Pakistani recipes, and practice mindful eating habits.
+# Workout Tracker - Gym-Based Fitness App
 
-Key Features:
+This repository contains the source code for a gym-based workout tracker app built in Unity3D. The app helps users manage their fitness routines, log workouts, plan exercises, and achieve fitness goals. It includes engaging features such as subscription-based premium plans, social sharing, and interactive GIFs to enhance the workout experience.
 
-    Meal Tracking: Users can easily log their meals, including breakfast, lunch, dinner, and snacks.
-    Food Diary: Keep a detailed record of daily food intake, helping users stay accountable and make healthier choices.
-    Traditional Pakistani Recipes: Explore a collection of traditional subcontinent dishes like chicken karahi and naan, with recipes and nutritional information.
-    Mindful Eating: Encourages users to eat mindfully, focusing on the sensory experience of eating to improve digestion and satisfaction.
+## Features
 
-This app aims to promote healthier eating habits and increase awareness of traditional Pakistani cuisine, fostering a more balanced and mindful approach to food.
-To run the Food Tracker Health App built on Unity3D, follow these steps:
+- **Workout Tracking**: Log exercises, sets, reps, and weights for each session.
+- **Routine Planning**: Create and customize workout plans tailored to your needs.
+- **Progress Monitoring**: Track and share your progress with friends on social platforms.
+- **Interactive GIFs**: Animated workout demonstrations that change dynamically based on your routine.
+- **Subscription Plans**: Access premium features with subscription-based plans for advanced insights and exclusive content.
+- **Social Sharing**: Share your progress, achievements, and routines on social media platforms.
 
-1. Clone Repository: Clone the repository to your local machine using Git.
-2. Open in Unity: Open the project in Unity3D by selecting the project folder.
-3. Set Up Environment: Ensure you have the necessary dependencies and environment set up to run Unity3D projects.
-4. Build and Run: Build the project for your desired platform (e.g., Windows, macOS, Android, iOS) and run the generated executable or package on your device.
-5. Usage: Follow the on-screen instructions to navigate the app, log meals, explore recipes, and practice mindful eating.
+---
 
-License: This project is privately licensed. Contact the owner for licensing inquiries and usage permissions.
+## Project Setup
+
+1. **Clone the Repository**  
+   Clone the repository to your local machine:  
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. **Open in Unity**  
+   Open the project in Unity3D:  
+   - Launch Unity3D.
+   - Select "Open Project".
+   - Navigate to the cloned folder and open it.
+
+3. **Build and Run**  
+   - Select your target platform (e.g., Android, iOS, Windows).
+   - Build the app and run the generated executable or package.
+
+---
+
+## Usage
+
+- **Log Workouts**: Enter details about your workout sessions, including exercise type, reps, and sets.
+- **Track Progress**: Monitor and visualize progress with detailed summaries and charts.
+- **Share Progress**: Post your achievements and routines on social media to inspire others.
+- **View GIFs**: Watch dynamic workout GIFs for each exercise to maintain proper form.
+- **Subscription Features**: Unlock exclusive features like advanced stats and personalized coaching.
+
+---
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch:  
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Commit your changes:  
+   ```bash
+   git commit -m "Add your message here"
+   ```
+4. Push to the branch:  
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Create a pull request.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
