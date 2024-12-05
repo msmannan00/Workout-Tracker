@@ -63,11 +63,6 @@ This repository contains the source code for a gym-based workout tracker app bui
 5. Create a pull request.
 
 ---
-## Screenshots
-![bage selection](https://github.com/user-attachments/assets/e0f4a545-f0b4-4607-a6c5-8e65c0311378)
-![achievements](https://github.com/user-attachments/assets/0aa0359a-ec98-4417-b89c-6bed31ff751a)
-![add new exercise](https://github.com/user-attachments/assets/6d006b69-c5dd-40bd-b145-6bece364c26b)
-
 
 ## License
 
