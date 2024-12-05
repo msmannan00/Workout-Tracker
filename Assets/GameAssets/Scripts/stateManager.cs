@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class StateManager : GenericSingletonClass<StateManager>
 {
-    private List<GameObject> inactivePages = new List<GameObject>();
-    private bool isProcessing = false;
+    public List<GameObject> inactivePages = new List<GameObject>();
+    public GameObject footer;
+    public bool isProcessing = false;
 
-    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null)
+    public void OpenStaticScreen(string folderPath, GameObject currentPage, string newPage, Dictionary<string, object> data, bool keepState = false, Action<object> callback = null,bool isfooter=false)
     {
         if (isProcessing) return;
         isProcessing = true;
@@ -22,7 +23,7 @@ public class StateManager : GenericSingletonClass<StateManager>
         var prefabResource = Resources.Load<GameObject>(prefabPath);
         var prefab = Instantiate(prefabResource);
         var container = GameObject.FindGameObjectWithTag(newPage);
-
+        container.transform.SetSiblingIndex(container.transform.parent.childCount - 2);
         prefab.transform.SetParent(container.transform, false);
         var mController = prefab.GetComponent<PageController>();
         mController.onInit(data, callback);
@@ -42,13 +43,15 @@ public class StateManager : GenericSingletonClass<StateManager>
                 }
                 isProcessing = false;
             };
-
             GlobalAnimator.Instance.ApplyParallax(currentPage, prefab, callbackSuccess, keepState);
         }
         else
         {
             isProcessing = false;
         }
+        if (isfooter)
+            callback?.Invoke(null);
+        userSessionManager.Instance.currentScreen = prefab.gameObject;
     }
 
     public void openSidebar(string folderPath, GameObject currentPage, string newPage)
@@ -63,7 +66,34 @@ public class StateManager : GenericSingletonClass<StateManager>
         GlobalAnimator.Instance.openSidebar(prefab);
 
     }
+    public void OpenFooter(string folderPath , string newPage,bool create)
+    {
+        if (create)
+        {
+            var prefabPath = "Prefabs/" + folderPath + "/" + newPage;
+            var prefabResource = Resources.Load<GameObject>(prefabPath);
+            var prefab = Instantiate(prefabResource);
+            var container = GameObject.FindGameObjectWithTag(newPage);
 
+            prefab.transform.SetParent(container.transform, false);
+            footer = prefab.gameObject;
+        }
+        else
+        {
+            footer.SetActive(true);
+            footer.transform.parent.SetAsLastSibling();
+        }
+
+        //GlobalAnimator.Instance.openSidebar(prefab);
+    }
+    public void SetSpecificFooterButton(FooterButtons button)
+    {
+        footer.GetComponent<FooterController>().BottomButtonSelectionSeter(button);
+    }
+    public void CloseFooter()
+    {
+        footer.SetActive(false);
+    }
     public void HandleSidebarBackAction(GameObject currentActivePage)
     {
         GlobalAnimator.Instance.closeSidebar(currentActivePage);
@@ -106,8 +136,9 @@ public class StateManager : GenericSingletonClass<StateManager>
                     Destroy(overlayBlocker);
                 });
             }
-
+            userSessionManager.Instance.currentScreen = lastPage;
             inactivePages.RemoveAt(inactivePages.Count - 1);
+
         }
     }
 

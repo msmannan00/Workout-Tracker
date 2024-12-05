@@ -1,42 +1,86 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DashboardController : MonoBehaviour, PageController
 {
+    //public List<TextMeshProUGUI> headingTexts;
+    //public TextMeshProUGUI headingColorText;
+    //public List<Image> footerButtonImages;
+    //public List<Image> headerButtonImages;
+    //public GameObject bottomMiddelObject;
+    public TMP_InputField searchInputField;
+    //public Image searchIcon1, searchIcon2, topButtonBar;
     public Transform content;
-
+    public RectTransform switchButton;
+    public TextMeshProUGUI switchWorkout, switchSplit;
+    public Button createNewWorkout, startNewWorkout, workout, split;
+    List<GameObject> items = new List<GameObject>();
+    bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         onReloadData(null);
+        searchInputField.onValueChanged.AddListener(OnSearchChanged);
+        Workout();
+        isWorkout = true;
+        createNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        startNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        workout.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        split.onClick.AddListener(AudioController.Instance.OnButtonClick);
+    }
+    private void OnEnable()
+    {
+        foreach(GameObject go in items)
+        {
+            go.SetActive(false);
+            go.SetActive(true);
+        }
+        Workout();
+        isWorkout = true;
     }
 
-    private void Awake()
-    {
-    }
-
-    void Start()
-    {
-    }
-
-    public void EditTemplete()
-    {
-    }
 
     public void Play()
     {
+        if (userSessionManager.Instance.selectedTemplete != null)
+        {
+            AudioController.Instance.OnButtonClick();
+            StartEmptyWorkoutWithTemplate(userSessionManager.Instance.selectedTemplete);
+        }
     }
-
+    public void CreateNewWorkout()
+    {
+        int number = content.childCount;
+        string templeteName = "Workout " + number;
+        while(ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Any(t => t.templeteName == templeteName))
+        {
+            number++;
+            templeteName = "Workout " + number;
+        }
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+                { "workoutName", templeteName },
+                {"editWorkout", false}
+            };
+        StateManager.Instance.OpenStaticScreen("createWorkout", gameObject, "createNewWorkoutScreen", mData, true, onReloadData,true);
+        StateManager.Instance.CloseFooter();
+    }
     public void StartEmptyWorkout()
     {
+        DefaultTempleteModel exercise=new DefaultTempleteModel();
+        exercise.templeteName="Workout " + content.childCount.ToString();
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "isTemplateCreator", true }
+            {"dataTemplate", exercise }, { "isTemplateCreator", true }
         };
         Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback, true);
+        StateManager.Instance.CloseFooter();
     }
 
     public void onReloadData(object data)
@@ -45,29 +89,24 @@ public class DashboardController : MonoBehaviour, PageController
         {
             Destroy(child.gameObject);
         }
-
-        foreach (var exercise in userSessionManager.Instance.excerciseData.exerciseTemplete)
+        foreach (var exercise in ApiDataHandler.Instance.getTemplateData().exerciseTemplete)
         {
+            DefaultTempleteModel templeteData = exercise;
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
-                { "data", exercise }
+                { "data", templeteData },
+                {"parent",gameObject }
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
-            DashboardItemController itemController = exercisePrefab.GetComponent<DashboardItemController>();
-            itemController.onInit(mData);
-
             GameObject exerciseObject = Instantiate(exercisePrefab, content);
 
-            Button button = exerciseObject.GetComponentInChildren<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() => StartEmptyWorkoutWithTemplate(exercise));
-            }
+            DashboardItemController itemController = exerciseObject.GetComponent<DashboardItemController>();
+            itemController.onInit(mData,StartEmptyWorkoutWithTemplate);
         }
     }
 
-    private void StartEmptyWorkoutWithTemplate(object exercise)
+    public void StartEmptyWorkoutWithTemplate(object exercise)
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
@@ -75,12 +114,96 @@ public class DashboardController : MonoBehaviour, PageController
             { "dataTemplate", exercise }
         };
 
-        Action<object> callback = onReloadData;
+        //Action<object> callback = onReloadData;
 
-        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData, true, callback);
+        StateManager.Instance.OpenStaticScreen("workoutLog", gameObject, "workoutLogScreen", mData,true);
     }
 
-    public void SelectWorkout(GameObject obj)
+    void OnSearchChanged(string searchQuery)
     {
+        LoadExerciseTemplates(searchQuery);
     }
+    void LoadExerciseTemplates(string filter = "")
+    {
+        foreach(Transform child in content)
+        {
+            Destroy(child.gameObject) ;
+        }
+        TemplateData exerciseData = ApiDataHandler.Instance.getTemplateData();
+
+        bool showAll = string.IsNullOrEmpty(filter);
+
+        foreach (DefaultTempleteModel template in exerciseData.exerciseTemplete)
+        {
+            string lowerFilter = filter.ToLower();
+
+            // Check if the templateName or any exerciseType name matches the filter
+            if (!showAll &&
+                !(template.templeteName.ToLower().Contains(lowerFilter) ||
+                  template.exerciseTemplete.Any(e => e.name.ToLower().Contains(lowerFilter))))
+            {
+                continue;
+            }
+
+            // If a match is found, spawn the dashboard prefab
+            GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
+            GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+            // Initialize data for the dashboard item
+            Dictionary<string, object> initData = new Dictionary<string, object>
+            {
+                { "data", template },
+                {"parent",gameObject }
+            };
+
+            // Initialize the DashboardItemController
+            DashboardItemController itemController = newExerciseObject.GetComponent<DashboardItemController>();
+            itemController.onInit(initData, StartEmptyWorkoutWithTemplate);
+
+
+        }
+    }
+ 
+    public void OnHistory()
+    {
+        StateManager.Instance.OpenStaticScreen("history", gameObject, "historyScreen", null, true, null);
+    }
+
+    public void Workout()
+    {
+        if (isWorkout) return;
+        isWorkout = true;
+        //AudioController.Instance.OnButtonClick();
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, -3, 0.25f);
+        switch(ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                switchWorkout.color = new Color32(255, 255, 255, 255);
+                switchSplit.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchWorkout.color = new Color32(51, 23, 23, 255);
+                switchSplit.color = new Color32(171, 162, 162, 255);
+                break;
+        }
+    }
+    public void Splits()
+    {
+        if(!isWorkout) return;
+        isWorkout = false;
+        //AudioController.Instance.OnButtonClick();
+        GlobalAnimator.Instance.AnimateRectTransformX(switchButton, 141, 0.25f);
+        switch (ApiDataHandler.Instance.gameTheme)
+        {
+            case Theme.Light:
+                switchSplit.color = new Color32(255, 255, 255, 255);
+                switchWorkout.color = new Color32(92, 59, 28, 155);
+                break;
+            case Theme.Dark:
+                switchSplit.color = new Color32(51, 23, 23, 255);
+                switchWorkout.color = new Color32(171, 162, 162, 255);
+                break;
+        }
+    }
+
 }

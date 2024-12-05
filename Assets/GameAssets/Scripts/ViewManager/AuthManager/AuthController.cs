@@ -15,13 +15,19 @@ public class AuthController : MonoBehaviour, PageController
 
     [Header("Utilities")]
     public TMP_Text aError;
+    public TMP_Text aHeading;
     public TMP_Text aPageToggleText1;
     public TMP_Text aPageToggleText2;
 
     [Header("Auth Fields")]
     public TMP_InputField aUsername;
     public TMP_InputField aPassword;
+    public TMP_InputField aReEnterPassword;
     public TextMeshProUGUI aTriggerButton;
+    public GameObject aForgetPassword;
+    public RectTransform aLineDevider;
+    public RectTransform agoogle;
+    public RectTransform aApple;
 
     private string mAuthType;
 
@@ -29,7 +35,7 @@ public class AuthController : MonoBehaviour, PageController
     public GoogleAuth GoogleAuth;
     public Text Log;
     public Text Output;
-
+    public bool isRegistering;
     public FacebookAuth FacebookAuth;
 
 
@@ -79,6 +85,10 @@ public class AuthController : MonoBehaviour, PageController
             }
             userSessionManager.Instance.OnInitialize(mUsername, mUsername);
             onSignIn();
+        }
+        else if (mUsername == "")
+        {
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
         }
     }
 
@@ -163,7 +173,7 @@ public class AuthController : MonoBehaviour, PageController
     {
         gameObject.transform.parent.SetSiblingIndex(1);
 
-        bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
+        bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
         if (!mFirsTimePlanInitialized)
         {
             GlobalAnimator.Instance.FadeOutLoader();
@@ -171,14 +181,67 @@ public class AuthController : MonoBehaviour, PageController
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
             };
-
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+            //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            //userSessionManager.Instance.AddGymVisit();
+            //if (ApiDataHandler.Instance.GetWeight() > 0)
+            //{
+            //    GlobalAnimator.Instance.FadeOutLoader();
+            //    Dictionary<string, object> mData = new Dictionary<string, object>
+            //    {
+            //        { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
+            //    };
+            //    StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+            //    //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            //    userSessionManager.Instance.AddGymVisit();
+            //}
+            //else
+            //{
+            //    Dictionary<string, object> mData = new Dictionary<string, object>
+            //    {
+            //        { "isFirstTime", true }
+            //    };
+            //    StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            //}
         }
         else
         {
-            Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
+            print("panel weekly goal");
+            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+            StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+
+            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
         }
+
+
+        //if (ApiDataHandler.Instance.GetWeeklyGoal() > 0)
+        //{
+        //    if (ApiDataHandler.Instance.GetWeight() > 0)
+        //    {
+        //        GlobalAnimator.Instance.FadeOutLoader();
+        //        Dictionary<string, object> mData = new Dictionary<string, object>
+        //        {
+        //            { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
+        //        };
+        //        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+        //        //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+        //        userSessionManager.Instance.AddGymVisit();
+        //    }
+        //    else
+        //    {
+        //        Dictionary<string, object> mData = new Dictionary<string, object>
+        //        {
+        //            { "isFirstTime", true }
+        //        };
+        //        StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+        //    }
+        //}
+        //else
+        //{
+        //    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+        //    StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+
+        //}
     }
 
     public void FBSignIn()
@@ -255,17 +318,40 @@ public class AuthController : MonoBehaviour, PageController
         this.mAuthType = (string)pData.GetValueOrDefault(AuthKey.sAuthType, AuthConstant.sAuthTypeSignup);
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
-            aTriggerButton.text = "Log In";
-            aPageToggleText1.text = "I Don't have an account? ";
-            aPageToggleText2.text = "Signup";
+            aHeading.text = "login";
+            aTriggerButton.text = "Continue";
+            aPageToggleText1.text = "New user?";
+            aPageToggleText2.text = "Create an account.";
+            aForgetPassword.SetActive(true);
+            aReEnterPassword.gameObject.SetActive(false);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), 35);
+            ChangeYPosition(aLineDevider, -16.5f);
+            ChangeYPosition(agoogle, -86.6f);
+            ChangeYPosition(aApple, -168.3f);
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
-            aTriggerButton.text = "Sign Up";
+            aHeading.text = "create account";
+            aTriggerButton.text = "next";
             aPageToggleText1.text = "Already have an acount?";
             aPageToggleText2.text = "Log In";
+            aForgetPassword.SetActive(false);
+            aReEnterPassword.gameObject.SetActive(true);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -38);
+            ChangeYPosition(aLineDevider, -68);
+            ChangeYPosition(agoogle, -138);
+            ChangeYPosition(aApple, -220);
+            aPageToggleText1.gameObject.SetActive(false);
+            aPageToggleText2.gameObject.SetActive(false);
+
         }
 
+    }
+    void ChangeYPosition(RectTransform rectTransform,float yPos)
+    {
+        Vector2 newPosition = rectTransform.anchoredPosition;
+        newPosition.y = yPos;
+        rectTransform.anchoredPosition = newPosition;
     }
 
     public void OnPrivacyPolicy()
@@ -282,6 +368,7 @@ public class AuthController : MonoBehaviour, PageController
 
     public void OnTrigger()
     {
+        AudioController.Instance.OnButtonClick();
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
             Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>
@@ -302,9 +389,17 @@ public class AuthController : MonoBehaviour, PageController
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
+            if (aPassword.text != aReEnterPassword.text)
+            {
+                aError.text = "Password does't match";
+                aError.gameObject.SetActive(true);
+                return;
+            }
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
+                print("true");
+                //PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
 
                 GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");
                 GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
@@ -318,6 +413,7 @@ public class AuthController : MonoBehaviour, PageController
                     { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
                 };
                 StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
+                ApiDataHandler.Instance.SetJoiningDate(DateTime.Now);
             };
 
             Action<PlayFabError> callbackFailure = (pError) =>
@@ -344,6 +440,7 @@ public class AuthController : MonoBehaviour, PageController
             GlobalAnimator.Instance.FadeOutLoader();
             GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertSuccess");
             GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
+            alertsContainer.transform.SetAsLastSibling();
             GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
             AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
             alertController.InitController("Reset password instructions have been sent to your email address", pCallbackSuccess: callbackSuccess, pTrigger: "Open Mail");
@@ -358,6 +455,7 @@ public class AuthController : MonoBehaviour, PageController
 
             GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
             GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
+            alertsContainer.transform.SetAsLastSibling();
             GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
             AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
             alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");

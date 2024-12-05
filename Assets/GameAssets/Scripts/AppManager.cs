@@ -9,12 +9,12 @@ public class AppManager : MonoBehaviour
         /*Initiating app pages*/
         #if UNITY_ANDROID && !UNITY_EDITOR
             Screen.fullScreen = false;
-            AndroidUtility.ShowStatusBar(new Color32(9, 126, 57, 255));
+            AndroidUtility.ShowStatusBar(new Color32(0, 0, 0, 255));
         #endif
 
-        userSessionManager.Instance.LoadExcerciseData();
+        //userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
-        DataManager.Instance.loadData();
+        ApiDataHandler.Instance.loadData();
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))
         {
             StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
