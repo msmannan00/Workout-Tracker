@@ -56,13 +56,21 @@ This repository contains the source code for a gym-based workout tracker app bui
    git commit -m "Add your message here"
    ```
 4. Push to the branch:  
-   ```bash
+   ```bash![add new exercise](https://github.com/user-attachments/assets/8a5c62b3-48dd-4c38-ad12-ca9c7d2c300c)
+
    git push origin feature/your-feature-name
    ```
 5. Create a pull request.
 
 ---
+## Screenshots
+![bage selection](https://github.com/user-attachments/assets/e0f4a545-f0b4-4607-a6c5-8e65c0311378)![achievements](https://github.com/user-attachments/assets/0aa0359a-ec98-4417-b89c-6bed31ff751a)
+![add new exercise](https://github.com/user-attachments/assets/6d006b69-c5dd-40bd-b145-6bece364c26b)
 
-## License
+
+
+
+## Lice![Uploading achievements.jpg…]()
+nse
 
 This project is licensed under the [MIT License](LICENSE).
