@@ -67,7 +67,7 @@ public class UserNameController : MonoBehaviour, PageController
     // Function to store the username in the Firebase Database
     private void StoreUsername(string username,string userID)
     {
-        FirebaseDatabase.DefaultInstance.GetReference("users")
+        FirebaseManager.Instance.databaseReference.Child("users")
             .Child(userID)  // Save under the user's UID
             .Child("username").SetValueAsync(username)
             .ContinueWithOnMainThread(task =>
@@ -84,52 +84,22 @@ public class UserNameController : MonoBehaviour, PageController
                 }
             });
 
-        // Save the username under the 'usernames/{username}' path to ensure uniqueness
-        FirebaseDatabase.DefaultInstance.GetReference("usernames")
-            .SetValueAsync(username)  // Use `true` or any value to mark it as taken
-            .ContinueWithOnMainThread(task =>
+
+        var usernameRef = FirebaseDatabase.DefaultInstance.GetReference("usernames");
+        usernameRef.Child(username).SetValueAsync(true).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
             {
-                if (task.IsCompleted)
-                {
-                    ApiDataHandler.Instance.userName=username;
-                    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-                    StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-                    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
-
-
-                    Debug.Log("Username saved successfully under usernames path.");
-                }
-                else
-                {
-                    Debug.LogError("Error saving username under usernames path: " + task.Exception);
-                }
-            });
-
-
-
-
-
-
-
-
-
-
-
-        //var usernameRef = FirebaseDatabase.DefaultInstance.GetReference("usernames");
-        //usernameRef.Child(username).SetValueAsync(true).ContinueWithOnMainThread(task =>
-        //{
-        //    if (task.IsCompleted)
-        //    {
-        //        Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-        //        StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-        //        PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
-        //        Debug.Log("Username stored successfully!");
-        //    }
-        //    else
-        //    {
-        //        GlobalAnimator.Instance.ShowTextMessage(messageText, "Failed to store username", 2);
-        //        Debug.LogError("Failed to store username: " + task.Exception);
-        //    }
-        //});
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+                StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
+                Debug.Log("Username stored successfully!");
+            }
+            else
+            {
+                GlobalAnimator.Instance.ShowTextMessage(messageText, "Failed to store username", 2);
+                Debug.LogError("Failed to store username: " + task.Exception);
+            }
+        });
     }
 }

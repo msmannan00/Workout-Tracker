@@ -24,7 +24,6 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     private int currentTimeInSeconds; 
     private int userEnteredTimeInSeconds; 
     private float timer;
-    private bool timerRunning = false;
     private Coroutine timerCoroutine;
     private Action<object> callBack;
     bool shake = true;

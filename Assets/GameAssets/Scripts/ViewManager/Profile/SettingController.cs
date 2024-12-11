@@ -134,7 +134,7 @@ public class SettingController : MonoBehaviour, PageController
         DateTime now = DateTime.Now;
         print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
         TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
-        if (timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal() == 0)
+        if (timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData, true);
@@ -151,6 +151,15 @@ public class SettingController : MonoBehaviour, PageController
         }
 
 
+    }
+    public void LogOut()
+    {
+        FirebaseManager.Instance.OnLogout();
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+                { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+            };
+        StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
     }
     IEnumerator OffMessageText(float time)
     {

@@ -37,7 +37,7 @@ public class WeeklyGoalController : MonoBehaviour, PageController
     {
         ApiDataHandler.Instance.SetWeeklyGoal(dropDown.value + 2);
         ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
-        if (goalText != null) { goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString(); }
+        if (goalText != null) { goalText.text = userSessionManager.Instance.weeklyGoal.ToString(); }
         if (firstTime)
         {
             PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);

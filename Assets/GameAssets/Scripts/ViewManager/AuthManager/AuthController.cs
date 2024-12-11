@@ -108,21 +108,22 @@ public class AuthController : MonoBehaviour, PageController
 
     public void onVerifyFirstLogin()
     {
-        string mUsername = PreferenceManager.Instance.GetString("login_username");
-        //print(mUsername);
-        if (mUsername.Length > 2)
-        {
-            if (mUsername.Contains("@"))
-            {
-                mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
-            }
-            userSessionManager.Instance.OnInitialize(mUsername, mUsername);
-            onSignIn();
-        }
-        else if (mUsername == "")
-        {
-            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
-        }
+        //string mUsername = PreferenceManager.Instance.GetString("login_username");
+        ////print(mUsername);
+        //if (mUsername.Length > 2)
+        //{
+        //    if (mUsername.Contains("@"))
+        //    {
+        //        mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
+        //    }
+        //    userSessionManager.Instance.OnInitialize(mUsername, mUsername);
+        //    onSignIn();
+        //}
+        //else if (mUsername == "")
+        //{
+        //    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
+        //}
+        onSignIn();
     }
 
     IEnumerator CallSavedlogins()
@@ -208,61 +209,139 @@ public class AuthController : MonoBehaviour, PageController
         gameObject.transform.parent.SetSiblingIndex(1);
         StateManager.Instance.isProcessing = false;
         bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
-        if (!mFirsTimePlanInitialized)
-        {
-            print("if");
-            FirebaseManager.Instance.GetDataFromFirebase(FirebaseManager.Instance.user.UserId + "/username", data =>
-            {
-                string jsonData = data.GetRawJsonValue();
-                ApiDataHandler.Instance.userName = (string)ApiDataHandler.Instance.LoadData(jsonData, typeof(string));
-            });
-            GlobalAnimator.Instance.FadeOutLoader();
-            Dictionary<string, object> mData = new Dictionary<string, object>
-            {
-                { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-            };
-            StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-        }
-        else
-        {
-            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-            StateManager.Instance.OpenStaticScreen("userName", gameObject, "userNameScreen", mData);
-        }
-
-
-        //if (ApiDataHandler.Instance.GetWeeklyGoal() > 0)
+        GlobalAnimator.Instance.FadeInLoader();
+        CheckUserNameSet();
+        
+        //if (!mFirsTimePlanInitialized)
         //{
-        //    if (ApiDataHandler.Instance.GetWeight() > 0)
+        //    print("if");
+        //    FirebaseManager.Instance.GetDataFromFirebase("/users/"+FirebaseManager.Instance.user.UserId + "/username", data =>
         //    {
-        //        GlobalAnimator.Instance.FadeOutLoader();
-        //        Dictionary<string, object> mData = new Dictionary<string, object>
+        //        if (data.Exists)  // Ensure that data exists
         //        {
-        //            { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-        //        };
-        //        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-        //        //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-        //        userSessionManager.Instance.AddGymVisit();
-        //    }
-        //    else
+        //            string username = data.Value.ToString();  // Directly get the value as string
+        //            userSessionManager.Instance.mProfileUsername = username;
+        //            Debug.Log("Username retrieved: " + username);
+        //        }
+        //    });
+        //    GlobalAnimator.Instance.FadeOutLoader();
+        //    Dictionary<string, object> mData = new Dictionary<string, object>
         //    {
-        //        Dictionary<string, object> mData = new Dictionary<string, object>
-        //        {
-        //            { "isFirstTime", true }
-        //        };
-        //        StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-        //    }
+        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
+        //    };
+        //    StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
         //}
         //else
         //{
         //    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-        //    StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-
+        //    StateManager.Instance.OpenStaticScreen("userName", gameObject, "userNameScreen", mData);
         //}
     }
-
-
-
-   
+    public void CheckUserNameSet()
+    {
+        print("check userName");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result => {
+            print(result);
+            if (result)
+            {
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/username", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string username = data.Value.ToString();  // Directly get the value as string
+                        userSessionManager.Instance.mProfileUsername = username;
+                        Debug.Log("Username retrieved: " + username);
+                        CheckWeeklyGoalSet();
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+                StateManager.Instance.OpenStaticScreen("userName", gameObject, "userNameScreen", mData);
+            }
+        });
+    }
+   public void CheckWeeklyGoalSet()
+    {
+        print("check weeklygoal");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", result => {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string stringGoal = data.Value.ToString();  // Directly get the value as string
+                        int goal = int.Parse(stringGoal);  // Directly get the value as string
+                        userSessionManager.Instance.weeklyGoal = goal;
+                        //ApiDataHandler.Instance.userName = username;  // Set the username in your handler
+                        Debug.Log("weekly goal: " + goal);
+                        CheckWeightSet();
+                    }
+                    else print("data is null");
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+                StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+            }
+        });
+    }
+    public void CheckWeightSet()
+    {
+        print("check weight");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", result => {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/measurements/weight", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string stringWeight = data.Value.ToString();
+                        float weight = float.Parse(stringWeight);
+                        Debug.Log("seted weight: " + weight);
+                        CheckJoingDateSet();
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "isFirstTime", true } };
+                StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            }
+        });
+    }
+    public void CheckJoingDateSet()
+    {
+        print("check joining date");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", result => {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string date = data.Value.ToString();
+                        userSessionManager.Instance.joiningDate = date;
+                        Debug.Log("joining date: " + date);
+                        GlobalAnimator.Instance.FadeOutLoader();
+                        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
+            }
+        });
+    }
     void ChangeYPosition(RectTransform rectTransform,float yPos)
     {
         Vector2 newPosition = rectTransform.anchoredPosition;

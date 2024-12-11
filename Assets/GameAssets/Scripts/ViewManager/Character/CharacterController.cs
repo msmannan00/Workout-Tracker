@@ -25,7 +25,7 @@ public class CharacterController : MonoBehaviour,PageController
     }
     private void OnEnable()
     {
-        coinText.text=ApiDataHandler.Instance.GetCoins().ToString();
+        coinText.text=userSessionManager.Instance.currentCoins.ToString();
     }
     public void ShopeButtonClick()
     {

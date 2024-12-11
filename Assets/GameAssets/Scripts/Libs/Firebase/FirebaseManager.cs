@@ -186,8 +186,11 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     {
         databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
         {
+            if (task.IsCompleted)
+                print("complete");
             bool exists = task.IsCompleted && task.Result.Exists;
             callback(exists);  // Call the callback with true or false
+            return exists;
         });
     }
     //public void SaveDataToFirebase(string path, object value)

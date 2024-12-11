@@ -111,9 +111,9 @@ public class StreakManager : MonoBehaviour
     private DateTime GetStartOfWeek(DateTime date)
     {
         return date;
-        int daysToSubtract = (int)date.DayOfWeek - (int)DayOfWeek.Monday;
-        if (daysToSubtract < 0) daysToSubtract += 7; // Adjust for Sunday
-        return date.AddDays(-daysToSubtract).Date;
+        //int daysToSubtract = (int)date.DayOfWeek - (int)DayOfWeek.Monday;
+        //if (daysToSubtract < 0) daysToSubtract += 7; // Adjust for Sunday
+        //return date.AddDays(-daysToSubtract).Date;
     }
 
     /// <summary>

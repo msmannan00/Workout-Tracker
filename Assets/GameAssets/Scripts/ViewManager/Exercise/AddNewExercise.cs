@@ -119,7 +119,7 @@ public class AddNewExercise : MonoBehaviour, PageController
                 //DataManager.Instance.SaveData(exerciseDataItem);
                 FirebaseExerciseManager.Instance.AddNewExercise(exerciseDataItem);
 
-                ApiDataHandler.Instance.SaveExerciseData(exerciseDataItem);
+                ApiDataHandler.Instance.SaveExerciseData(exerciseDataItem,ApiDataHandler.Instance.getExerciseData().exercises.Count);
                 callback.Invoke(exerciseDataItem);
                 OnClose();
             }

@@ -25,15 +25,15 @@ public class ProfileController : MonoBehaviour,PageController
         
 
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
-        joinedText.text = ApiDataHandler.Instance.GetJoiningDate();
-        
+        joinedText.text = userSessionManager.Instance.joiningDate.ToString();
+
         settingButton.onClick.AddListener(Settings);
     }
     private void OnEnable()
     {
         levelText.text= "Level "+ApiDataHandler.Instance.GetCharacterLevel().ToString();
-        streakText.text = "Streak: " + ApiDataHandler.Instance.GetUserStreak().ToString();
-        goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString();
+        streakText.text = "Streak: " + userSessionManager.Instance.userStreak.ToString();
+        goalText.text = userSessionManager.Instance.weeklyGoal.ToString();
         string badgeName = ApiDataHandler.Instance.GetBadgeName();
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
         badgeIamge.sprite= sprite;
@@ -67,7 +67,7 @@ public class ProfileController : MonoBehaviour,PageController
         DateTime now = DateTime.Now;
         print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
         TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
-        if(timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal()==0)
+        if(timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false },{ "text" , goalText } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData,true);

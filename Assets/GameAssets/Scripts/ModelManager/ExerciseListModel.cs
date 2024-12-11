@@ -1,7 +1,6 @@
 using System;
-
 using System.Collections.Generic;
-[System.Serializable]
+[Serializable]
 
 public class ExerciseDataItem
 {
@@ -13,7 +12,7 @@ public class ExerciseDataItem
     public ExerciseType exerciseType;
 }
 
-[System.Serializable]
+[Serializable]
 public class ExerciseData
 {
     public List<ExerciseDataItem> exercises=new List<ExerciseDataItem>();

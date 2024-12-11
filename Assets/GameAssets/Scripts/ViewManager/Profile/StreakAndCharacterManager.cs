@@ -82,9 +82,9 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
             if (HasMetWeeklyGoal())
             {
                 // Increment streak and level up character
-                currentStreak=ApiDataHandler.Instance.GetUserStreak();
+                currentStreak=userSessionManager.Instance.userStreak;
                 currentStreak++;
-                ApiDataHandler.Instance.SetUserStreak(currentStreak);
+                ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
                 characterLevel=ApiDataHandler.Instance.GetCharacterLevel();
                 characterLevel++;
                 ApiDataHandler.Instance.SetCharacterLevel(characterLevel);
@@ -93,7 +93,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
             else
             {
                 // Reset streak and decrease level
-                ApiDataHandler.Instance.SetUserStreak(0);
+                ApiDataHandler.Instance.SetUserStreakToFirebase(0);
                 characterLevel = ApiDataHandler.Instance.GetCharacterLevel();
                 characterLevel = Math.Max(0, characterLevel - 1); // Character level should not go below 1
                 ApiDataHandler.Instance.SetCharacterLevel((int)characterLevel);
@@ -122,7 +122,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 visitCount++;
             }
         }
-        weeklyGoal = ApiDataHandler.Instance.GetWeeklyGoal();
+        weeklyGoal = userSessionManager.Instance.weeklyGoal;
         Debug.Log($"Visits in current 7-day period: {visitCount}/{weeklyGoal}");
         return visitCount >= weeklyGoal;
     }

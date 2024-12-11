@@ -113,8 +113,8 @@ public class DynamicHorizontalLayout : MonoBehaviour
         int result;
         if (int.TryParse(weightText, out result))
         {
-            userSessionManager.Instance.currentWeight = result;
-            ApiDataHandler.Instance.SaveWeight(result);
+            //userSessionManager.Instance.currentWeight = result;
+            //ApiDataHandler.Instance.SaveWeight(result);
         }
     }
 }

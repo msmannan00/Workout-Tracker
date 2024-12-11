@@ -15,8 +15,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string mProfileUsername;
     public string mProfileID;
     public bool mSidebar = false;
-    public int currentWeight;
     public GameObject currentScreen;
+    public int weeklyGoal;
+    public string joiningDate;
+    public int currentCoins;
+    public int userStreak;
+
     [Header("Theme Settings")]
     private Theme gameTheme;
     public TMP_FontAsset darkPrimaryFont, darkSecondaryFont;
@@ -61,7 +65,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
-        this.mProfileUsername = pProfileUsername;
         this.mProfileID = pProfileID;
         PreferenceManager.Instance.SetString("login_username", pProfileUsername);
         mSidebar = false;
@@ -98,7 +101,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.Streak:
-                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText, coinText);
+                    CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.userStreak, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.LevelUp:
                     CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText, coinText);
@@ -163,7 +166,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.Streak:
-                CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetUserStreak(), trophyImages, progressText, descriptionText, coinText);
+                CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.userStreak, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.LevelUp:
                 CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText, coinText);
@@ -234,7 +237,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (totalWeight >= (int)value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -278,7 +281,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (performedWorkouts >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -322,7 +325,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (performedExercises >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -366,7 +369,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (performed >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -411,7 +414,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (performedTime >= (float)achievementDataItem.value / 60)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -453,7 +456,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (streak >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -497,7 +500,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (completeAchievements==totalAchievements)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -539,7 +542,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (longestSession >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -580,7 +583,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (currentBadgeName != "TheGorillaBadge")
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -622,7 +625,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             if (performedExercises >= achievementDataItem.value)
             {
                 achievementDataItem.isCompleted = true;
-                SetCoins(achievementDataItem.coins);
+                AddCoins(achievementDataItem.coins);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -659,7 +662,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
 
-    //------------------------------------------------------Helper Functions--------------------------------------------------------------
+    //------------------------------------------------------Helper Functions----------------------------------------------------------------------------------
 
     public int GetUniqueExerciseCount(HistoryModel historyModel)
     {
@@ -803,11 +806,11 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         else 
             return 0;
     }
-    public void SetCoins(int coins)
+    public void AddCoins(int coins)
     {
-        int currentCoins = ApiDataHandler.Instance.GetCoins();
+        int currentCoins = this.currentCoins;
         currentCoins += coins;
-        ApiDataHandler.Instance.SetCoins(currentCoins);
+        ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
     }
 
     public float ConvertLbsToKg(float pounds)
