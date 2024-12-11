@@ -7,7 +7,7 @@ public class FirebaseExerciseManager : GenericSingletonClass<FirebaseExerciseMan
 {
     public ExerciseData exerciseData = new ExerciseData();
 
-    public DatabaseReference databaseReference;
+    public DatabaseReference databaseReference { get; private set; }
 
     public void Load()
     {

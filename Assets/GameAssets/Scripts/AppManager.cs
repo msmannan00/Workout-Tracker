@@ -15,12 +15,31 @@ public class AppManager : MonoBehaviour
         //userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
 
-        FirebaseManager.Instance.Load(null);
-        FirebaseExerciseManager.Instance.Load();
+        FirebaseManager.Instance.Load(OpenScreen);
+        //FirebaseExerciseManager.Instance.Load();
         //DataManager.Instance.loadData();
 
         //ApiDataHandler.Instance.loadData();
 
+
+        //if (FirebaseManager.Instance.user == null)
+        //{
+        //    StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
+        //}
+        //else
+        //{
+        //    Dictionary<string, object> mData = new Dictionary<string, object>
+        //    {
+        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+        //    };
+        //    StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+        //}
+
+        
+
+    }
+    public void OpenScreen()
+    {
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))
         {
             StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
@@ -33,7 +52,6 @@ public class AppManager : MonoBehaviour
             };
             StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
         }
-
     }
 
 }

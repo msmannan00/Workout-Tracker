@@ -76,198 +76,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         this.mProfileUsername = null;
         this.mProfileID = null;
     }
-
-    // Sets the current week's attendance dates
-    //public void AddGymVisit()
-    //{
-    //    // Store gym visit with the current date
-    //    string visitKey = "GymVisit_" + ApiDataHandler.Instance.GetCurrentWeekStartDate().ToString("yyyy-MM-dd");
-    //    // Get the stored visit dates for the current week
-    //    List<string> visits = PreferenceManager.Instance.GetStringList(visitKey) ?? new List<string>();
-    //    // Get today's date in string format
-    //    string today = DateTime.Now.ToString("yyyy-MM-dd");
-
-
-    //public void LoadExcerciseData()
-    //{
-    //    if (PreferenceManager.Instance.HasKey("excerciseData"))
-    //    {
-    //        string json = PreferenceManager.Instance.GetString("excerciseData");
-    //        excerciseData = JsonUtility.FromJson<ExcerciseData>(json);
-    //        //print(json);
-    //    }
-    //    else
-    //    {
-    //        excerciseData = new ExcerciseData();
-    //        CreateRandomDefaultEntry();
-    //    }
-    //}
-
-    //public void CreateRandomDefaultEntry()
-    //{
-    //    ExerciseTypeModel back1 = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Deadlift (Barbell)",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel back2 = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Seated Row (Cable)",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    }; 
-    //    ExerciseTypeModel chest = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bench Press (Barbell)",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel running = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Running",
-    //        exerciseType = ExerciseType.TimeAndMiles,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel jumpRope = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Jump Rope",
-    //        exerciseType = ExerciseType.RepsOnly,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel spiderCurls = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Spider Curls",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel bicepCulDumbbell = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bicep Curl (Dumbbell)",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseTypeModel bicepCurlMachine = new ExerciseTypeModel
-    //    {
-    //        index = 0,
-    //        name = "Bicep Curl (Machine)",
-    //        exerciseType = ExerciseType.WeightAndReps,
-    //        exerciseModel = new List<ExerciseModel>()
-    //    };
-    //    ExerciseModel defaultExerciseModel1 = new ExerciseModel
-    //    {
-    //        setID = 1,
-    //        previous = "-",
-    //        weight = 0,
-    //        rir = 0,
-    //        reps = 0
-    //    };
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back1.exerciseModel.Add(defaultExerciseModel1);
-    //    back2.exerciseModel.Add(defaultExerciseModel1);
-    //    chest.exerciseModel.Add(defaultExerciseModel1);
-    //    running.exerciseModel.Add(defaultExerciseModel1);
-    //    running.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    jumpRope.exerciseModel.Add(defaultExerciseModel1);
-    //    spiderCurls.exerciseModel.Add(defaultExerciseModel1);
-    //    spiderCurls.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCulDumbbell.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
-    //    bicepCurlMachine.exerciseModel.Add(defaultExerciseModel1);
-
-
-    //    DefaultTempleteModel chestAndBack = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Chest And Back",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { back1, back2, chest }
-    //    };
-    //    DefaultTempleteModel runingAndJumpRope = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Runing And Jump Rope",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { running, jumpRope }
-    //    };
-    //    DefaultTempleteModel bicep = new DefaultTempleteModel
-    //    {
-    //        templeteName = "Biceps",
-    //        exerciseTemplete = new List<ExerciseTypeModel> { bicepCulDumbbell, bicepCulDumbbell, spiderCurls }
-    //    };
-    //    excerciseData.exerciseTemplete.Clear();
-    //    excerciseData.exerciseTemplete.Add(chestAndBack);
-    //    excerciseData.exerciseTemplete.Add(runingAndJumpRope);
-    //    excerciseData.exerciseTemplete.Add(bicep);
-
-    //    // Add today's date if it's not already recorded
-    //    if (!visits.Contains(today))
-    //    {
-    //        visits.Add(today);
-    //        PreferenceManager.Instance.SetStringList(visitKey, visits);
-    //    }
-    //    UpdateStreak();
-        
-    //}
-    //public bool HasMetWeeklyGoal()
-    //{
-    //    // Get weekly goal
-    //    int weeklyGoal = ApiDataHandler.Instance.GetWeeklyGoal();
-
-    //    // Get the current week's attendance
-    //    string visitKey = "GymVisit_" + ApiDataHandler.Instance.GetCurrentWeekStartDate().ToString("yyyy-MM-dd");
-    //    List<string> visits = PreferenceManager.Instance.GetStringList(visitKey) ?? new List<string>();
-
-    //    // Check if the user has met their weekly goal
-    //    return visits.Count >= weeklyGoal;
-    //}
-    //public void UpdateStreak()
-    //{
-    //    // Check and update the current week's start date if needed
-    //    ApiDataHandler.Instance.CheckAndUpdateWeekStartDate();
-
-    //    // Get the stored week start date and the current week start date
-    //    DateTime lastWeekStartDate = ApiDataHandler.Instance.GetCurrentWeekStartDate();
-    //    DateTime currentWeekStartDate = ApiDataHandler.Instance.GetStartOfCurrentWeek();
-
-    //    // Check if it's a new week
-    //    if (currentWeekStartDate > lastWeekStartDate)
-    //    {
-    //        int level = ApiDataHandler.Instance.GetCharacterLevel();
-    //        // If the user met the weekly goal, increase the streak
-    //        if (HasMetWeeklyGoal())
-    //        {
-    //            int currentStreak = ApiDataHandler.Instance.GetUserStreak();
-    //            ApiDataHandler.Instance.SetUserStreak(currentStreak + 1);
-    //            level++;
-    //            ApiDataHandler.Instance.SetCharacterLevel(level);
-    //        }
-    //        else
-    //        {
-    //            // Reset streak if the user failed to meet the weekly goal
-    //            ApiDataHandler.Instance.SetUserStreak(0);
-    //            if (level > 1)
-    //            {
-    //                level--;
-    //                ApiDataHandler.Instance.SetCharacterLevel(level);
-    //            }
-    //        }
-    //        // Update the date when the weekly goal was last set
-    //        ApiDataHandler.Instance.SetCurrentWeekStartDate(currentWeekStartDate);
-    //    }
-    //}
-
-
-
-
-
     public void CheckAchievementStatus(List<Image> trophyImages=null, TextMeshProUGUI progressText=null, TextMeshProUGUI descriptionText = null, TextMeshProUGUI coinText=null)
     {
         foreach(AchievementTemplate _data in ApiDataHandler.Instance.getAchievementData().achievements)
@@ -330,7 +138,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     break;
             }
         }
-        ApiDataHandler.Instance.SaveAchievementData();
+        //ApiDataHandler.Instance.SaveAchievementData();
         
     }
     
@@ -395,7 +203,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 break;
         }
      
-        ApiDataHandler.Instance.SaveAchievementData();
+        //ApiDataHandler.Instance.SaveAchievementData();
 
     }
 

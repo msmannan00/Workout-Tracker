@@ -49,5 +49,6 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
         }
         ApiDataHandler.Instance.SavePersonalBestData();
         userSessionManager.Instance.CheckAchievementStatus();
+        //ApiDataHandler.Instance.SaveAchievementData();
     }
 }

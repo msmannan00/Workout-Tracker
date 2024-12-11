@@ -1,14 +1,17 @@
 using System;
+using System.Collections.Generic;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 
 public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
     public  FirebaseAuth auth;
-    private FirebaseUser user;
+    public FirebaseUser user;
     public DependencyStatus dependencyStatus=DependencyStatus.UnavilableMissing;
+    public DatabaseReference databaseReference { get; private set; }
     public bool firebaseInitialized;
 
     private void Start()
@@ -27,8 +30,14 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
                 // Firebase is ready
                 dependencyStatus = DependencyStatus.Available;
                 auth = FirebaseAuth.DefaultInstance;
-                print(task.Result);
+                databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
                 firebaseInitialized = true;
+                user = auth.CurrentUser;
+                if (user != null)
+                {
+                    // User is logged in, proceed to the main screen or home
+                    Debug.Log("User is logged in: " + user.UserId);
+                }
                 onFirebaseInitialized?.Invoke();
             }
             else
@@ -38,6 +47,20 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             if (auth == null)
                 print("null");
         });
+        //if (user == null)
+        //{
+        //    print(true);
+        //    StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
+        //}
+        //else
+        //{
+        //    print(false);
+        //    Dictionary<string, object> mData = new Dictionary<string, object>
+        //    {
+        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+        //    };
+        //    StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+        //}
     }
 
     public void OnSaveUser(string email, string password)
@@ -71,7 +94,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             {
                 print("else");
                 user = task.Result.User;
-                OnSaveUser(email, password);
+                //OnSaveUser(email, password);
                 string username = HelperMethods.Instance.ExtractUsernameFromEmail(email);
                 string userId = user.UserId;
                 print(username + "  " + userId);
@@ -100,7 +123,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             {
                 print("create");
                 user = task.Result.User;
-                OnSaveUser(email, password);
+                //OnSaveUser(email, password);
                 pCallbackSuccess.Invoke();
             }
         });
@@ -159,6 +182,86 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             onFailure(new AggregateException(new Exception("No user signed in.")));
         }
     }
+    public void CheckIfLocationExists(string path, System.Action<bool> callback)
+    {
+        databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            bool exists = task.IsCompleted && task.Result.Exists;
+            callback(exists);  // Call the callback with true or false
+        });
+    }
+    //public void SaveDataToFirebase(string path, object value)
+    //{
+    //    print("saving...");
+    //    databaseReference.Child(path).SetValueAsync(value).ContinueWithOnMainThread(task =>
+    //    {
+    //        if (task.IsCompleted)
+    //        {
+    //            Debug.Log("Data saved successfully at: " + path);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to save data at: " + path);
+    //        }
+    //    });
+    //}
+    public void GetDataFromFirebase(string path, System.Action<DataSnapshot> callback)
+    {
+        databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+
+                if (snapshot.Exists)
+                {
+                    // If data exists at the path, pass it to the callback
+                    callback(snapshot);
+                }
+                else
+                {
+                    // If no data exists at the path
+                    print("No data exist"+" "+path);
+                }
+            }
+            else
+            {
+                //callback("Error: " + task.Exception?.Message);
+                print("error"+task.Exception?.Message);
+            }
+        });
+    }
+    public void CheckUserUsername()
+    {
+        string userID = auth.CurrentUser.UserId;
+
+        // Check if the user already has a username stored
+        FirebaseDatabase.DefaultInstance.GetReference("users")
+            .Child(userID)
+            .Child("username")
+            .GetValueAsync().ContinueWithOnMainThread(task =>
+            {
+                if (task.Exception != null)
+                {
+                    Debug.LogError("Error retrieving username: " + task.Exception);
+                    return;
+                }
+
+                if (task.Result.Value != null)
+                {
+                    string username = task.Result.Value.ToString();
+                    Debug.Log("User's username: " + username);
+                }
+                else
+                {
+                    Debug.Log("User has not set a username yet.");
+                    // Optionally prompt the user to set their username
+                }
+            });
+    }
+
+
+    
 
     public void OnServerInitialized()
     {

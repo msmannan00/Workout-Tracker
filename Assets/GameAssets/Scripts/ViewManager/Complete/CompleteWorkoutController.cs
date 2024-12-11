@@ -77,6 +77,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
         AudioController.Instance.OnComplete();
         particleComplete.Play();
         userSessionManager.Instance.CheckAchievementStatus();
+        //ApiDataHandler.Instance.SaveAchievementData();
     }
     private void Update()
     {

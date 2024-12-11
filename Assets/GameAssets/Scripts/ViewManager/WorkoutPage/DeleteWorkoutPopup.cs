@@ -9,12 +9,14 @@ public class DeleteWorkoutPopup : MonoBehaviour, IPrefabInitializer
     public Button yesButton, noButton, fade;
     private GameObject workoutScreen;
     private DefaultTempleteModel templeteModel;
+    int index;
     Action<List<object>> callback;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
     {
         callback = onFinish;
         workoutScreen = (GameObject)data[0];
         templeteModel = (DefaultTempleteModel)data[1];
+        index = (int)data[2];
     }
     private void Start()
     {
@@ -28,6 +30,7 @@ public class DeleteWorkoutPopup : MonoBehaviour, IPrefabInitializer
     {
         ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Remove(templeteModel);
         ApiDataHandler.Instance.SaveTemplateData();
+        //ApiDataHandler.Instance.DeleteExerciseTemplate(index);
         PopupController.Instance.ClosePopup("DeleteWorkoutPopup");
         StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
         StateManager.Instance.OpenFooter(null, null, false);

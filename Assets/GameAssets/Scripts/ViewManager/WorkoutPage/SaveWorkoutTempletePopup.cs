@@ -12,6 +12,7 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
     private GameObject workoutScreen;
     private DefaultTempleteModel templeteModel;
     Action<List<object>> callback;
+    public int index;
     bool isContinueButton;
     bool isEdit;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
@@ -22,6 +23,7 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
         isEdit = (bool)data[2];
         isContinueButton = (bool)data[3];
         statementText.text = (string)data[4];
+        index=(int)data[5];
         if (isContinueButton)
         {
             continueButton.gameObject.SetActive(true);
@@ -49,10 +51,12 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
     {
         List<object> obj = new List<object>();
         obj.Add(templeteModel.exerciseTemplete);
+        templeteModel.exerciseTemplete.RemoveAll(model => model.exerciseModel.Count == 0);
         if (isEdit)
         {
             callback?.Invoke(obj);
-            ApiDataHandler.Instance.SaveTemplateData();
+            //ApiDataHandler.Instance.SaveTemplateData();
+            ApiDataHandler.Instance.ReplaceExerciseTemplate(templeteModel,index);
             PopupController.Instance.ClosePopup("SaveWorkoutTempletePopup");
             StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);
@@ -64,7 +68,7 @@ public class SaveWorkoutTempletePopup : MonoBehaviour, IPrefabInitializer
             createdWorkoutCount++;
             ApiDataHandler.Instance.SetCreatedWorkoutTempleteCount(createdWorkoutCount);
             ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Add(templeteModel);
-            ApiDataHandler.Instance.SaveTemplateData();
+            ApiDataHandler.Instance.AddExerciseTemplate(templeteModel,index);
             PopupController.Instance.ClosePopup("SaveWorkoutTempletePopup");
             StateManager.Instance.OpenStaticScreen("dashboard", workoutScreen, "dashboardScreen", null);
             StateManager.Instance.OpenFooter(null, null, false);

@@ -50,15 +50,16 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
     {
         if (historyData.exerciseTypeModel.Count > 0)
         {
+            ApiDataHandler.Instance.SaveHistory(historyData,ApiDataHandler.Instance.getHistoryData().exerciseTempleteModel.Count);
             ApiDataHandler.Instance.AddItemToHistoryData(historyData);
-            ApiDataHandler.Instance.SaveHistory();
         }
         if (isTemplateCreator)
         {
+            modifiedModel.exerciseTemplete.RemoveAll(model => model.exerciseModel.Count == 0);
             if (modifiedModel.exerciseTemplete.Count > 0)
             {
+                ApiDataHandler.Instance.AddExerciseTemplate(modifiedModel,ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Count);
                 ApiDataHandler.Instance.AddItemToTemplateData(modifiedModel);
-                ApiDataHandler.Instance.SaveTemplateData();
             }
         }
         StreakAndCharacterManager.Instance.AddVisit(DateTime.Now.ToString("yyyy-MM-dd"));

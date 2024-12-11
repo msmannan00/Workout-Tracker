@@ -5,25 +5,30 @@ using System.Collections.Generic;
 using System;
 using System.Data;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using Firebase.Database;
+using static UnityEditor.Progress;
+using System.Reflection;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
     [SerializeField]
-    private ExerciseData exerciseData = new ExerciseData();
+    private ExerciseData exerciseData = new ExerciseData(); // firebase
     [SerializeField]
-    private AchievementData achievementData = new AchievementData();
+    private AchievementData achievementData = new AchievementData();    //firebase
     [SerializeField]
     private PersonalBestData personalBestData = new PersonalBestData();
     [SerializeField]
-    private TemplateData templateData = new TemplateData();
+    private TemplateData templateData = new TemplateData(); //firebase
     [SerializeField]
-    private HistoryModel historyData = new HistoryModel();
+    private HistoryModel historyData = new HistoryModel();  //firebase
     [SerializeField]
-    private MeasurementModel measurementData = new MeasurementModel();
+    private MeasurementModel measurementData = new MeasurementModel();  //firebase
     [SerializeField]
-    private MeasurementHistory measurementHistory = new MeasurementHistory();
+    private MeasurementHistory measurementHistory = new MeasurementHistory();   //firebase
     [SerializeField]
-    private ExerciseNotesHistory notesHistory = new ExerciseNotesHistory();
+    private ExerciseNotesHistory notesHistory = new ExerciseNotesHistory(); //firebase
+    [SerializeField]
+    public string userName;
 
     [Header("Theme Settings")]
     public Theme gameTheme;
@@ -52,40 +57,152 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     public void SaveTemplateData()
     {
         string json = JsonUtility.ToJson(templateData);
-        print(json);
-        PreferenceManager.Instance.SetString("excerciseData", json);
-        PreferenceManager.Instance.Save();
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
+            .Child("workoutTempletes").SetRawJsonValueAsync(json).ContinueWith(task => {
+                if (task.IsCompleted)
+                {
+                    Debug.Log("workoutTempletes added");
+                }
+                else
+                {
+                    Debug.LogError("Failed to add exercise: " + task.Exception);
+                }
+            });
+    }
+    public void ReplaceExerciseTemplate(DefaultTempleteModel newTemplate, int templateIndex)
+    {
+
+        // Convert the new template to JSON
+        string jsonUpdatedTemplate = JsonUtility.ToJson(newTemplate);
+        // Update the specific template node in Firebase
+        FirebaseManager.Instance.databaseReference.Child("users")
+            .Child(FirebaseManager.Instance.user.UserId).Child("workoutTempletes").Child("exerciseTemplete")
+            .Child(templateIndex.ToString()).SetRawJsonValueAsync(jsonUpdatedTemplate).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    Debug.Log("Workout template replaced successfully.");
+                }
+                else
+                {
+                    Debug.LogError("Failed to replace workout template: " + task.Exception);
+                }
+            });
+    }
+    public void AddExerciseTemplate(DefaultTempleteModel template,int index)
+    {
+        string json = JsonUtility.ToJson(template);
+        FirebaseManager.Instance.databaseReference.Child("users")
+           .Child(FirebaseManager.Instance.user.UserId).Child("workoutTempletes").Child("exerciseTemplete")
+           .Child(index.ToString()).SetRawJsonValueAsync(json).ContinueWith(task =>
+           {
+               if (task.IsCompleted)
+               {
+                   Debug.Log("Workout template added.");
+               }
+               else
+               {
+                   Debug.LogError("Failed to add workout template: " + task.Exception);
+               }
+           });
+    }
+    public void DeleteExerciseTemplate(int templateIndex)
+    {
+        // Reference to the workoutTempletes node in Firebase
+        var reference = FirebaseManager.Instance.databaseReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("workoutTempletes").Child("exerciseTemplete");
+
+        // Remove the template at the specific index in Firebase
+        reference.Child(templateIndex.ToString())  // Use the index as the key
+            .RemoveValueAsync().ContinueWith(task => {
+                if (task.IsCompleted)
+                {
+                    Debug.Log("Workout template deleted successfully.");
+                }
+                else
+                {
+                    Debug.LogError("Failed to delete workout template: " + task.Exception);
+                }
+            });
     }
 
     public void LoadTemplateData()
     {
-        if (PreferenceManager.Instance.HasKey("excerciseData"))
+        FirebaseManager.Instance.CheckIfLocationExists("/users/"+ FirebaseManager.Instance.user.UserId +"/workoutTempletes", result =>
         {
-            string json = PreferenceManager.Instance.GetString("excerciseData");
-            templateData = JsonUtility.FromJson<TemplateData>(json);
-        }
-        else
-        {
-            templateData = new TemplateData();
-            CreateRandomDefaultEntry();
-        }
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId  + "/workoutTempletes", _data =>
+                { 
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        templateData = (TemplateData)LoadData(jsonData, typeof(TemplateData));
+                        print("from firebase");
+                    }
+                });
+               
+                Debug.Log("Data exists at the path.");
+            }
+            else
+            {
+                CreateRandomDefaultEntry();
+
+                Debug.Log("No data found at the path.");
+            }
+        });
+
+        
     }
-    public void LoadNotesHistory()
+
+    public void LoadExercises()
     {
-        if (PreferenceManager.Instance.HasKey("notesHistory"))
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/exercises", result =>
         {
-            string json = PreferenceManager.Instance.GetString("notesHistory");
-            notesHistory = JsonUtility.FromJson<ExerciseNotesHistory>(json);
-        }
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId , _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        exerciseData = (ExerciseData)LoadData(jsonData, typeof(ExerciseData));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+            else
+            {
+                TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
+                string exerciseJson = exerciseJsonFile.text;
+                this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJson);
+                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
+                .SetRawJsonValueAsync(exerciseJson).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log("exercise added.");
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to add exercises: " + task.Exception);
+                    }
+                });
+            }
+        });
+
+
     }
-    public void LoadMeasurementHistory()
+    public object LoadData(string jsonData, Type targetType)
     {
-        if (PreferenceManager.Instance.HasKey("measurementHistory"))
-        {
-            string json = PreferenceManager.Instance.GetString("measurementHistory");
-            measurementHistory = JsonUtility.FromJson<MeasurementHistory>(json);
-        }
+        return JsonUtility.FromJson(jsonData, targetType);
     }
+    
+    
 
     public void CreateRandomDefaultEntry()
     {
@@ -198,65 +315,90 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         templateData.exerciseTemplete.Add(chestAndBack);
         templateData.exerciseTemplete.Add(runingAndJumpRope);
         templateData.exerciseTemplete.Add(bicep);
-
+        print("create templete");
         SaveTemplateData();
     }
-
-    public void SaveHistory()
+    public void LoadMeasurementData()
     {
-        string json = JsonUtility.ToJson(historyData);
-        PreferenceManager.Instance.SetString("historyData", json);
-        PreferenceManager.Instance.Save();
-    }
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        measurementData = (MeasurementModel)LoadData(jsonData, typeof(MeasurementModel));
+                        print("from firebase");
+                    }
+                });
 
+                Debug.Log("Data exists at the path.");
+            }
+
+        });
+    }
+    public void LoadMeasurementHistory()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurementHistory", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/measurementHistory", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        measurementHistory = (MeasurementHistory)LoadData(jsonData, typeof(MeasurementHistory));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+
+        });
+    }
     public void SaveMeasurementData()
     {
         string json = JsonUtility.ToJson(measurementData);
-        PreferenceManager.Instance.SetString("measurementData", json);
-        PreferenceManager.Instance.Save();
+        var path = "/users/" + FirebaseManager.Instance.user.UserId + "/measurements";
+
+        FirebaseManager.Instance.databaseReference.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Workout template added.");
+            }
+            else
+            {
+                Debug.LogError("Failed to add workout template: " + task.Exception);
+            }
+        });
     }
-    public void SaveMeasurementHistory()
+    public void SaveMeasurementHistory(MeasurementHistoryItem item,int index)
     {
-        string json = JsonUtility.ToJson(measurementHistory);
-        PreferenceManager.Instance.SetString("measurementHistory", json);
-        PreferenceManager.Instance.Save();
+        string json = JsonUtility.ToJson(item);
+        var path = "/users/" + FirebaseManager.Instance.user.UserId + "/measurementHistory/measurmentHistory";
+
+        FirebaseManager.Instance.databaseReference.Child(path).Child(index.ToString()).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Workout template added.");
+            }
+            else
+            {
+                Debug.LogError("Failed to add workout template: " + task.Exception);
+            }
+        });
     }
-    public void SaveNotesHistory()
-    {
-        string json = JsonUtility.ToJson(notesHistory);
-        PreferenceManager.Instance.SetString("notesHistory", json);
-        PreferenceManager.Instance.Save();
-    }
+   
     public void SetMeasurementHistory(MeasurementHistoryItem item)
     {
         measurementHistory.measurmentHistory.Add(item);
     }
-    public void LoadHistory()
-    {
-        if (PreferenceManager.Instance.HasKey("historyData"))
-        {
-            string json = PreferenceManager.Instance.GetString("historyData");
-            historyData = JsonUtility.FromJson<HistoryModel>(json);
-        }
-        else
-        {
-            historyData = new HistoryModel();
-        }
-    }
-
-    public void LoadMeasurementData()
-    {
-        if (PreferenceManager.Instance.HasKey("measurementData"))
-        {
-            string json = PreferenceManager.Instance.GetString("measurementData");
-            measurementData = JsonUtility.FromJson<MeasurementModel>(json);
-        }
-        else
-        {
-            measurementData = new MeasurementModel();
-        }
-    }
-
     public MeasurementModel getMeasurementData()
     {
         return measurementData;
@@ -265,9 +407,204 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return measurementHistory;
     }
+    
+    public void LoadHistory()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/workoutHistory", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/workoutHistory", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        historyData = (HistoryModel)LoadData(jsonData, typeof(HistoryModel));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+            
+        });
+    }
+    public void SaveHistory(HistoryTempleteModel item,int index)
+    {
+        string json = JsonUtility.ToJson(item);
+        var path = "/users/" + FirebaseManager.Instance.user.UserId + "/workoutHistory/exerciseTempleteModel";
+
+        FirebaseManager.Instance.databaseReference.Child(path).Child(index.ToString()).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Workout template added.");
+            }
+            else
+            {
+                Debug.LogError("Failed to add workout template: " + task.Exception);
+            }
+        });
+
+
+    }
+    public void LoadNotesHistory()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/exerciseNotes", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/exerciseNotes", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        notesHistory = (ExerciseNotesHistory)LoadData(jsonData, typeof(ExerciseNotesHistory));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+
+        });
+    }
+    public void SaveNotesHistory(ExerciseNotesHistoryItem item, int index)
+    {
+        string json = JsonUtility.ToJson(item);
+        var path = "/users/" + FirebaseManager.Instance.user.UserId + "/exerciseNotes/exercises";
+
+        FirebaseManager.Instance.databaseReference.Child(path).Child(index.ToString()).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Workout template added.");
+            }
+            else
+            {
+                Debug.LogError("Failed to add workout template: " + task.Exception);
+            }
+        });
+    }
     public ExerciseNotesHistory getNotesHistory()
     {
         return notesHistory;
+    }
+    
+    public void LoadAchievements()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        achievementData = (AchievementData)LoadData(jsonData, typeof(AchievementData));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+            else
+            {
+                TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+                string achievementJson = achievementJsonFile.text;
+                this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+
+                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("achievements")
+                .SetRawJsonValueAsync(achievementJson).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log("exercise added.");
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to add exercises: " + task.Exception);
+                    }
+                });
+            }
+
+        });
+    }
+
+    public void SaveAchievementData()
+    {
+        string json = JsonUtility.ToJson(achievementData);
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("achievements")
+               .SetRawJsonValueAsync(json).ContinueWith(task =>
+               {
+                   if (task.IsCompleted)
+                   {
+                       Debug.Log("exercise added.");
+                   }
+                   else
+                   {
+                       Debug.LogError("Failed to add exercises: " + task.Exception);
+                   }
+               });
+    }
+    public void LoadPersonalBest()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/personalBest", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/personalBest", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        personalBestData = (PersonalBestData)LoadData(jsonData, typeof(PersonalBestData));
+                        print("from firebase");
+                    }
+                });
+
+                Debug.Log("Data exists at the path.");
+            }
+            else
+            {
+                TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/personalBest");
+                string achievementJson = achievementJsonFile.text;
+                this.personalBestData = JsonUtility.FromJson<PersonalBestData>(achievementJson);
+
+                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("personalBest")
+                .SetRawJsonValueAsync(achievementJson).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log("exercise added.");
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to add exercises: " + task.Exception);
+                    }
+                });
+            }
+
+        });
+    }
+
+    public void SavePersonalBestData()
+    {
+        string json = JsonUtility.ToJson(personalBestData);
+        var path = "/users/" + FirebaseManager.Instance.user.UserId + "/personalBest";
+
+        FirebaseManager.Instance.databaseReference.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Workout template added.");
+            }
+            else
+            {
+                Debug.LogError("Failed to add workout template: " + task.Exception);
+            }
+        });
     }
 
 
@@ -275,29 +612,14 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void loadData()
     {
-        TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
-        //this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJsonFile.text);
-        string exerciseJson = PreferenceManager.Instance.GetString("exerciseData", exerciseJsonFile.text);
-        this.exerciseData= JsonUtility.FromJson<ExerciseData>(exerciseJson);
-
-        TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
-        //this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJsonFile.text);
-        string achievementJson = PreferenceManager.Instance.GetString("achievementData", achievementJsonFile.text);
-        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
-
-        TextAsset personBestJsonFile = Resources.Load<TextAsset>("data/personalBest");
-        //this.personalBestData = JsonUtility.FromJson<PersonalBestData>(personBestJsonFile.text);
-        string personBestJson = PreferenceManager.Instance.GetString("personBestData", personBestJsonFile.text);
-        this.personalBestData = JsonUtility.FromJson<PersonalBestData>(personBestJson);
-
         LoadHistory();
-
         LoadTemplateData();
-
+        LoadExercises();
         LoadMeasurementData();
         LoadMeasurementHistory();
         LoadNotesHistory();
-
+        LoadAchievements();
+        LoadPersonalBest();
         gameTheme = LoadTheme();
     }
 
@@ -323,36 +645,14 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public void SaveExerciseData(ExerciseDataItem exercise)
     {
-        //this.exerciseData.exercises.Add(exercise);
-        //string json = JsonUtility.ToJson(exerciseData, true);
-        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/exercise.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        //File.WriteAllText(filePath, json);
 
         this.exerciseData.exercises.Add(exercise);
         string json = JsonUtility.ToJson(exerciseData);
         PreferenceManager.Instance.SetString("exerciseData", json);
         PreferenceManager.Instance.Save();
     }
-    public void SaveAchievementData()
-    {
-        //string json = JsonUtility.ToJson(achievementData, true);
-        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/achievement.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        //File.WriteAllText(filePath, json);
-
-        string json = JsonUtility.ToJson(achievementData);
-        PreferenceManager.Instance.SetString("achievementData", json);
-        PreferenceManager.Instance.Save();
-    }
-    public void SavePersonalBestData()
-    {
-        //string json = JsonUtility.ToJson(personalBestData, true);
-        //string filePath = "E:/Git Hub/Workout-Tracker/Assets/Resources/Data/personalBest.json";//Path.Combine(Application.persistentDataPath, "data/exercise");
-        //File.WriteAllText(filePath, json);
-
-        string json = JsonUtility.ToJson(personalBestData);
-        PreferenceManager.Instance.SetString("personBestData", json);
-        PreferenceManager.Instance.Save();
-    }
+    
+   
     public void RemovePersonalBestData(PersonalBestDataItem item)
     {
         personalBestData.exercises.Remove(item);
@@ -404,11 +704,6 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         PreferenceManager.Instance.SetInt("AddFriendCount", count);
     }
 
-    //public void SetWeeklyGoalSetedDate(DateTime date)
-    //{
-    //    string dateInString = date.ToString("MMM dd, yyyy");
-    //    PreferenceManager.Instance.SetString("WeeklyGoalSetedDate", dateInString);
-    //}
     public void AddItemToHistoryData(HistoryTempleteModel item)
     {
         historyData.exerciseTempleteModel.Add(item);
