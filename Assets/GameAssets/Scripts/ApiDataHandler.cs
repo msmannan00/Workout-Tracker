@@ -52,7 +52,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         string json = JsonUtility.ToJson(templateData);
         FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
-            .Child("workoutTempletes").SetRawJsonValueAsync(json).ContinueWith(task => {
+            .Child("workoutTempletes").SetRawJsonValueAsync(json).ContinueWith(task =>
+            {
                 if (task.IsCompleted)
                 {
                     Debug.Log("workoutTempletes added");
@@ -110,7 +111,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
         // Remove the template at the specific index in Firebase
         reference.Child(templateIndex.ToString())  // Use the index as the key
-            .RemoveValueAsync().ContinueWith(task => {
+            .RemoveValueAsync().ContinueWith(task =>
+            {
                 if (task.IsCompleted)
                 {
                     Debug.Log("Workout template deleted successfully.");
@@ -124,12 +126,12 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadTemplateData()
     {
-        FirebaseManager.Instance.CheckIfLocationExists("/users/"+ FirebaseManager.Instance.user.UserId +"/workoutTempletes", result =>
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/workoutTempletes", result =>
         {
             if (result)
             {
-                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId  + "/workoutTempletes", _data =>
-                { 
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/workoutTempletes", _data =>
+                {
                     if (_data != null)
                     {
                         string jsonData = _data.GetRawJsonValue();
@@ -137,7 +139,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                         print("from firebase");
                     }
                 });
-               
+
                 Debug.Log("Data exists at the path.");
             }
             else
@@ -148,7 +150,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             }
         });
 
-        
+
     }
 
     public void LoadExercises()
@@ -157,7 +159,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             if (result)
             {
-                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId , _data =>
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId, _data =>
                 {
                     if (_data != null)
                     {
@@ -439,7 +441,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
                 Debug.Log("Data exists at the path.");
             }
-            
+
         });
     }
     public void SaveHistory(HistoryTempleteModel item,int index)
@@ -671,7 +673,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public void SetJoiningDate(DateTime date)
     {
-        string dateInString= date.ToString("MMM / yyyy");
+        string dateInString = date.ToString("MMM / yyyy");
         FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("joiningDate")
             .SetValueAsync(dateInString).ContinueWith(task =>
             {
@@ -709,7 +711,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadCoins()
     {
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/coins", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/coins", result =>
+        {
             print(result);
             if (result)
             {
@@ -748,7 +751,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public void LoadUserStreak()
     {
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/streak", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/streak", result =>
+        {
             print(result);
             if (result)
             {
@@ -777,7 +781,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     if (task.IsCompleted)
                     {
                         userSessionManager.Instance.currentCoins = streak;
-                        Debug.Log("coin seted: " + streak);
+                        Debug.Log("streak seted: " + streak);
                     }
                     else
                     {

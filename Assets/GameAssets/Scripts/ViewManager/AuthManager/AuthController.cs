@@ -74,7 +74,6 @@ public class AuthController : MonoBehaviour, PageController
         aUsername.text = "";
         GoogleAuth = new GoogleAuth();
         GoogleAuth.TryResume(OnSignIn, OnGetAccessToken);
-        //FacebookAuth = new FacebookAuth();
         onVerifyFirstLogin();
     }
     public void Start()
@@ -211,36 +210,14 @@ public class AuthController : MonoBehaviour, PageController
         bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
         GlobalAnimator.Instance.FadeInLoader();
         CheckUserNameSet();
+
         
-        //if (!mFirsTimePlanInitialized)
-        //{
-        //    print("if");
-        //    FirebaseManager.Instance.GetDataFromFirebase("/users/"+FirebaseManager.Instance.user.UserId + "/username", data =>
-        //    {
-        //        if (data.Exists)  // Ensure that data exists
-        //        {
-        //            string username = data.Value.ToString();  // Directly get the value as string
-        //            userSessionManager.Instance.mProfileUsername = username;
-        //            Debug.Log("Username retrieved: " + username);
-        //        }
-        //    });
-        //    GlobalAnimator.Instance.FadeOutLoader();
-        //    Dictionary<string, object> mData = new Dictionary<string, object>
-        //    {
-        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-        //    };
-        //    StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-        //}
-        //else
-        //{
-        //    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-        //    StateManager.Instance.OpenStaticScreen("userName", gameObject, "userNameScreen", mData);
-        //}
     }
     public void CheckUserNameSet()
     {
         print("check userName");
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result =>
+        {
             print(result);
             if (result)
             {
@@ -264,10 +241,11 @@ public class AuthController : MonoBehaviour, PageController
             }
         });
     }
-   public void CheckWeeklyGoalSet()
+    public void CheckWeeklyGoalSet()
     {
         print("check weeklygoal");
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", result =>
+        {
             if (result)
             {
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", data =>
@@ -295,7 +273,8 @@ public class AuthController : MonoBehaviour, PageController
     public void CheckWeightSet()
     {
         print("check weight");
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", result =>
+        {
             if (result)
             {
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/measurements/weight", data =>
@@ -320,7 +299,8 @@ public class AuthController : MonoBehaviour, PageController
     public void CheckJoingDateSet()
     {
         print("check joining date");
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", result => {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", result =>
+        {
             if (result)
             {
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", data =>

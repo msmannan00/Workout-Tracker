@@ -36,7 +36,7 @@ public class UserNameController : MonoBehaviour, PageController
 
     private IEnumerator CheckUsernameExists(string username,string userID)
     {
-        // Reference to the 'usernames' node in Firebase Realtime Database
+        yield return null;
         var usernameRef = FirebaseDatabase.DefaultInstance.GetReference("usernames");
 
         // Check if the username exists in the database
@@ -54,7 +54,7 @@ public class UserNameController : MonoBehaviour, PageController
         if (!checkUserTask.Result.Exists)
         {
             // Store the username in the database
-            StoreUsername(username,userID);
+            StoreUsername(username, userID);
         }
         else
         {

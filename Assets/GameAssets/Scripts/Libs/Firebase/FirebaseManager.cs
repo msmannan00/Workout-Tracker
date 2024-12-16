@@ -8,9 +8,9 @@ using UnityEngine;
 
 public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
-    public  FirebaseAuth auth;
+    public FirebaseAuth auth;
     public FirebaseUser user;
-    public DependencyStatus dependencyStatus=DependencyStatus.UnavilableMissing;
+    public DependencyStatus dependencyStatus = DependencyStatus.UnavilableMissing;
     public DatabaseReference databaseReference { get; private set; }
     public bool firebaseInitialized;
 
@@ -47,20 +47,6 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             if (auth == null)
                 print("null");
         });
-        //if (user == null)
-        //{
-        //    print(true);
-        //    StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
-        //}
-        //else
-        //{
-        //    print(false);
-        //    Dictionary<string, object> mData = new Dictionary<string, object>
-        //    {
-        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
-        //    };
-        //    StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
-        //}
     }
 
     public void OnSaveUser(string email, string password)
@@ -84,7 +70,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
         {
             print("in");
-            
+
             if (task.IsCanceled || task.IsFaulted)
             {
                 print("if");
@@ -138,57 +124,55 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 
     public void OnLogoutForced()
     {
-        auth.SignOut();
-        PlayerPrefs.DeleteKey("email");
-        PlayerPrefs.DeleteKey("password");
+        //auth.SignOut();
+        //PlayerPrefs.DeleteKey("email");
+        //PlayerPrefs.DeleteKey("password");
     }
 
     public void InitiatePasswordRecovery(string email, Action onSuccess, Action<AggregateException> onFailure)
     {
-        auth.SendPasswordResetEmailAsync(email).ContinueWith(task =>
-        {
-            if (task.IsCanceled || task.IsFaulted)
-            {
-                onFailure(task.Exception);
-            }
-            else
-            {
-                Debug.Log("Password reset email sent successfully.");
-                onSuccess();
-            }
-        });
+        //auth.SendPasswordResetEmailAsync(email).ContinueWith(task =>
+        //{
+        //    if (task.IsCanceled || task.IsFaulted)
+        //    {
+        //        onFailure(task.Exception);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Password reset email sent successfully.");
+        //        onSuccess();
+        //    }
+        //});
     }
 
     public void InitiateAccountDeletion(Action onSuccess, Action<AggregateException> onFailure)
     {
-        if (user != null)
-        {
-            user.DeleteAsync().ContinueWith(task =>
-            {
-                if (task.IsCanceled || task.IsFaulted)
-                {
-                    onFailure(task.Exception);
-                }
-                else
-                {
-                    Debug.Log("Account deleted successfully.");
-                    onSuccess();
-                }
-            });
-        }
-        else
-        {
-            Debug.LogError("No user is signed in.");
-            onFailure(new AggregateException(new Exception("No user signed in.")));
-        }
+        //if (user != null)
+        //{
+        //    user.DeleteAsync().ContinueWith(task =>
+        //    {
+        //        if (task.IsCanceled || task.IsFaulted)
+        //        {
+        //            onFailure(task.Exception);
+        //        }
+        //        else
+        //        {
+        //            Debug.Log("Account deleted successfully.");
+        //            onSuccess();
+        //        }
+        //    });
+        //}
+        //else
+        //{
+        //    Debug.LogError("No user is signed in.");
+        //    onFailure(new AggregateException(new Exception("No user signed in.")));
+        //}
     }
     public void CheckIfLocationExists(string path, System.Action<bool> callback)
     {
         databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompleted)
-                print("complete");
-            bool exists = task.IsCompleted && task.Result.Exists;
+            bool exists = task.IsCompleted /*&& task.Result.Exists*/;
             callback(exists);  // Call the callback with true or false
             return exists;
         });
@@ -208,63 +192,50 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     //        }
     //    });
     //}
-    public void GetDataFromFirebase(string path, System.Action<DataSnapshot> callback)
+    public async void GetDataFromFirebase(string path, System.Action<DataSnapshot> callback)
     {
-        databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        try
         {
-            if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
+            DataSnapshot snapshot = await databaseReference.Child(path).GetValueAsync();
 
-                if (snapshot.Exists)
-                {
-                    // If data exists at the path, pass it to the callback
-                    callback(snapshot);
-                }
-                else
-                {
-                    // If no data exists at the path
-                    print("No data exist"+" "+path);
-                }
+            if (snapshot.Exists)
+            {
+                // Update Unity-related elements here
+                callback(snapshot);
             }
             else
             {
-                //callback("Error: " + task.Exception?.Message);
-                print("error"+task.Exception?.Message);
+                print("No data exist at path: " + path);
             }
-        });
+        }
+        catch (System.Exception ex)
+        {
+            print("Error: " + ex.Message);
+        }
+        //databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        //{
+        //    if (task.IsCompleted)
+        //    {
+        //        DataSnapshot snapshot = task.Result;
+
+        //        if (snapshot.Exists)
+        //        {
+        //            // If data exists at the path, pass it to the callback
+        //            callback(snapshot);
+        //        }
+        //        else
+        //        {
+        //            // If no data exists at the path
+        //            print("No data exist"+" "+path);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //callback("Error: " + task.Exception?.Message);
+        //        print("error"+task.Exception?.Message);
+        //    }
+        //});
     }
-    public void CheckUserUsername()
-    {
-        string userID = auth.CurrentUser.UserId;
-
-        // Check if the user already has a username stored
-        FirebaseDatabase.DefaultInstance.GetReference("users")
-            .Child(userID)
-            .Child("username")
-            .GetValueAsync().ContinueWithOnMainThread(task =>
-            {
-                if (task.Exception != null)
-                {
-                    Debug.LogError("Error retrieving username: " + task.Exception);
-                    return;
-                }
-
-                if (task.Result.Value != null)
-                {
-                    string username = task.Result.Value.ToString();
-                    Debug.Log("User's username: " + username);
-                }
-                else
-                {
-                    Debug.Log("User has not set a username yet.");
-                    // Optionally prompt the user to set their username
-                }
-            });
-    }
-
-
-    
 
     public void OnServerInitialized()
     {

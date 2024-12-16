@@ -181,7 +181,7 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
-        ApiDataHandler.Instance.LoadMeasurementData();
+        //ApiDataHandler.Instance.LoadMeasurementData();
     }
 
 }
