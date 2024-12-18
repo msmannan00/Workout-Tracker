@@ -82,14 +82,14 @@ public class DynamicHorizontalLayout : MonoBehaviour
             if (i == index)
             {
                 FindAnyObjectByType<BadgeController>().SetBadge(image.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
-                image.color = new Color32(255, 171, 0, 255);
+                //image.color = new Color32(255, 171, 0, 255);
                 //UpdateWeightData(textComponent.text);
                 image.transform.GetChild(0).gameObject.SetActive(true);
                 image.transform.GetChild(1).gameObject.SetActive(true);
             }
             else /*if (i == index - 1 || i == index + 1)*/
             {
-                image.color = new Color32(231, 214, 169, 255);
+                //image.color = new Color32(231, 214, 169, 255);
                 image.transform.GetChild(0).gameObject.SetActive(false);
                 image.transform.GetChild(1).gameObject.SetActive(false);
             }

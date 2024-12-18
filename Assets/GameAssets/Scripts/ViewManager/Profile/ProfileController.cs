@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class ProfileController : MonoBehaviour,PageController
 {
+    public TextMeshProUGUI userNameText;
     public TextMeshProUGUI streakText;
     public TextMeshProUGUI achievementText;
     public TextMeshProUGUI joinedText;
@@ -22,12 +23,13 @@ public class ProfileController : MonoBehaviour,PageController
     }
     private void Start()
     {
-        
 
+        userNameText.text = userSessionManager.Instance.mProfileUsername;
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
         joinedText.text = userSessionManager.Instance.joiningDate.ToString();
 
         settingButton.onClick.AddListener(Settings);
+        streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
     }
     private void OnEnable()
     {
@@ -79,5 +81,9 @@ public class ProfileController : MonoBehaviour,PageController
         }
 
         
+    }
+    public void OpenStreakDetail()
+    {
+        PopupController.Instance.OpenPopup("profile","levelDetailPopup",null,null);
     }
 }

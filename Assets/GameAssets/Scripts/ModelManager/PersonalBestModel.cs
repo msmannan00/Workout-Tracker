@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-[System.Serializable]
+[Serializable]
 public class PersonalBestDataItem
 {
     public string exerciseName;
@@ -9,7 +9,7 @@ public class PersonalBestDataItem
     public int rep;
 }
 
-[System.Serializable]
+[Serializable]
 public class PersonalBestData
 {
     public List<PersonalBestDataItem> exercises = new List<PersonalBestDataItem>();

@@ -118,7 +118,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                             previous.text = exerciseHistory.weight.ToString() + "kg " + "x " + exerciseHistory.reps.ToString("F1") + " @ " + exerciseHistory.rir;
                             break;
                         case WeightUnit.lbs:
-                            previous.text = (userSessionManager.Instance.ConvertKgToLbs(exerciseHistory.weight)).ToString() + "lbs " + "x " + exerciseHistory.reps.ToString("F1") + " @ " + exerciseHistory.rir;
+                            previous.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(exerciseHistory.weight)).ToString() + "lbs " + "x " + exerciseHistory.reps.ToString("F1") + " @ " + exerciseHistory.rir;
                             break;
                     }
                     
@@ -262,7 +262,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnWeightChanged(string newWeight)
     {
-        if (int.TryParse(newWeight, out int weightValue))
+        if (float.TryParse(newWeight, out float weightValue))
         {
             exerciseModel.weight = weightValue;
         }
@@ -275,7 +275,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
 
     private void OnREPSChanged(string newLbs)
     {
-        if (int.TryParse(newLbs, out int lbsValue))
+        if (float.TryParse(newLbs, out float lbsValue))
         {
             exerciseModel.reps = lbsValue;
         }

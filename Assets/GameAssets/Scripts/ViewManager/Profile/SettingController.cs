@@ -152,6 +152,11 @@ public class SettingController : MonoBehaviour, PageController
 
 
     }
+    public void RPE_RIR_Popup()
+    {
+        back = false;
+        PopupController.Instance.OpenPopup("profile", "RPE_RIR_Popup", OnBackCheck, null);
+    }
     public void LogOut()
     {
         FirebaseManager.Instance.OnLogout();
@@ -160,6 +165,14 @@ public class SettingController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
         StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+    }
+    public void TermsAndConditions()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "TermsAndConditions", null, true);
+    }
+    public void PrivacyPolicy()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "PrivacyPolicy", null, true);
     }
     IEnumerator OffMessageText(float time)
     {

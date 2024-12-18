@@ -11,7 +11,7 @@ public class CharacterController : MonoBehaviour,PageController
     public Button shopButton, emotesButton, achievementButton;
     public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
-        
+        levelText.GetComponent<Button>().onClick.AddListener(LevelDetailPopup);
     }
     private void Start()
     {
@@ -46,5 +46,9 @@ public class CharacterController : MonoBehaviour,PageController
         };
         StateManager.Instance.OpenStaticScreen("character", gameObject, "achievementScreen", mData, true);
         StateManager.Instance.CloseFooter();
+    }
+    public void LevelDetailPopup()
+    {
+        PopupController.Instance.OpenPopup("character", "levelDetailPopup", null, null);
     }
 }

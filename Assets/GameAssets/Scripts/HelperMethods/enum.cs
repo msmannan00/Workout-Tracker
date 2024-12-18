@@ -72,3 +72,7 @@ public enum SwipeToDeleteItem
     WorkoutLogDataModel=2,
     PersonBestSubItem=3
 }
+public enum ShopItemType
+{
+    Cloths=1
+}

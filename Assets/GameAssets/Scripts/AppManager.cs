@@ -16,27 +16,13 @@ public class AppManager : MonoBehaviour
         Application.targetFrameRate = 60;
 
         FirebaseManager.Instance.Load(OpenScreen);
-        //FirebaseExerciseManager.Instance.Load();
-        //DataManager.Instance.loadData();
-
-        //ApiDataHandler.Instance.loadData();
-
-
-        //if (FirebaseManager.Instance.user == null)
+        //List<string> gifPaths = new List<string>
         //{
-        //    StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
-        //}
-        //else
-        //{
-        //    Dictionary<string, object> mData = new Dictionary<string, object>
-        //    {
-        //        { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
-        //    };
-        //    StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
-        //}
+        //    Application.dataPath + "/Resources/UIAssets/character/gifs"//,
+        //    //Application.dataPath + "/Gifs/Path2"
+        //};
 
-        
-
+        //GifManager.Instance.LoadGifsFromPaths(gifPaths);
     }
     public void OpenScreen()
     {

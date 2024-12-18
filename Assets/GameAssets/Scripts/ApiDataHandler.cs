@@ -22,6 +22,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     [SerializeField]
     private ExerciseNotesHistory notesHistory = new ExerciseNotesHistory(); //firebase
     [SerializeField]
+    private ShopModel shopData = new ShopModel(); 
+    [SerializeField]
     private string userName;
 
     [Header("Theme Settings")]
