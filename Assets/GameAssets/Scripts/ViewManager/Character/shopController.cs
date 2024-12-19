@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class shopController : MonoBehaviour, PageController
 {
     public TMP_InputField searchBar;
+    public TextMeshProUGUI messageText;
     public Button backButton;
     public GameObject[] items;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -19,7 +20,7 @@ public class shopController : MonoBehaviour, PageController
     {
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         searchBar.onValueChanged.AddListener(SearchItems);
-        ShopModel shopModel = new ShopModel();
+        ShopModel shopModel = ApiDataHandler.Instance.getShopData();
         foreach(GameObject item in items)
         {
             TextMeshProUGUI priceText = item.transform.Find("price text").GetComponent<TextMeshProUGUI>();
@@ -33,6 +34,7 @@ public class shopController : MonoBehaviour, PageController
             {
                 priceText.text=itemData.price.ToString();
             }
+            item.GetComponent<Button>().onClick.AddListener(() => BuyItemButton(itemData, priceText,nameText));
         }
     }
     private void Update()
@@ -42,9 +44,40 @@ public class shopController : MonoBehaviour, PageController
             Back();
         }
     }
-    public void BuyItemButton(bool buyed)
+    public void BuyItemButton(ShopItem shopItem,TextMeshProUGUI priceText,TextMeshProUGUI nameText)
     {
+        if (shopItem.buyed)
+        {
+            ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+            GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text+" Selected", 2);
+        }
+        else
+        {
+            if (userSessionManager.Instance.currentCoins >= shopItem.price)
+            {
+                //GlobalAnimator.Instance.FadeInLoader();
+                int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
+                ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
+                GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
+                SuccessfullyBuy(shopItem,priceText,nameText);
 
+            }
+            else
+            {
+                // insufficient coins
+                GlobalAnimator.Instance.ShowTextMessage(messageText, "Insufficient coins", 2);
+            }
+        }
+    }
+    public void SuccessfullyBuy(ShopItem shopItem, TextMeshProUGUI priceText, TextMeshProUGUI nameText)
+    {
+        //GlobalAnimator.Instance.FadeOutLoader();
+        shopItem.buyed = true;
+        ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+        string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
+        ApiDataHandler.Instance.SetShopData(jsonString);
+        priceText.text = "Buyed";
+        print("success end");
     }
     void SearchItems(string searchTerm)
     {
@@ -84,7 +117,7 @@ public class shopController : MonoBehaviour, PageController
     public ShopItem GetShopItemByName(ShopModel shopModel, string itemName)
     {
         // Use LINQ to find the item
-        ShopItem item = shopModel.items.FirstOrDefault(i => i.itemName == itemName);
+        ShopItem item = shopModel.items.FirstOrDefault(i => i.itemName.ToLower() == itemName.ToLower());
 
         if (item == null)
         {

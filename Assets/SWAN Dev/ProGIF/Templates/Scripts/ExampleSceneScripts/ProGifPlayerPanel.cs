@@ -169,7 +169,11 @@ public class ProGifPlayerPanel : MonoBehaviour
 		button.enabled = enable;
 		button.targetGraphic.color = (enable)? new Color(0f, 0.5f, 0f) : Color.gray;
 	}
-
+	public void LoadAndPlay(string path)
+	{
+		gifPath= path;
+		Play();
+	}
 	public void Play()
 	{
 		if(string.IsNullOrEmpty(gifPath)) return;

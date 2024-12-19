@@ -76,3 +76,9 @@ public enum ShopItemType
 {
     Cloths=1
 }
+public enum CharacterSide
+{
+    Front,
+    Side,
+    Back
+}

@@ -132,8 +132,8 @@ public class SettingController : MonoBehaviour, PageController
     {
         AudioController.Instance.OnButtonClick();
         DateTime now = DateTime.Now;
-        print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
-        TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
+        //print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
+        TimeSpan timeDifference = now - StreakAndCharacterManager.Instance.startOfCurrentWeek;
         if (timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };

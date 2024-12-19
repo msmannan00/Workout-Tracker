@@ -117,7 +117,7 @@ public class AddNewExercise : MonoBehaviour, PageController
             if (!IsExerciseNamePresent(exerciseDataItem.exerciseName))
             {
                 //DataManager.Instance.SaveData(exerciseDataItem);
-                FirebaseExerciseManager.Instance.AddNewExercise(exerciseDataItem);
+                //FirebaseExerciseManager.Instance.AddNewExercise(exerciseDataItem);
 
                 ApiDataHandler.Instance.SaveExerciseData(exerciseDataItem,ApiDataHandler.Instance.getExerciseData().exercises.Count);
                 callback.Invoke(exerciseDataItem);

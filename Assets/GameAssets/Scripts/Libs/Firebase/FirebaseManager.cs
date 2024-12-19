@@ -172,7 +172,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     {
         databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
         {
-            bool exists = task.IsCompleted /*&& task.Result.Exists*/;
+            bool exists = task.IsCompleted && task.Result.Exists;
             callback(exists);  // Call the callback with true or false
             return exists;
         });

@@ -20,6 +20,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string joiningDate;
     public int currentCoins;
     public int userStreak;
+    public int characterLevel;
+    public string gifsPath = "Resources/UIAssets/character/gifs/";
 
     [Header("Theme Settings")]
     private Theme gameTheme;
@@ -104,7 +106,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.userStreak, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.LevelUp:
-                    CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText, coinText);
+                    CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.characterLevel, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.CompleteAllAchievements:
                     CheckCompleteAllAchivements(_data, trophyImages, progressText, descriptionText, coinText);
@@ -166,10 +168,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.Streak:
-                CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.userStreak, trophyImages, progressText, descriptionText, coinText);
+                CheckStreakAndLevelAchievements(_data, userStreak, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.LevelUp:
-                CheckStreakAndLevelAchievements(_data, ApiDataHandler.Instance.GetCharacterLevel(), trophyImages, progressText, descriptionText, coinText);
+                CheckStreakAndLevelAchievements(_data, characterLevel, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.CompleteAllAchievements:
                 CheckCompleteAllAchivements(_data, trophyImages, progressText, descriptionText, coinText);

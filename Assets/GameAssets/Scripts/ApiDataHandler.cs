@@ -624,8 +624,48 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         });
     }
 
+    public void LoadShopData()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/shop", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId+"/shop", _data =>
+                {
+                    if (_data != null)
+                    {
+                        string jsonData = _data.GetRawJsonValue();
+                        shopData = (ShopModel)LoadData(jsonData, typeof(ShopModel));
+                        print("from firebase");
+                    }
+                });
 
-
+                Debug.Log("Data exists at the path.");
+            }
+            else
+            {
+                TextAsset shopJsonFile = Resources.Load<TextAsset>("data/shopData");
+                string shopJson = shopJsonFile.text;
+                this.shopData = JsonUtility.FromJson<ShopModel>(shopJson);
+                SetShopData(shopJson);
+            }
+        });
+    }
+    public void SetShopData(string shopJson)
+    {
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("shop")
+               .SetRawJsonValueAsync(shopJson).ContinueWith(task =>
+               {
+                   if (task.IsCompleted)
+                   {
+                       Debug.Log("shop added.");
+                   }
+                   else
+                   {
+                       Debug.LogError("Failed to add shop: " + task.Exception);
+                   }
+               });
+    }
 
     public void LoadDataFromFirebase()
     {
@@ -637,8 +677,12 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         LoadNotesHistory();
         LoadAchievements();
         LoadPersonalBest();
+        LoadShopData();
         LoadCoins();
         LoadUserStreak();
+        LoadCharacterLevel();
+        LoadCurrentWeekStartDateFromFirebase();
+        LoadGymVisitsFromFirebase();
         gameTheme = LoadTheme();
     }
 
@@ -662,7 +706,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return this.templateData;
     }
-   
+   public ShopModel getShopData()
+    {
+        return shopData;
+    }
     
    
     public void RemovePersonalBestData(PersonalBestDataItem item)
@@ -735,7 +782,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             }
         });
     }
-    public void SetCoinsToFirebase(int coin)
+    public void SetCoinsToFirebase(int coin, Action<bool> onSave=null)
     {
         FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("coins")
                 .SetValueAsync(coin).ContinueWith(task =>
@@ -743,10 +790,12 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     if (task.IsCompleted)
                     {
                         userSessionManager.Instance.currentCoins = coin;
+                        onSave?.Invoke(true);
                         Debug.Log("coin seted: " + coin);
                     }
                     else
                     {
+                        onSave?.Invoke(false);
                         Debug.LogError("Failed to save coin: " + task.Exception);
                     }
                 });
@@ -791,16 +840,56 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     }
                 });
     }
-
-
-    public void SetCharacterLevel(int level)
+    public void LoadCharacterLevel()
     {
-        PreferenceManager.Instance.SetInt("CharacterLevel", level);
+        print("load character");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", result =>
+        {
+            print(result);
+            if (result)
+            {
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string level = data.Value.ToString();  // Directly get the value as string
+                        userSessionManager.Instance.characterLevel = int.Parse(level); ;
+                        print("level retrieved: " + level);
+                    }
+                });
+            }
+            else
+            {
+                SetCharacterLevelToFirebase(0);
+            }
+        });
     }
-    public int GetCharacterLevel()
+    public void SetCharacterLevelToFirebase(int level)
     {
-        return PreferenceManager.Instance.GetInt("CharacterLevel", 0);
+        print("---------------------------------------");
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("CharacterLevel")
+                .SetValueAsync(level).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        userSessionManager.Instance.currentCoins = level;
+                        Debug.Log("level seted: " + level);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to save level: " + task.Exception);
+                    }
+                });
     }
+    //public void SetCharacterLevel(int level)
+    //{
+    //    PreferenceManager.Instance.SetInt("CharacterLevel", level);
+    //}
+    //public int GetCharacterLevel()
+    //{
+    //    return PreferenceManager.Instance.GetInt("CharacterLevel", 0);
+    //}
 
 
     public void SetWeightUnit(int unit)
@@ -867,49 +956,57 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         templateData.exerciseTemplete.Add(item);
     }
-   
-    
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    //public void SetCurrentWeekStartDate(DateTime startDate)
+    //{
+    //    string startDateString = startDate.ToString("yyyy-MM-dd");
+    //    PlayerPrefs.SetString("CurrentWeekStartDate", startDateString);
+    //    PlayerPrefs.Save();
+    //}
+    public void LoadCurrentWeekStartDateFromFirebase()
+    {
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/CurrentWeekStartDate", result =>
+        {
+            print(result);
+            if (result)
+            {
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/CurrentWeekStartDate", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string startDateString = data.Value.ToString();  // Directly get the value as string
+                        StreakAndCharacterManager.Instance.startOfCurrentWeek = DateTime.Parse(startDateString);
+                        print("level retrieved: " + startDateString);
+                    }
+                });
+            }
+        });
+
+    }
     public void SetCurrentWeekStartDate(DateTime startDate)
     {
         string startDateString = startDate.ToString("yyyy-MM-dd");
-        PlayerPrefs.SetString("CurrentWeekStartDate", startDateString);
-        PlayerPrefs.Save();
+        string userId = FirebaseManager.Instance.user.UserId;
+
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("CurrentWeekStartDate")
+            .SetValueAsync(startDateString).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    StreakAndCharacterManager.Instance.startOfCurrentWeek = startDate;
+                    Debug.Log("CurrentWeekStartDate saved to Firebase: " + startDateString);
+                }
+                else
+                {
+                    Debug.LogError("Failed to save CurrentWeekStartDate: " + task.Exception);
+                }
+            });
     }
-
-    // Method to get the start date of the current week
-    public DateTime GetCurrentWeekStartDate()
-    {
-        string startDateString = PlayerPrefs.GetString("CurrentWeekStartDate", "");
-
-        if (!string.IsNullOrEmpty(startDateString))
-        {
-            return DateTime.Parse(startDateString);
-        }
-
-        // If no start date is set, return the start of this week as a default
-        DateTime today = DateTime.Now;
-        int daysSinceMonday = (int)today.DayOfWeek - (int)DayOfWeek.Monday;
-        if (daysSinceMonday < 0) daysSinceMonday += 7;
-        return today.AddDays(-daysSinceMonday);
-    }
-
-    // Method to check if the week has changed and update the start date automatically
-    public void CheckAndUpdateWeekStartDate()
-    {
-        DateTime storedWeekStartDate = GetCurrentWeekStartDate();
-        DateTime currentWeekStartDate = GetStartOfCurrentWeek();
-
-        // If the stored week start date is not the same as the current week start date, update it
-        if (storedWeekStartDate != currentWeekStartDate)
-        {
-            SetCurrentWeekStartDate(currentWeekStartDate);
-        }
-    }
-
-    // Helper method to get the start date of the current week
     public DateTime GetStartOfCurrentWeek()
     {
         return DateTime.Now;
@@ -918,12 +1015,60 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         //if (daysSinceMonday < 0) daysSinceMonday += 7;
         //return today.AddDays(-daysSinceMonday);
     }
-    
+
+    public void LoadGymVisitsFromFirebase()
+    {
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("GymVisits")
+            .GetValueAsync().ContinueWith(task =>
+            {
+                if (task.IsCompleted && task.Result.Exists)
+                {
+                    List<string> visits = new List<string>();
+                    foreach (var visit in task.Result.Children)
+                    {
+                        visits.Add(visit.Value.ToString());
+                    }
+                    StreakAndCharacterManager.Instance.gymVisits = visits;
+                    Debug.Log("Gym visits loaded from Firebase.");
+                    //onLoaded(visits);
+                }
+                else
+                {
+                    //Debug.LogError("Failed to load gym visits: " + task.Exception);
+                    //onLoaded(new List<string>());
+                }
+            });
+    }
+    public void SetGymVisitsToFirebase(List<string> visits)
+    {
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("GymVisits")
+            .SetValueAsync(visits).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    Debug.Log("Gym visits saved to Firebase.");
+                }
+                else
+                {
+                    Debug.LogError("Failed to save gym visits: " + task.Exception);
+                }
+            });
+    }
+
+    public void SetCloths(string name)
+    {
+        print("set cloths");
+        PreferenceManager.Instance.SetString("clothes", name);
+    }
+    public string GetClothes()
+    {
+        return PreferenceManager.Instance.GetString("clothes", "no clothes");
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
-    
     public int GetCompletedAchievements()
     {
         int completedCount = 0;
