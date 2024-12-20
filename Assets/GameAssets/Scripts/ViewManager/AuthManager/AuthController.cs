@@ -122,7 +122,9 @@ public class AuthController : MonoBehaviour, PageController
         //{
         //    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
         //}
-        onSignIn();
+        if(FirebaseManager.Instance.user !=null){
+            onSignIn();
+        }
     }
 
     IEnumerator CallSavedlogins()
