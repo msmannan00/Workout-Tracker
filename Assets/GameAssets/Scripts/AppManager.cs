@@ -6,7 +6,7 @@ public class AppManager : MonoBehaviour
 {
     private void Start()
     {
-        /*Initiating app pages*/
+
         #if UNITY_ANDROID && !UNITY_EDITOR
             Screen.fullScreen = false;
             AndroidUtility.ShowStatusBar(new Color32(0, 0, 0, 255));
@@ -14,7 +14,18 @@ public class AppManager : MonoBehaviour
 
         //userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
-        ApiDataHandler.Instance.loadData();
+
+        FirebaseManager.Instance.Load(OpenScreen);
+        //List<string> gifPaths = new List<string>
+        //{
+        //    Application.dataPath + "/Resources/UIAssets/character/gifs"//,
+        //    //Application.dataPath + "/Gifs/Path2"
+        //};
+
+        //GifManager.Instance.LoadGifsFromPaths(gifPaths);
+    }
+    public void OpenScreen()
+    {
         if (!PreferenceManager.Instance.GetBool("WelcomeScreensShown_v3"))
         {
             StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
@@ -27,7 +38,6 @@ public class AppManager : MonoBehaviour
             };
             StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
         }
-
     }
 
 }

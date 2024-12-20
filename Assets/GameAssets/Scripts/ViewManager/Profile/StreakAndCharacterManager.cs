@@ -18,7 +18,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
     private void Start()
     {
         // Initialize start of the week based on today's date
-        startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek(); //GetStartOfWeek(DateTime.Now);
+        //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek(); //GetStartOfWeek(DateTime.Now);
     }
 
     /// <summary>
@@ -42,22 +42,29 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
         //    UpdateStreak();
         //}
         //else
-        {
-            // Store gym visit with the current date
-            string visitKey = "GymVisit_" + ApiDataHandler.Instance.GetCurrentWeekStartDate().ToString("yyyy-MM-dd");
-            // Get the stored visit dates for the current week
-            List<string> visits = PreferenceManager.Instance.GetStringList(visitKey) ?? new List<string>();
-            // Get today's date in string format
-            string today = DateTime.Now.ToString("yyyy-MM-dd");
+        //{
+        //    // Store gym visit with the current date
+        //    string visitKey = "GymVisit_" + startOfCurrentWeek.ToString("yyyy-MM-dd");
+        //    // Get the stored visit dates for the current week
+        //    List<string> visits = PreferenceManager.Instance.GetStringList(visitKey) ?? new List<string>();
+        //    // Get today's date in string format
+        //    string today = DateTime.Now.ToString("yyyy-MM-dd");
 
-            // Add today's date if it's not already recorded
-            if (!visits.Contains(today))
-            {
-                visits.Add(today);
-                PreferenceManager.Instance.SetStringList(visitKey, visits);
-            }
-            UpdateStreak();
+        //    // Add today's date if it's not already recorded
+        //    if (!visits.Contains(today))
+        //    {
+        //        visits.Add(today);
+        //        PreferenceManager.Instance.SetStringList(visitKey, visits);
+        //    }
+        //    UpdateStreak();
+        //}
+        string today = DateTime.Now.ToString("yyyy-MM-dd");
+        if (!gymVisits.Contains(today))
+        {
+            gymVisits.Add(today);
+            ApiDataHandler.Instance.SetGymVisitsToFirebase(gymVisits);
         }
+        UpdateStreak();
     }
 
     /// <summary>
@@ -66,7 +73,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
     public void UpdateStreak()
     {
         // Check if the current week has ended
-        startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek();
+        //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek();
         DateTime endOfCurrentWeek = startOfCurrentWeek.AddDays(7);
         print(startOfCurrentWeek.ToString("yyyy-MM-dd"));
         print(endOfCurrentWeek.ToString("yyyy-MM-dd"));
@@ -82,27 +89,27 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
             if (HasMetWeeklyGoal())
             {
                 // Increment streak and level up character
-                currentStreak=ApiDataHandler.Instance.GetUserStreak();
+                currentStreak=userSessionManager.Instance.userStreak;
                 currentStreak++;
-                ApiDataHandler.Instance.SetUserStreak(currentStreak);
-                characterLevel=ApiDataHandler.Instance.GetCharacterLevel();
+                ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
+                characterLevel=userSessionManager.Instance.characterLevel;
                 characterLevel++;
-                ApiDataHandler.Instance.SetCharacterLevel(characterLevel);
+                ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
                 Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");
             }
             else
             {
                 // Reset streak and decrease level
-                ApiDataHandler.Instance.SetUserStreak(0);
-                characterLevel = ApiDataHandler.Instance.GetCharacterLevel();
+                ApiDataHandler.Instance.SetUserStreakToFirebase(0);
+                characterLevel = userSessionManager.Instance.characterLevel;
                 characterLevel = Math.Max(0, characterLevel - 1); // Character level should not go below 1
-                ApiDataHandler.Instance.SetCharacterLevel((int)characterLevel);
+                ApiDataHandler.Instance.SetCharacterLevelToFirebase((int)characterLevel);
                 Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
             }
 
             // Move start of the week to the next period
             ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
-            startOfCurrentWeek = ApiDataHandler.Instance.GetCurrentWeekStartDate();//GetStartOfWeek(DateTime.Now);
+            //startOfCurrentWeek = ApiDataHandler.Instance.GetCurrentWeekStartDate();//GetStartOfWeek(DateTime.Now);
         }
     }
 
@@ -122,34 +129,8 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 visitCount++;
             }
         }
-        weeklyGoal = ApiDataHandler.Instance.GetWeeklyGoal();
+        weeklyGoal = userSessionManager.Instance.weeklyGoal;
         Debug.Log($"Visits in current 7-day period: {visitCount}/{weeklyGoal}");
         return visitCount >= weeklyGoal;
-    }
-
-    /// <summary>
-    /// Gets the start date of the week for a given date (Monday as the start of the week).
-    /// </summary>
-    private DateTime GetStartOfWeek(DateTime date)
-    {
-        int daysToSubtract = (int)date.DayOfWeek - (int)DayOfWeek.Monday;
-        if (daysToSubtract < 0) daysToSubtract += 7; // Adjust for Sunday
-        return date.AddDays(-daysToSubtract).Date;
-    }
-
-    /// <summary>
-    /// Sets the start of the week manually (for testing).
-    /// </summary>
-    public void SetStartOfWeek(string date)
-    {
-        if (DateTime.TryParse(date, out DateTime parsedDate))
-        {
-            startOfCurrentWeek = GetStartOfWeek(parsedDate);
-            Debug.Log($"Week Start Date set to: {startOfCurrentWeek:yyyy-MM-dd}");
-        }
-        else
-        {
-            Debug.LogError("Invalid date format. Use yyyy-MM-dd.");
-        }
     }
 }

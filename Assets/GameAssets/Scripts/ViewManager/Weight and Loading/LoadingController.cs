@@ -14,7 +14,7 @@ public class LoadingController : MonoBehaviour,PageController
 
     void Start()
     {
-        // Animate the width to 200 over 3 seconds
+        ApiDataHandler.Instance.LoadDataFromFirebase();
         imageRectTransform.DOSizeDelta(new Vector2(200f, imageRectTransform.sizeDelta.y), 3f).OnComplete(() => {
             //StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", null, isfooter: true);
             StateManager.Instance.OpenFooter("shared", "footer",true);

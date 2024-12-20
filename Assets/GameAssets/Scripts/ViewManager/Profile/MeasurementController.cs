@@ -149,13 +149,16 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         if (historyItems.Count > 0)
         {
+            int historyIndex=ApiDataHandler.Instance.getMeasurementHistory().measurmentHistory.Count;
             ApiDataHandler.Instance.SaveMeasurementData();
             foreach (MeasurementHistoryItem item in historyItems)
             {
+                ApiDataHandler.Instance.SaveMeasurementHistory(item,historyIndex);
                 ApiDataHandler.Instance.SetMeasurementHistory(item);
+                historyIndex++;
             }
             historyItems.Clear();
-            ApiDataHandler.Instance.SaveMeasurementHistory();
+            //ApiDataHandler.Instance.SaveMeasurementHistory();
             DOTween.Kill(messageText);
             GlobalAnimator.Instance.ShowTextMessage(messageText, "Saved Successfully!", 2);
         }
@@ -178,7 +181,7 @@ public class MeasurementController : MonoBehaviour,PageController
     {
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null, null, false);
-        ApiDataHandler.Instance.LoadMeasurementData();
+        //ApiDataHandler.Instance.LoadMeasurementData();
     }
 
 }

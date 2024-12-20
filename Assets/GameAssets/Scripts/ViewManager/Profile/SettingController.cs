@@ -132,9 +132,9 @@ public class SettingController : MonoBehaviour, PageController
     {
         AudioController.Instance.OnButtonClick();
         DateTime now = DateTime.Now;
-        print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
-        TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
-        if (timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal() == 0)
+        //print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
+        TimeSpan timeDifference = now - StreakAndCharacterManager.Instance.startOfCurrentWeek;
+        if (timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };
             StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData, true);
@@ -151,6 +151,28 @@ public class SettingController : MonoBehaviour, PageController
         }
 
 
+    }
+    public void RPE_RIR_Popup()
+    {
+        back = false;
+        PopupController.Instance.OpenPopup("profile", "RPE_RIR_Popup", OnBackCheck, null);
+    }
+    public void LogOut()
+    {
+        FirebaseManager.Instance.OnLogout();
+        Dictionary<string, object> mData = new Dictionary<string, object>
+            {
+                { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+            };
+        StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+    }
+    public void TermsAndConditions()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "TermsAndConditions", null, true);
+    }
+    public void PrivacyPolicy()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "PrivacyPolicy", null, true);
     }
     IEnumerator OffMessageText(float time)
     {

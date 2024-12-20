@@ -1,17 +1,15 @@
 using UnityEngine;
 using TMPro;
 using System;
-using PlayFab;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using Assets.SimpleGoogleSignIn.Scripts;
-using Assets.SimpleFacebookSignIn.Scripts;
 using System.Collections;
+using Firebase;
+using Firebase.Auth;
 
 public class AuthController : MonoBehaviour, PageController
 {
-    [Header("Managers")]
-    public PlayfabManager aPlayFabManager;
 
     [Header("Utilities")]
     public TMP_Text aError;
@@ -36,18 +34,51 @@ public class AuthController : MonoBehaviour, PageController
     public Text Log;
     public Text Output;
     public bool isRegistering;
-    public FacebookAuth FacebookAuth;
 
-
-    public void Start()
+    public void onInit(Dictionary<string, object> pData, Action<object> callback)
     {
+        this.mAuthType = (string)pData.GetValueOrDefault(AuthKey.sAuthType, AuthConstant.sAuthTypeSignup);
+        if (this.mAuthType == AuthConstant.sAuthTypeLogin)
+        {
+            aHeading.text = "login";
+            aTriggerButton.text = "Continue";
+            aPageToggleText1.text = "New user?";
+            aPageToggleText2.text = "Create an account.";
+            aForgetPassword.SetActive(true);
+            aReEnterPassword.gameObject.SetActive(false);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), 35);
+            ChangeYPosition(aLineDevider, -16.5f);
+            ChangeYPosition(agoogle, -86.6f);
+            ChangeYPosition(aApple, -168.3f);
+        }
+        else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
+        {
+            aHeading.text = "create account";
+            aTriggerButton.text = "next";
+            aPageToggleText1.text = "Already have an acount?";
+            aPageToggleText2.text = "Log In";
+            aForgetPassword.SetActive(false);
+            aReEnterPassword.gameObject.SetActive(true);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -38);
+            ChangeYPosition(aLineDevider, -68);
+            ChangeYPosition(agoogle, -138);
+            ChangeYPosition(aApple, -220);
+            aPageToggleText1.gameObject.SetActive(false);
+            aPageToggleText2.gameObject.SetActive(false);
+
+        }
+
+
         StartCoroutine(prelaodAssets());
         userSessionManager.Instance.mSidebar = false;
         aUsername.text = "";
         GoogleAuth = new GoogleAuth();
         GoogleAuth.TryResume(OnSignIn, OnGetAccessToken);
-        FacebookAuth = new FacebookAuth();
         onVerifyFirstLogin();
+    }
+    public void Start()
+    {
+       
     }
 
     IEnumerator prelaodAssets()
@@ -76,20 +107,22 @@ public class AuthController : MonoBehaviour, PageController
 
     public void onVerifyFirstLogin()
     {
-        string mUsername = PreferenceManager.Instance.GetString("login_username", "");
-        if (mUsername.Length > 2)
-        {
-            if (mUsername.Contains("@"))
-            {
-                mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
-            }
-            userSessionManager.Instance.OnInitialize(mUsername, mUsername);
-            onSignIn();
-        }
-        else if (mUsername == "")
-        {
-            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
-        }
+        //string mUsername = PreferenceManager.Instance.GetString("login_username");
+        ////print(mUsername);
+        //if (mUsername.Length > 2)
+        //{
+        //    if (mUsername.Contains("@"))
+        //    {
+        //        mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
+        //    }
+        //    userSessionManager.Instance.OnInitialize(mUsername, mUsername);
+        //    onSignIn();
+        //}
+        //else if (mUsername == "")
+        //{
+        //    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
+        //}
+        onSignIn();
     }
 
     IEnumerator CallSavedlogins()
@@ -171,181 +204,123 @@ public class AuthController : MonoBehaviour, PageController
 
     public void onSignIn()
     {
+        print("sign in");
         gameObject.transform.parent.SetSiblingIndex(1);
-
+        StateManager.Instance.isProcessing = false;
         bool mFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
-        if (!mFirsTimePlanInitialized)
+        GlobalAnimator.Instance.FadeInLoader();
+        CheckUserNameSet();
+
+        
+    }
+    public void CheckUserNameSet()
+    {
+        print("check userName");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result =>
         {
-            GlobalAnimator.Instance.FadeOutLoader();
-            Dictionary<string, object> mData = new Dictionary<string, object>
+            print(result);
+            if (result)
             {
-                { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-            };
-            StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-            //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-            //userSessionManager.Instance.AddGymVisit();
-            //if (ApiDataHandler.Instance.GetWeight() > 0)
-            //{
-            //    GlobalAnimator.Instance.FadeOutLoader();
-            //    Dictionary<string, object> mData = new Dictionary<string, object>
-            //    {
-            //        { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-            //    };
-            //    StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-            //    //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-            //    userSessionManager.Instance.AddGymVisit();
-            //}
-            //else
-            //{
-            //    Dictionary<string, object> mData = new Dictionary<string, object>
-            //    {
-            //        { "isFirstTime", true }
-            //    };
-            //    StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-            //}
-        }
-        else
-        {
-            print("panel weekly goal");
-            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-            StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-
-            PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
-        }
-
-
-        //if (ApiDataHandler.Instance.GetWeeklyGoal() > 0)
-        //{
-        //    if (ApiDataHandler.Instance.GetWeight() > 0)
-        //    {
-        //        GlobalAnimator.Instance.FadeOutLoader();
-        //        Dictionary<string, object> mData = new Dictionary<string, object>
-        //        {
-        //            { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-        //        };
-        //        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
-        //        //StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-        //        userSessionManager.Instance.AddGymVisit();
-        //    }
-        //    else
-        //    {
-        //        Dictionary<string, object> mData = new Dictionary<string, object>
-        //        {
-        //            { "isFirstTime", true }
-        //        };
-        //        StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
-        //    }
-        //}
-        //else
-        //{
-        //    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
-        //    StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-
-        //}
-    }
-
-    public void FBSignIn()
-    {
-        FacebookAuth.FBSignIn(FBOnSignIn, caching: true);
-    }
-
-    public void FBSignOut()
-    {
-        FacebookAuth.FBSignOut(revokeAccessToken: true);
-    }
-
-    public void FBGetAccessToken()
-    {
-        FacebookAuth.FBGetAccessToken(FBOnGetAccessToken);
-    }
-
-    private void FBOnSignIn(bool success, string error, Assets.SimpleFacebookSignIn.Scripts.UserInfo userInfo)
-    {
-        if (success)
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            onFBSignIn();
-            mAuthType = success ? $"{userInfo.name}!" : error;
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-        }
-    }
-
-    private void FBOnGetAccessToken(bool success, string error, Assets.SimpleFacebookSignIn.Scripts.TokenResponse tokenResponse)
-    {
-        if (!success) return;
-
-        var jwt = new Assets.SimpleFacebookSignIn.Scripts.JWT(tokenResponse.IdToken);
-
-        Debug.Log($"JSON Web Token (JWT) Payload: {jwt.Payload}");
-
-        jwt.ValidateSignature(FacebookAuth.ClientId, OnValidateSignature);
-    }
-
-    private void FBOnValidateSignature(bool success, string error)
-    {
-    }
-
-    public void FBNavigate(string url)
-    {
-        Application.OpenURL(url);
-    }
-
-    public void onFBSignIn()
-    {
-        gameObject.transform.parent.SetSiblingIndex(1);
-
-        bool mFBFirsTimePlanInitialized = PreferenceManager.Instance.GetBool("FBFirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, false);
-        if (!mFBFirsTimePlanInitialized)
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            Dictionary<string, object> mData = new Dictionary<string, object>
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/username", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string username = data.Value.ToString();  // Directly get the value as string
+                        userSessionManager.Instance.mProfileUsername = username;
+                        Debug.Log("Username retrieved: " + username);
+                        CheckWeeklyGoalSet();
+                    }
+                });
+            }
+            else
             {
-                { AuthKey.sAuthType, AuthConstant.sAuthTypeSignup}
-            };
-
-            StateManager.Instance.OpenStaticScreen("planCreator", gameObject, "planCreatorScreen", mData);
-        }
-        else
-        {
-
-            Dictionary<string, object> mData = new Dictionary<string, object> { };
-            StateManager.Instance.OpenStaticScreen("dashboard", gameObject, "dashboardScreen", mData);
-        }
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+                StateManager.Instance.OpenStaticScreen("userName", gameObject, "userNameScreen", mData);
+            }
+        });
     }
-
-    public void onInit(Dictionary<string, object> pData, Action<object> callback)
+    public void CheckWeeklyGoalSet()
     {
-        this.mAuthType = (string)pData.GetValueOrDefault(AuthKey.sAuthType, AuthConstant.sAuthTypeSignup);
-        if (this.mAuthType == AuthConstant.sAuthTypeLogin)
+        print("check weeklygoal");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", result =>
         {
-            aHeading.text = "login";
-            aTriggerButton.text = "Continue";
-            aPageToggleText1.text = "New user?";
-            aPageToggleText2.text = "Create an account.";
-            aForgetPassword.SetActive(true);
-            aReEnterPassword.gameObject.SetActive(false);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), 35);
-            ChangeYPosition(aLineDevider, -16.5f);
-            ChangeYPosition(agoogle, -86.6f);
-            ChangeYPosition(aApple, -168.3f);
-        }
-        else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/weeklyGoal", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string stringGoal = data.Value.ToString();  // Directly get the value as string
+                        int goal = int.Parse(stringGoal);  // Directly get the value as string
+                        userSessionManager.Instance.weeklyGoal = goal;
+                        //ApiDataHandler.Instance.userName = username;  // Set the username in your handler
+                        Debug.Log("weekly goal: " + goal);
+                        CheckWeightSet();
+                    }
+                    else print("data is null");
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
+                StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
+            }
+        });
+    }
+    public void CheckWeightSet()
+    {
+        print("check weight");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/measurements", result =>
         {
-            aHeading.text = "create account";
-            aTriggerButton.text = "next";
-            aPageToggleText1.text = "Already have an acount?";
-            aPageToggleText2.text = "Log In";
-            aForgetPassword.SetActive(false);
-            aReEnterPassword.gameObject.SetActive(true);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -38);
-            ChangeYPosition(aLineDevider, -68);
-            ChangeYPosition(agoogle, -138);
-            ChangeYPosition(aApple, -220);
-            aPageToggleText1.gameObject.SetActive(false);
-            aPageToggleText2.gameObject.SetActive(false);
-
-        }
-
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/measurements/weight", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string stringWeight = data.Value.ToString();
+                        float weight = float.Parse(stringWeight);
+                        Debug.Log("seted weight: " + weight);
+                        CheckJoingDateSet();
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "isFirstTime", true } };
+                StateManager.Instance.OpenStaticScreen("weight", gameObject, "weightScreen", mData);
+            }
+        });
+    }
+    public void CheckJoingDateSet()
+    {
+        print("check joining date");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/joiningDate", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string date = data.Value.ToString();
+                        userSessionManager.Instance.joiningDate = date;
+                        Debug.Log("joining date: " + date);
+                        GlobalAnimator.Instance.FadeOutLoader();
+                        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
+            }
+        });
     }
     void ChangeYPosition(RectTransform rectTransform,float yPos)
     {
@@ -377,15 +352,42 @@ public class AuthController : MonoBehaviour, PageController
                 userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
             };
-            Action<PlayFabError> callbackFailure = (pError) =>
+            Action<FirebaseException> callbackFailure = (pError) =>
             {
+                print(pError);
                 GlobalAnimator.Instance.FadeOutLoader();
                 GlobalAnimator.Instance.FadeIn(aError.gameObject);
-                aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+                //var errorMessage = pError.InnerException != null
+                //    ? pError.InnerException.Message
+                //    : pError.Message;
+                //aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
+
+                AuthError errorCode = (AuthError)pError.ErrorCode;
+                string message = "Login Failed!";
+                switch (errorCode)
+                {
+                    case AuthError.MissingEmail:
+                        message = "Missing Email";
+                        break;
+                    case AuthError.MissingPassword:
+                        message = "Missing Password";
+                        break;
+                    case AuthError.WrongPassword:
+                        message = "Wrong Password";
+                        break;
+                    case AuthError.InvalidEmail:
+                        message = "Invalid Email";
+                        break;
+                    case AuthError.UserNotFound:
+                        message = "Account does not exist";
+                        break;
+                }
+                aError.text = message;
             };
 
             GlobalAnimator.Instance.FadeInLoader();
-            aPlayFabManager.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
+            print("login");
+            FirebaseManager.Instance.OnTryLogin(this.aUsername.text, this.aPassword.text, mCallbackSuccess, callbackFailure);
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
@@ -398,6 +400,7 @@ public class AuthController : MonoBehaviour, PageController
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
+
                 print("true");
                 //PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" + userSessionManager.Instance.mProfileUsername, true);
 
@@ -410,22 +413,41 @@ public class AuthController : MonoBehaviour, PageController
 
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
+                    { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin }
                 };
                 StateManager.Instance.OpenStaticScreen("auth", gameObject, "authScreen", mData);
                 ApiDataHandler.Instance.SetJoiningDate(DateTime.Now);
             };
 
-            Action<PlayFabError> callbackFailure = (pError) =>
+            Action<AggregateException> callbackFailure = (pError) =>
             {
+                //GlobalAnimator.Instance.FadeOutLoader();
+                //GlobalAnimator.Instance.FadeIn(aError.gameObject);
+                //aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
                 GlobalAnimator.Instance.FadeOutLoader();
                 GlobalAnimator.Instance.FadeIn(aError.gameObject);
-                aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+                var errorMessage = pError.InnerException != null
+                    ? pError.InnerException.Message
+                    : pError.Message;
+                aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
             };
 
             GlobalAnimator.Instance.FadeInLoader();
-            aPlayFabManager.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
+            FirebaseManager.Instance.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
         }
+    }
+    private void OnSignInSuccess(string userId)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        userSessionManager.Instance.OnInitialize(userId, aUsername.text);
+        onSignIn();
+    }
+
+    private void OnSignInFailure(string error)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        GlobalAnimator.Instance.FadeIn(aError.gameObject);
+        aError.text = error; // You can customize the error message here.
     }
 
     public void OnForgotPassword()
@@ -447,22 +469,22 @@ public class AuthController : MonoBehaviour, PageController
             GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
         };
 
-        Action<PlayFabError> callbackFailure = (pError) =>
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            GlobalAnimator.Instance.FadeIn(aError.gameObject);
-            aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+        //Action<PlayFabError> callbackFailure = (pError) =>
+        //{
+        //    GlobalAnimator.Instance.FadeOutLoader();
+        //    GlobalAnimator.Instance.FadeIn(aError.gameObject);
+        //    aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
 
-            GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
-            GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
-            alertsContainer.transform.SetAsLastSibling();
-            GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
-            AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
-            alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");
-            GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
-        };
-        GlobalAnimator.Instance.FadeInLoader();
-        aPlayFabManager.InitiatePasswordRecovery(aUsername.text, callbackSuccess, callbackFailure);
+        //    GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
+        //    GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
+        //    alertsContainer.transform.SetAsLastSibling();
+        //    GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
+        //    AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
+        //    alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");
+        //    GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
+        //};
+        //GlobalAnimator.Instance.FadeInLoader();
+        //aPlayFabManager.InitiatePasswordRecovery(aUsername.text, callbackSuccess, callbackFailure);
     }
 
 
@@ -473,10 +495,6 @@ public class AuthController : MonoBehaviour, PageController
       
     }
 
-    public void FacebookSignIn()
-    {
-        FBSignIn();
-    }
 
     public void OnResetErrors()
     {

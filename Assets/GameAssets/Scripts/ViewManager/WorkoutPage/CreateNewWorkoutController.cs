@@ -1,4 +1,4 @@
-using PlayFab.EconomyModels;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     public DefaultTempleteModel templeteModel = new DefaultTempleteModel();
     [SerializeField]
     private DefaultTempleteModel orignalTempleteModel = new DefaultTempleteModel();
-
+    int index;
     bool editWorkout;
     Action<object> callback;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -31,6 +31,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         if(editWorkout)
         {
             orignalTempleteModel = (DefaultTempleteModel)data["templeteModel"];
+            index=ApiDataHandler.Instance.getTemplateData().exerciseTemplete.IndexOf(orignalTempleteModel);
+            print(index);
             templeteModel = DeepCopy(orignalTempleteModel);
             deleteButton.gameObject.SetActive(true);
             deleteButton.onClick.AddListener(DeleteWorkout);
@@ -53,6 +55,8 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         {
             labelText.text = "NEW WORKOUT";
             workoutName.text = (string)data["workoutName"];
+            templeteModel.templeteName= (string)data["workoutName"];
+            index = ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Count;
         }
         this.callback = callback;
         //saveTemplate.interactable = false;
@@ -150,7 +154,6 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                 GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/workoutLog/workoutLogScreenDataModel");
                 GameObject exerciseObject = Instantiate(exercisePrefab, content);
                 exerciseObject.GetComponent<workoutLogScreenDataModel>().onInit(mData, OnRemoveIndex);
-                print("2");
             }
             saveTemplate.interactable = true;
         }
@@ -174,7 +177,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
     }
     private void DeleteWorkout()
     {
-        List<object> initialData = new List<object> { this.gameObject, orignalTempleteModel };
+        List<object> initialData = new List<object> { this.gameObject, orignalTempleteModel,index };
         PopupController.Instance.OpenPopup("createWorkout", "DeleteWorkoutPopup", null, initialData);
     }
     public void SaveNewWorkout()
@@ -202,7 +205,7 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         if (template.exerciseTemplete.Count == 0)
         {
             string message = "Attention: You cannot save an empty workout template.";
-            List<object> initialData = new List<object> { this.gameObject, template, editWorkout,true,message};
+            List<object> initialData = new List<object> { this.gameObject, template, editWorkout,true,message,index};
             PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", null, initialData);
             //Debug.Log("The exercise template list is empty.");
             return;
@@ -211,20 +214,30 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
         // Check if all exercise templates have at least one exercise model
         bool allHaveExerciseModels = template.exerciseTemplete
             .All(et => et.exerciseModel.Count > 0);
+        int exerciseHaveSet = template.exerciseTemplete.Count(model => model.exerciseModel.Count > 0);
+        int totaltExercise = template.exerciseTemplete.Count;
+        
+        print(exerciseHaveSet +" "+totaltExercise);
 
-        if (allHaveExerciseModels)
+        if (exerciseHaveSet== totaltExercise)
         {
             string message = "Are you sure you want to save workout templete.";
-            List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message };
+            List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message, index };
             PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", SaveExerciseNotesHistory, initialData);
             //Debug.Log("All exercise templates have at least one exercise model.");
         }
-        else
+        else if(exerciseHaveSet>0)
         {
             string message = "Exercises with 0 sets will be discard. Are you sure you want to save it.";
-            List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message };
+            List<object> initialData = new List<object> { this.gameObject, template, editWorkout, false, message, index };
             PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", SaveExerciseNotesHistory, initialData);
             Debug.Log("Some exercise templates have models, and some do not.");
+        }
+        else if (exerciseHaveSet == 0)
+        {
+            string message = "Attention: You cannot save all exercise with 0 set.";
+            List<object> initialData = new List<object> { this.gameObject, template, editWorkout, true, message, index };
+            PopupController.Instance.OpenPopup("createWorkout", "SaveWorkoutTempletePopup", null, initialData);
         }
     }
 
@@ -309,13 +322,16 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                 if (exerciseType.exerciseNotes != string.Empty)
                 {
                     bool exerciseExist = false;
-                    foreach (ExerciseNotesHistoryItem noteItem in ApiDataHandler.Instance.getNotesHistory().exercises)
+                    var exercises = ApiDataHandler.Instance.getNotesHistory().exercises;
+                    for (int index = 0; index < exercises.Count; index++)
                     {
-                        if (noteItem.exerciseName.ToLower() == exerciseType.name.ToLower())
+                        ExerciseNotesHistoryItem exercise = exercises[index];
+                        if (exercise.exerciseName.ToLower() == exerciseType.name.ToLower())
                         {
-                            noteItem.notes = exerciseType.exerciseNotes;
-                            ApiDataHandler.Instance.SaveNotesHistory();
+                            exercise.notes = exerciseType.exerciseNotes;
+                            ApiDataHandler.Instance.SaveNotesHistory(exercise, index);
                             exerciseExist = true;
+                            Debug.Log("Item found at index: " + index);
                             break;
                         }
                     }
@@ -326,8 +342,9 @@ public class CreateNewWorkoutController : MonoBehaviour,PageController
                             exerciseName = exerciseType.name,
                             notes = exerciseType.exerciseNotes
                         };
+                        ApiDataHandler.Instance.SaveNotesHistory(newExercise, ApiDataHandler.Instance.getNotesHistory().exercises.Count);
                         ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
-                        ApiDataHandler.Instance.SaveNotesHistory();
+
                     }
                 }
             }

@@ -122,7 +122,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
                     text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
                     break;
                 case WeightUnit.lbs:
-                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString("F1");
+                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("f0") + " lbs x " + data.reps.ToString("F1");
                     break;
             }
             //text.text = data.weight.ToString() + " kg x " + data.reps.ToString();

@@ -87,8 +87,8 @@ public class WeightController : MonoBehaviour,PageController
                             dateTime = DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"),
                             value = Mathf.RoundToInt(result)
                         };
+                        ApiDataHandler.Instance.SaveMeasurementHistory(item, ApiDataHandler.Instance.getMeasurementHistory().measurmentHistory.Count);
                         ApiDataHandler.Instance.SetMeasurementHistory(item);
-                        ApiDataHandler.Instance.SaveMeasurementHistory();
                         //ApiDataHandler.Instance.SaveWeight(Mathf.RoundToInt(result));
                     }
                     break;
@@ -104,8 +104,8 @@ public class WeightController : MonoBehaviour,PageController
                             dateTime = DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"),
                             value = Mathf.RoundToInt(userSessionManager.Instance.ConvertLbsToKg(result))
                         };
+                        ApiDataHandler.Instance.SaveMeasurementHistory(item,ApiDataHandler.Instance.getMeasurementHistory().measurmentHistory.Count);
                         ApiDataHandler.Instance.SetMeasurementHistory(item);
-                        ApiDataHandler.Instance.SaveMeasurementHistory();
                         //ApiDataHandler.Instance.SaveWeight(Mathf.RoundToInt(result));
                     }
                     break;

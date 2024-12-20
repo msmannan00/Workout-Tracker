@@ -382,13 +382,16 @@ public class WorkoutLogController : MonoBehaviour, PageController
             if (exerciseType.exerciseNotes != string.Empty)
             {
                 bool exerciseExist = false;
-                foreach(ExerciseNotesHistoryItem item in ApiDataHandler.Instance.getNotesHistory().exercises)
+                var exercises = ApiDataHandler.Instance.getNotesHistory().exercises;
+                for (int index = 0; index < exercises.Count; index++)
                 {
-                    if (item.exerciseName.ToLower() == exerciseType.name.ToLower())
+                    ExerciseNotesHistoryItem exercise = exercises[index];
+                    if (exercise.exerciseName.ToLower() == exerciseType.name.ToLower())
                     {
-                        item.notes = exerciseType.exerciseNotes;
-                        ApiDataHandler.Instance.SaveNotesHistory();
+                        exercise.notes = exerciseType.exerciseNotes;
+                        ApiDataHandler.Instance.SaveNotesHistory(exercise,index);
                         exerciseExist = true;
+                        Debug.Log("Item found at index: " + index);
                         break;
                     }
                 }
@@ -399,8 +402,8 @@ public class WorkoutLogController : MonoBehaviour, PageController
                         exerciseName = exerciseType.name,
                         notes = exerciseType.exerciseNotes
                     };
+                    ApiDataHandler.Instance.SaveNotesHistory(newExercise, ApiDataHandler.Instance.getNotesHistory().exercises.Count);
                     ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
-                    ApiDataHandler.Instance.SaveNotesHistory();
                 }
             }
             //print(historyExerciseType.categoryName + "/" + exerciseType.categoryName);
@@ -492,7 +495,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
         if (historyTemplate.exerciseTypeModel.Count > 0)
         {
             ApiDataHandler.Instance.AddItemToHistoryData(historyTemplate);
-            ApiDataHandler.Instance.SaveHistory();
+            //ApiDataHandler.Instance.SaveHistory();
         }
 
         if (isTemplateCreator)

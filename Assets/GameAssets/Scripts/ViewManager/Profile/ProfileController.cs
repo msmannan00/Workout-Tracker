@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class ProfileController : MonoBehaviour,PageController
 {
+    public TextMeshProUGUI userNameText;
     public TextMeshProUGUI streakText;
     public TextMeshProUGUI achievementText;
     public TextMeshProUGUI joinedText;
@@ -16,24 +17,26 @@ public class ProfileController : MonoBehaviour,PageController
     public TextMeshProUGUI levelText;
     public Image badgeIamge;
     public Button settingButton;
+    public ProGifPlayerPanel gifPlayer;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
         
     }
     private void Start()
     {
-        
-
+        gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+        userNameText.text = userSessionManager.Instance.mProfileUsername;
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
-        joinedText.text = ApiDataHandler.Instance.GetJoiningDate();
-        
+        joinedText.text = userSessionManager.Instance.joiningDate.ToString();
+
         settingButton.onClick.AddListener(Settings);
+        streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
     }
     private void OnEnable()
     {
-        levelText.text= "Level "+ApiDataHandler.Instance.GetCharacterLevel().ToString();
-        streakText.text = "Streak: " + ApiDataHandler.Instance.GetUserStreak().ToString();
-        goalText.text = ApiDataHandler.Instance.GetWeeklyGoal().ToString();
+        levelText.text= "Level "+userSessionManager.Instance.characterLevel.ToString();
+        streakText.text = "Streak: " + userSessionManager.Instance.userStreak.ToString();
+        goalText.text = userSessionManager.Instance.weeklyGoal.ToString();
         string badgeName = ApiDataHandler.Instance.GetBadgeName();
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
         badgeIamge.sprite= sprite;
@@ -63,21 +66,25 @@ public class ProfileController : MonoBehaviour,PageController
     }
     public void WeeklyGoal()
     {
-        AudioController.Instance.OnButtonClick();
-        DateTime now = DateTime.Now;
-        print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
-        TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
-        if(timeDifference.TotalDays >= 14 || ApiDataHandler.Instance.GetWeeklyGoal()==0)
-        {
-            Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false },{ "text" , goalText } };
-            StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData,true);
-            StateManager.Instance.CloseFooter();
-        }
-        else
-        {
-            GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.",2f);
-        }
+        //AudioController.Instance.OnButtonClick();
+        //DateTime now = DateTime.Now;
+        //print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
+        //TimeSpan timeDifference = now - ApiDataHandler.Instance.GetCurrentWeekStartDate();
+        //if(timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
+        //{
+        //    Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false },{ "text" , goalText } };
+        //    StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData,true);
+        //    StateManager.Instance.CloseFooter();
+        //}
+        //else
+        //{
+        //    GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2  weeks.",2f);
+        //}
 
         
+    }
+    public void OpenStreakDetail()
+    {
+        PopupController.Instance.OpenPopup("profile","levelDetailPopup",null,null);
     }
 }

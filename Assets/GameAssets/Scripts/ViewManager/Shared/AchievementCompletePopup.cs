@@ -57,6 +57,7 @@ public class AchievementCompletePopup : MonoBehaviour, IPrefabInitializer
     }
     public void Continue()
     {
+        ApiDataHandler.Instance.SaveAchievementData();
         AudioController.Instance.OnButtonClick();
         PopupController.Instance.ClosePopup("AchievementCompletePopup");
     }

@@ -13,6 +13,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     public TextMeshProUGUI bestSetText;
     public TextMeshProUGUI heaviestLiftedText;
     public GameObject headerObject;
+    public GameObject notPerformedObject;
     public Button backButton;
     public Transform content;
 
@@ -33,8 +34,6 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 rectTransform.offsetMax = offsetMax;
                 break;
         }
-        //exerciseNameText.text = exercise.exerciseName.ToUpper();
-        //List<HistoryExerciseModel> exerciseHistory = SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
         List<ExerciseWithDate> _exerciseHistory = _SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
         if (exercise.exerciseType == ExerciseType.WeightAndReps )
         {
@@ -62,7 +61,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
             }
             else
             {
-                heaviestLiftedText.text = "NULL";
+                heaviestLiftedText.text = "-";
             }
             ExerciseWithDate bestSet = GetTopPerformance(_exerciseHistory, HistoryPerformance.BestSet);
             if(bestSet != null)
@@ -117,41 +116,14 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
             }
             else
             {
-                bestSetText.text = "NULL";
-                estimate1RMText.text = "NULL";
+                bestSetText.text = "-";
+                estimate1RMText.text = "-";
 ;            }
-            
-            //estimate1RMText.text = roundedResult % 1 == 0
-            //    ? roundedResult.ToString("F0")
-            //    : roundedResult.ToString("F1");
             
         }
         backButton.onClick.AddListener(Back);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         AddItems(_exerciseHistory);
-        //switch (exercise.exerciseType)
-        //{
-        //    case ExerciseType.RepsOnly:
-        //        singleItem.SetActive(true);
-        //        singleItemMaxLabel.text = "Max reps";
-        //        singleItemTotalLabel.text = "Total reps";
-        //        ShowRepsOnly(exerciseHistory);
-        //        break;
-        //    case ExerciseType.TimeBased:
-        //        singleItem.SetActive(true);
-        //        singleItemMaxLabel.text = "Max time";
-        //        singleItemTotalLabel.text = "Total time";
-        //        ShowTimeOnly(exerciseHistory);
-        //        break;
-        //    case ExerciseType.TimeAndMiles:
-        //        mileAndTime.SetActive(true);
-        //        CalculateExerciseMileAndTime(exerciseHistory);
-        //        break;
-        //    case ExerciseType.WeightAndReps:
-        //        weightAndREPS.SetActive(true);
-        //        CalculateWeightRepsStats(exerciseHistory);
-        //        break;
-        //}
     }
     private void Update()
     {
@@ -162,6 +134,12 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     }
     public void AddItems(List<ExerciseWithDate> history)
     {
+        if(history.Count == 0)
+        {
+            notPerformedObject.SetActive(true);
+            return;
+        }
+        notPerformedObject.SetActive(false);
         foreach(var item in history)
         {
             Dictionary<string, object> mData = new Dictionary<string, object>
