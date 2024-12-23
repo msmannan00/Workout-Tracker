@@ -160,6 +160,7 @@ public class SettingController : MonoBehaviour, PageController
     public void LogOut()
     {
         FirebaseManager.Instance.OnLogout();
+        PlayerPrefs.DeleteAll();
         Dictionary<string, object> mData = new Dictionary<string, object>
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
