@@ -28,7 +28,7 @@ public class shopController : MonoBehaviour, PageController
             ShopItem itemData = GetShopItemByName(shopModel, nameText.text);
             if (itemData.buyed)
             {
-                priceText.text = "Buyed";
+                priceText.text = "Bought";
             }
             else
             {
@@ -56,10 +56,9 @@ public class shopController : MonoBehaviour, PageController
             if (userSessionManager.Instance.currentCoins >= shopItem.price)
             {
                 //GlobalAnimator.Instance.FadeInLoader();
-                int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
-                ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
-                GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
-                SuccessfullyBuy(shopItem,priceText,nameText);
+                List<object> initialData = new List<object> { shopItem,priceText,nameText};
+                Action<List<object>> onFinish = Bought;
+                PopupController.Instance.OpenPopup("character", "BoughtPopup", onFinish,initialData);
 
             }
             else
@@ -69,14 +68,24 @@ public class shopController : MonoBehaviour, PageController
             }
         }
     }
+    public void Bought(List<object> list)
+    {
+        ShopItem shopItem = (ShopItem)list[0];
+        TextMeshProUGUI priceText = (TextMeshProUGUI)list[1];
+        TextMeshProUGUI nameText = (TextMeshProUGUI)list[2];
+        int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
+        ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
+        GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
+        SuccessfullyBuy(shopItem, priceText, nameText);
+    }
     public void SuccessfullyBuy(ShopItem shopItem, TextMeshProUGUI priceText, TextMeshProUGUI nameText)
     {
         //GlobalAnimator.Instance.FadeOutLoader();
         shopItem.buyed = true;
         ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
         string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
-        ApiDataHandler.Instance.SetShopData(jsonString);
-        priceText.text = "Buyed";
+        ApiDataHandler.Instance.SetShopDataToFirebase(jsonString);
+        priceText.text = "Bought";
         print("success end");
     }
     void SearchItems(string searchTerm)

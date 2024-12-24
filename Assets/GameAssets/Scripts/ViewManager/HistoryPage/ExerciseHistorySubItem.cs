@@ -41,7 +41,7 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
     {
         repsText.transform.parent.gameObject.SetActive(true);
         rirText.transform.parent.gameObject.SetActive(true);
-        repsText.text=exerciseModel.reps.ToString("F1");
+        repsText.text = userSessionManager.Instance.ShowFormattedNumber(exerciseModel.reps);//.ToString("F1");
         rirText.text=exerciseModel.rir.ToString();
     }
     void TimeBased()
@@ -68,7 +68,7 @@ public class ExerciseHistorySubItem : MonoBehaviour, ItemController
         rirText.transform.parent.gameObject.SetActive(true);
         rmText.transform.parent.gameObject.SetActive(true);
         rirText.text=exerciseModel.rir.ToString();
-        repsText.text=exerciseModel.reps.ToString("F1");
+        repsText.text=userSessionManager.Instance.ShowFormattedNumber(exerciseModel.reps);
         // calculating 1Rm
         if ((int)exerciseModel.reps == 1)
         {

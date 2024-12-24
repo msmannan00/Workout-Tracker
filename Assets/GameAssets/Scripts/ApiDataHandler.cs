@@ -647,11 +647,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 TextAsset shopJsonFile = Resources.Load<TextAsset>("data/shopData");
                 string shopJson = shopJsonFile.text;
                 this.shopData = JsonUtility.FromJson<ShopModel>(shopJson);
-                SetShopData(shopJson);
+                SetShopDataToFirebase(shopJson);
             }
         });
     }
-    public void SetShopData(string shopJson)
+    public void SetShopDataToFirebase(string shopJson)
     {
         FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("shop")
                .SetRawJsonValueAsync(shopJson).ContinueWith(task =>

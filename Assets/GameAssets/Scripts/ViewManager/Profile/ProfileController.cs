@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class ProfileController : MonoBehaviour,PageController
 {
+    public Image characterImage;
     public TextMeshProUGUI userNameText;
     public TextMeshProUGUI streakText;
     public TextMeshProUGUI achievementText;
@@ -17,14 +18,16 @@ public class ProfileController : MonoBehaviour,PageController
     public TextMeshProUGUI levelText;
     public Image badgeIamge;
     public Button settingButton;
-    public ProGifPlayerPanel gifPlayer;
+    //public ProGifPlayerPanel gifPlayer;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
         
     }
     private void Start()
     {
-        gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+        //gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+        Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/gifs/" + ApiDataHandler.Instance.GetClothes() + " front");
+        characterImage.sprite = loadedSprite;
         userNameText.text = userSessionManager.Instance.mProfileUsername;
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
         joinedText.text = userSessionManager.Instance.joiningDate.ToString();

@@ -72,13 +72,14 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
                 {
                     case WeightUnit.kg:
-                        bestSetText.text = bestSet.GetBestSet().weight.ToString() + " X " + bestSet.GetBestSet().reps.ToString("F1");
+                        
+                        bestSetText.text = bestSet.GetBestSet().weight.ToString() + " X " + userSessionManager.Instance.ShowFormattedNumber(bestSet.GetBestSet().reps);
                         estimate1RMText.text = roundedResult % 1 == 0
                     ? roundedResult.ToString("F0")
                     : roundedResult.ToString("F1");
                         break;
                     case WeightUnit.lbs:
-                        bestSetText.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(bestSet.GetBestSet().weight)).ToString("F0") + " X " + bestSet.GetBestSet().reps.ToString("F1");
+                        bestSetText.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(bestSet.GetBestSet().weight)).ToString("F0") + " X " + userSessionManager.Instance.ShowFormattedNumber(bestSet.GetBestSet().reps);
                         estimate1RMText.text = roundedResult % 1 == 0
                    ? Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F0")
                    : Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F1");

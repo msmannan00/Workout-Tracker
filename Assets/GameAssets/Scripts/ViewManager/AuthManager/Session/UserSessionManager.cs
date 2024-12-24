@@ -842,5 +842,11 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         string result = string.Join(" ", words).Trim();
         return result.Replace(" (", " (").Replace(") ", ")");
     }
+    public string ShowFormattedNumber(float number)
+    {
+        // Format the number
+        string formattedNumber = (number % 1 == 0) ? number.ToString("0") : number.ToString("0.##");
 
+        return formattedNumber;
+    }
 }
