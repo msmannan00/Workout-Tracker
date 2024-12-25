@@ -30,7 +30,7 @@ public class BadgeController : MonoBehaviour,PageController
     }
     public void Continu()
     {
-        ApiDataHandler.Instance.SetBadgeName(currentBadge);
+        ApiDataHandler.Instance.SetBadgeNameToFirebase(currentBadge);
         Back();
     }
     public void Back()

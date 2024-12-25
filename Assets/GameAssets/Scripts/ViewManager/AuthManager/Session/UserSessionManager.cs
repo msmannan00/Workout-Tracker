@@ -18,6 +18,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public GameObject currentScreen;
     public int weeklyGoal;
     public string joiningDate;
+    public string badgeName;
     public int currentCoins;
     public int userStreak;
     public int characterLevel;
@@ -118,7 +119,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.ChangeTrainingBadge:
-                    ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText, coinText);
+                    ChangeTrainingBadgeAchievements(_data, badgeName, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.AddFriends:
                     CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);
@@ -183,7 +184,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.ChangeTrainingBadge:
-                ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText, coinText);
+                ChangeTrainingBadgeAchievements(_data, badgeName, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.AddFriends:
                 CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);

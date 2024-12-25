@@ -86,6 +86,10 @@ public class StateManager : GenericSingletonClass<StateManager>
 
         //GlobalAnimator.Instance.openSidebar(prefab);
     }
+    public void DeleteFooter()
+    {
+        Destroy(footer.gameObject); footer = null;
+    }
     public void SetSpecificFooterButton(FooterButtons button)
     {
         footer.GetComponent<FooterController>().BottomButtonSelectionSeter(button);

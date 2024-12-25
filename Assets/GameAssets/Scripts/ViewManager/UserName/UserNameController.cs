@@ -99,7 +99,7 @@ public class UserNameController : MonoBehaviour, PageController
 
         // Store username under the "usernames" node to prevent duplicates
         var usernameRef = FirebaseDatabase.DefaultInstance.GetReference("usernames");
-        usernameRef.Child(username).SetValueAsync(true).ContinueWithOnMainThread(task =>
+        usernameRef.Child(username).SetValueAsync(userID).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
@@ -115,5 +115,4 @@ public class UserNameController : MonoBehaviour, PageController
             }
         });
     }
-
 }

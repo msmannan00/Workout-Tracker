@@ -2,6 +2,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Firebase.Database;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -23,6 +24,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     private ExerciseNotesHistory notesHistory = new ExerciseNotesHistory(); //firebase
     [SerializeField]
     private ShopModel shopData = new ShopModel(); 
+    [SerializeField]
+    private Dictionary<string, string> friendsData = new Dictionary<string, string>();
     [SerializeField]
     private string userName;
 
@@ -125,7 +128,18 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
             });
     }
-
+    public void LoadFriendData()
+    {
+        FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/friend", data =>
+        {
+            DataSnapshot snapshot = data;
+            foreach (var child in snapshot.Children)
+            {
+                // Add the key (user identifier) and value (user data) to the dictionary
+                friendsData.Add(child.Key, child.Value.ToString());
+            }
+        });
+    }
     public void LoadTemplateData()
     {
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/workoutTempletes", result =>
@@ -683,6 +697,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         LoadCharacterLevel();
         LoadCurrentWeekStartDateFromFirebase();
         LoadGymVisitsFromFirebase();
+        LoadBadgeName();
+        LoadFriendData();
         gameTheme = LoadTheme();
     }
 
@@ -762,10 +778,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/coins", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/coins", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
@@ -845,10 +861,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         print("load character");
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
@@ -882,6 +898,47 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     }
                 });
     }
+    public void LoadBadgeName()
+    {
+        print("load badge");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", result =>
+        {
+            print(result);
+            if (result)
+            {
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string badgeName = data.Value.ToString();  // Directly get the value as string
+                        userSessionManager.Instance.badgeName = badgeName;
+                        print("level retrieved: " + badgeName);
+                    }
+                });
+            }
+            else
+            {
+                SetBadgeNameToFirebase("TheGorillaBadge");
+            }
+        });
+    }
+    public void SetBadgeNameToFirebase(string name)
+    {
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("BadgeName")
+                .SetValueAsync(name).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        userSessionManager.Instance.badgeName = name;
+                        Debug.Log("badge name seted: " + name);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to save badge name: " + task.Exception);
+                    }
+                });
+    }
     //public void SetCharacterLevel(int level)
     //{
     //    PreferenceManager.Instance.SetInt("CharacterLevel", level);
@@ -901,21 +958,21 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         return PreferenceManager.Instance.GetInt("WeightUnit", 1);
     }
    
-    public void SetBadgeName(string name)
-    {
-        string badgeName= name.Replace(" ", "");
-        PreferenceManager.Instance.SetString("BadgeName", badgeName);
-    }
-    public string GetBadgeName()
-    {
-        return PreferenceManager.Instance.GetString("BadgeName", "TheGorillaBadge");
-    }
+    //public void SetBadgeName(string name)
+    //{
+    //    string badgeName= name.Replace(" ", "");
+    //    PreferenceManager.Instance.SetString("BadgeName", badgeName);
+    //}
+    //public string GetBadgeName()
+    //{
+    //    return PreferenceManager.Instance.GetString("BadgeName", "TheGorillaBadge");
+    //}
 
     public void SetBuyedCloths(int count)
     {
         PreferenceManager.Instance.SetInt("BuyedCloths", count);
     }
-    public int GetBuyedCloths()
+    public int _GetBuyedCloths()
     {
         return PreferenceManager.Instance.GetInt("BuyedCloths", 0);
     }
@@ -944,7 +1001,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return PreferenceManager.Instance.GetInt("AddFriendCount", 0);
     }
-
+    public Dictionary<string,string> GetFriendsData()
+    {
+        return friendsData;
+    }
 
 
 
@@ -1068,6 +1128,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     //------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    public int GetBuyedCloths()
+    {
+        return shopData.items.Count(item => item.buyed);
+    }
 
     public int GetCompletedAchievements()
     {

@@ -118,8 +118,8 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     public void OnLogout()
     {
         auth.SignOut();
-        PlayerPrefs.DeleteKey("email");
-        PlayerPrefs.DeleteKey("password");
+        user = null;
+        PlayerPrefs.DeleteAll();
     }
 
     public void OnLogoutForced()

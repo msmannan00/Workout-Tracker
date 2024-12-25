@@ -15,14 +15,8 @@ public class AppManager : MonoBehaviour
         //userSessionManager.Instance.LoadExcerciseData();
         Application.targetFrameRate = 60;
 
-        FirebaseManager.Instance.Load(OpenScreen);
-        //List<string> gifPaths = new List<string>
-        //{
-        //    Application.dataPath + "/Resources/UIAssets/character/gifs"//,
-        //    //Application.dataPath + "/Gifs/Path2"
-        //};
-
-        //GifManager.Instance.LoadGifsFromPaths(gifPaths);
+        StateManager.Instance.OpenStaticScreen("welcome", null, "welcomeScreen", null);
+        //FirebaseManager.Instance.Load(OpenScreen);
     }
     public void OpenScreen()
     {

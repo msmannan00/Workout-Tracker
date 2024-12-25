@@ -36,7 +36,8 @@ public class WelcomeController : MonoBehaviour, PageController
             Sprite foodImage = Resources.Load<Sprite>("UIAssets/Welcome/Images/" + mFoodImage[mPageNumber]);
             mFood.GetComponent<Image>().sprite = foodImage;
         }
-        StartCoroutine(StartWait());
+        //StartCoroutine(StartWait());
+        FirebaseManager.Instance.Load(OpenScreen);
     }
 
     public void getStarted()
@@ -59,7 +60,10 @@ public class WelcomeController : MonoBehaviour, PageController
             StateManager.Instance.OpenStaticScreen("welcome", gameObject, "welcomeScreen", mData);
         }
     }
-
+    public void OpenScreen()
+    {
+        StartCoroutine(StartWait());
+    }
     public void OnLogin()
     {
         PreferenceManager.Instance.SetBool("WelcomeScreensShown_v3", true);
@@ -71,7 +75,7 @@ public class WelcomeController : MonoBehaviour, PageController
     }
     IEnumerator StartWait()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         OnLogin();
     }
 }

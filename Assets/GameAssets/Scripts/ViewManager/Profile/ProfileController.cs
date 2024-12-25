@@ -40,7 +40,7 @@ public class ProfileController : MonoBehaviour,PageController
         levelText.text= "Level "+userSessionManager.Instance.characterLevel.ToString();
         streakText.text = "Streak: " + userSessionManager.Instance.userStreak.ToString();
         goalText.text = userSessionManager.Instance.weeklyGoal.ToString();
-        string badgeName = ApiDataHandler.Instance.GetBadgeName();
+        string badgeName = userSessionManager.Instance.badgeName;
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
         badgeIamge.sprite= sprite;
     }

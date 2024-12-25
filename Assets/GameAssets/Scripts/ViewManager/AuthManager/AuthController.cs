@@ -222,10 +222,10 @@ public class AuthController : MonoBehaviour, PageController
         print("check userName");
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/username", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
