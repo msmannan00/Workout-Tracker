@@ -126,6 +126,7 @@ public class AuthController : MonoBehaviour, PageController
         if (FirebaseManager.Instance.user != null)
         {
             onSignIn();
+            userSessionManager.Instance.mProfileID = FirebaseManager.Instance.user.UserId;
         }
     }
 

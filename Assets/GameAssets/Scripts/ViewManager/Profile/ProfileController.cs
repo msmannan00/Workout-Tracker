@@ -29,7 +29,7 @@ public class ProfileController : MonoBehaviour,PageController
         Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/gifs/" + ApiDataHandler.Instance.GetClothes() + " front");
         characterImage.sprite = loadedSprite;
         userNameText.text = userSessionManager.Instance.mProfileUsername;
-        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
+        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData()).ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
         joinedText.text = userSessionManager.Instance.joiningDate.ToString();
 
         settingButton.onClick.AddListener(Settings);

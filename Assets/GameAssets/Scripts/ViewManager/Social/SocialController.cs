@@ -5,17 +5,20 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.EventSystems.EventTrigger;
+using Firebase.Database;
 
 public class SocialController : MonoBehaviour,PageController
 {
     public TextMeshProUGUI messageText;
     public TMP_InputField searchBar;
     public Button addFriendButton;
+
+    public Transform content;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         addFriendButton.onClick.AddListener(AddFriendButton);
         addFriendButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        StartCoroutine(FetchFriendDetailsForAll(ApiDataHandler.Instance.GetFriendsData()));
     }
     private void AddFriendButton()
     {
@@ -70,6 +73,67 @@ public class SocialController : MonoBehaviour,PageController
     {
         FirebaseDatabase.DefaultInstance.GetReference("users").Child(FirebaseManager.Instance.user.UserId).
         Child("friend").Child(friendUserName).SetValueAsync(friendID);
+        ApiDataHandler.Instance.GetFriendsData().Add(friendUserName, friendID);
 
+        //(string level, string badgeName) = FirebaseManager.Instance.FetchFriendDetails(friendID);
+        //AddFriendOnScreen(friendUserName, friendID, level, badgeName);
+        Dictionary<string, string> newFriend= new Dictionary<string, string>(){{ friendUserName, friendID } };
+        StartCoroutine(FetchFriendDetailsForAll(newFriend));
+    }
+    private IEnumerator FetchFriendDetailsForAll(Dictionary<string, string> friendsData)
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        // Iterate through each friend and fetch their data asynchronously
+        foreach (KeyValuePair<string, string> key in friendsData)
+        {
+            // Call the coroutine to fetch data for each friend
+            yield return StartCoroutine(FetchFriendDetails(key.Value, key.Key));
+        }
+        GlobalAnimator.Instance.FadeOutLoader();
+    }
+
+    private IEnumerator FetchFriendDetails(string friendId, string friendName)
+    {
+        string level = "";
+        string badgeName = "";
+
+        // Start Firebase request to get friend details
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
+
+        // Yield until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Once the task completes, process the result
+        if (dataTask.IsCompleted && dataTask.Result != null)
+        {
+            DataSnapshot snapshot = dataTask.Result;
+            level = snapshot.Child("CharacterLevel").Value.ToString();
+            badgeName = snapshot.Child("BadgeName").Value.ToString();
+
+            // Output the fetched data
+            Debug.Log("Friend Name: " + friendName + ", Level: " + level + ", Badge: " + badgeName);
+            print(level + "  " + badgeName);
+            // Check if we have valid data before adding the friend
+            if (!string.IsNullOrEmpty(level) && !string.IsNullOrEmpty(badgeName))
+            {
+                // Add friend to screen
+                AddFriendOnScreen(friendName, friendId, level, badgeName);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Failed to fetch data for friend: " + friendName);
+        }
+    }
+    public void AddFriendOnScreen(string name,string id,string level,string badgeName)
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "name", name }, { "userID", id },{ "level", level },
+            {"badge",badgeName}
+        };
+        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/social/friendDataModel");
+        GameObject exerciseObject = Instantiate(exercisePrefab, content);
+        exerciseObject.GetComponent<SocialDataModel >().onInit(mData, null);
     }
 }

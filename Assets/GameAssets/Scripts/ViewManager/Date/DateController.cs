@@ -48,6 +48,7 @@ public class DateController : MonoBehaviour,PageController
     }
     public void ContinueButton()
     {
+        ApiDataHandler.Instance.isSignUp = true;
         if ( month >= 1 && month <= 12 && year > 1980 && year <= DateTime.Now.Year)
         {
             DateTime date=new DateTime(year,month,1);

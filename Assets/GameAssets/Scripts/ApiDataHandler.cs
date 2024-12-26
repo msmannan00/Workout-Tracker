@@ -33,6 +33,9 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     public Theme gameTheme;
 
 
+    public bool isSignUp;
+
+
     public void SaveTheme(Theme theme)
     {
         PreferenceManager.Instance.SetInt("SelectedTheme", (int)theme);
@@ -683,25 +686,88 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadDataFromFirebase()
     {
-        LoadHistory();
-        LoadTemplateData();
-        LoadExercises();
-        LoadMeasurementData();
-        LoadMeasurementHistory();
-        LoadNotesHistory();
-        LoadAchievements();
-        LoadPersonalBest();
-        LoadShopData();
-        LoadCoins();
-        LoadUserStreak();
-        LoadCharacterLevel();
-        LoadCurrentWeekStartDateFromFirebase();
+        if (isSignUp)
+        {
+            LoadHistory();
+            LoadTemplateData();
+            LoadExercises();
+            LoadMeasurementData();
+            LoadMeasurementHistory();
+            LoadNotesHistory();
+            LoadAchievements();
+            LoadPersonalBest();
+            LoadShopData();
+            LoadCoins();
+            LoadUserStreak();
+            LoadCharacterLevel();
+            LoadCurrentWeekStartDateFromFirebase();
+            LoadBadgeName();
+            LoadFriendData();
+        }
+        else
+            LoadCompleteData();
+
         LoadGymVisitsFromFirebase();
-        LoadBadgeName();
-        LoadFriendData();
         gameTheme = LoadTheme();
     }
+    public void LoadCompleteData()
+    {
+        FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId, data =>
+        {
+            if (data != null)
+            {
+                // workoutHistory
+                string workoutHistory = data.Child("workoutHistory").GetRawJsonValue();
+                historyData = (HistoryModel)LoadData(workoutHistory, typeof(HistoryModel));
+                // workoutTempletes
+                string workoutTempletes = data.Child("workoutTempletes").GetRawJsonValue();
+                templateData = (TemplateData)LoadData(workoutTempletes, typeof(TemplateData));
+                // exercise
+                string exercise = data.GetRawJsonValue();
+                exerciseData = (ExerciseData)LoadData(exercise, typeof(ExerciseData));
+                // measurements
+                string measurements = data.Child("measurements").GetRawJsonValue();
+                measurementData = (MeasurementModel)LoadData(measurements, typeof(MeasurementModel));
+                // measurementHistory
+                string _measurementHistory = data.Child("measurementHistory").GetRawJsonValue();
+                measurementHistory = (MeasurementHistory)LoadData(_measurementHistory, typeof(MeasurementHistory));
+                // exerciseNotes
+                string exerciseNotes = data.Child("exerciseNotes").GetRawJsonValue();
+                notesHistory = (ExerciseNotesHistory)LoadData(exerciseNotes, typeof(ExerciseNotesHistory));
+                // achievements
+                string achievements = data.Child("achievements").GetRawJsonValue();
+                achievementData = (AchievementData)LoadData(achievements, typeof(AchievementData));
+                // personalBest
+                string personalBest = data.Child("personalBest").GetRawJsonValue();
+                personalBestData = (PersonalBestData)LoadData(personalBest, typeof(PersonalBestData));
+                //shop
+                string shop = data.Child("shop").GetRawJsonValue();
+                shopData = (ShopModel)LoadData(shop, typeof(ShopModel));
+                //coins
+                string coin = data.Child("coins").Value.ToString();
+                userSessionManager.Instance.currentCoins = int.Parse(coin);
+                //streak
+                string streak = data.Child("streak").Value.ToString();
+                userSessionManager.Instance.userStreak = int.Parse(streak);
+                // CharacterLevel
+                string level = data.Child("CharacterLevel").Value.ToString();
+                userSessionManager.Instance.characterLevel = int.Parse(level);
+                // CurrentWeekStartDate
+                string startDateString = data.Child("CurrentWeekStartDate").Value.ToString();
+                StreakAndCharacterManager.Instance.startOfCurrentWeek = DateTime.Parse(startDateString);
+                // BadgeName
+                string badgeName = data.Child("BadgeName").Value.ToString();
+                userSessionManager.Instance.badgeName = badgeName;
+                // friends
+                DataSnapshot friendData = data.Child("friend");
+                foreach (var child in friendData.Children)
+                {
+                    friendsData.Add(child.Key, child.Value.ToString());
+                }
 
+            }
+        });
+    }
     public ExerciseData getExerciseData()
     {
         return this.exerciseData;
@@ -787,7 +853,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     if (data.Exists)  // Ensure that data exists
                     {
                         string coin = data.Value.ToString();  // Directly get the value as string
-                        userSessionManager.Instance.currentCoins = int.Parse(coin); ;
+                        userSessionManager.Instance.currentCoins = int.Parse(coin);
                         Debug.Log("Coins retrieved: " + coin);
                     }
                 });
@@ -1133,10 +1199,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         return shopData.items.Count(item => item.buyed);
     }
 
-    public int GetCompletedAchievements()
+    public int GetCompletedAchievements(AchievementData data)
     {
         int completedCount = 0;
-        foreach (AchievementTemplate achievement in achievementData.achievements)
+        foreach (AchievementTemplate achievement in data.achievements)
         {
             bool isAchievementCompleted = achievement.achievementData.All(item => item.isCompleted);
             if (isAchievementCompleted)

@@ -114,5 +114,6 @@ public class UserNameController : MonoBehaviour, PageController
                 Debug.LogError("Failed to store username: " + task.Exception);
             }
         });
+        userSessionManager.Instance.mProfileUsername= username;
     }
 }

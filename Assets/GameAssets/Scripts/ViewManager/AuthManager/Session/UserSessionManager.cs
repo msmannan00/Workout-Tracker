@@ -499,7 +499,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 continue; // Skip if it's already completed
             }
             int totalAchievements = ApiDataHandler.Instance.GetTotalAchievements() - 1;
-            int completeAchievements = ApiDataHandler.Instance.GetCompletedAchievements();
+            int completeAchievements = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData());
             if (completeAchievements==totalAchievements)
             {
                 achievementDataItem.isCompleted = true;

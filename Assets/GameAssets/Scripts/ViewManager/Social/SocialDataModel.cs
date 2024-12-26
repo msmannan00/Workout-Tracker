@@ -19,5 +19,16 @@ public class SocialDataModel : MonoBehaviour,ItemController
         userID = (string)data["userID"];
         string badgeName = (string)data["badge"];
         badgeImage.sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
+        this.GetComponent<Button>().onClick.AddListener(AudioController.Instance.OnButtonClick);
+        this.GetComponent<Button>().onClick.AddListener(OpenDetails);
+    }
+    public void OpenDetails()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "name", nameText.text }, { "id", userID }
+        };
+        StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "profileScreen", mData, keepState: true);
+        StateManager.Instance.CloseFooter();
     }
 }

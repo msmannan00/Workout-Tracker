@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
@@ -212,30 +213,33 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         {
             print("Error: " + ex.Message);
         }
-        //databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
-        //{
-        //    if (task.IsCompleted)
-        //    {
-        //        DataSnapshot snapshot = task.Result;
-
-        //        if (snapshot.Exists)
-        //        {
-        //            // If data exists at the path, pass it to the callback
-        //            callback(snapshot);
-        //        }
-        //        else
-        //        {
-        //            // If no data exists at the path
-        //            print("No data exist"+" "+path);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //callback("Error: " + task.Exception?.Message);
-        //        print("error"+task.Exception?.Message);
-        //    }
-        //});
     }
+
+    public Task<(string,string)> FetchFriendDetails(string friendId)
+    {
+        var taskCompletionSource = new TaskCompletionSource<(string, string)>();
+        databaseReference.Child("users").Child(friendId).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+
+                 string level = snapshot.Child("CharacterLevel").Value.ToString();
+                 string badge = snapshot.Child("BadgeName").Value.ToString();
+
+                // Do something with the friend data (level and badge)
+                Debug.Log("Friend ID: " + friendId + " Level: " + level + " Badge: " + badge);
+                taskCompletionSource.SetResult((level, badge));
+
+            }
+            else
+            {
+                taskCompletionSource.SetResult(("", "")); // Return empty values if something goes wrong
+            }
+        });
+        return taskCompletionSource.Task;
+    }
+   
 
     public void OnServerInitialized()
     {
