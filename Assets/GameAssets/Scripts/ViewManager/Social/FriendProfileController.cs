@@ -18,18 +18,25 @@ public class FriendProfileController : MonoBehaviour, PageController
     public TextMeshProUGUI levelText;
     public Image badgeIamge;
     public Button backButton;
+    public Button removeButton;
     [SerializeField]
     private AchievementData achievementData = new AchievementData();
     [SerializeField]
     private PersonalBestData personalBestData = new PersonalBestData();
+
+    private GameObject friendObject;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
+        friendObject = (GameObject)data["object"];
         Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/gifs/no clothes front");
         characterImage.sprite = loadedSprite;
         StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         backButton.onClick.AddListener(Back);
+        removeButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        removeButton.onClick.AddListener(RemoveFriend);
+
     }
     private void Update()
     {
@@ -88,6 +95,40 @@ public class FriendProfileController : MonoBehaviour, PageController
         AudioController.Instance.OnButtonClick();
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "personalBestScreen", null, true);
         StateManager.Instance.CloseFooter();
+    }
+    public void RemoveFriend()
+    {
+        PopupController.Instance.OpenPopup("social", "RemoveFriendPopup", DeleteFriend, null);
+    }
+    public void DeleteFriend(object data)
+    {
+        StartCoroutine(DeletingFriendValue());
+    }
+    public IEnumerator DeletingFriendValue()
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        // Build the reference path for the 'friends' node
+        string path = $"users/{FirebaseManager.Instance.user.UserId}/friend/{userNameText.text}";
+
+        // Start deleting the friend from Firebase
+        var deleteTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).RemoveValueAsync();
+
+        // Wait until the task completes
+        yield return new WaitUntil(() => deleteTask.IsCompleted);
+
+        // Check for errors
+        if (deleteTask.Exception != null)
+        {
+            Debug.LogError("Error deleting friend: " + deleteTask.Exception);
+        }
+        else
+        {
+            ApiDataHandler.Instance.GetFriendsData().Remove(userNameText.text);
+            Destroy(friendObject);
+            StateManager.Instance.HandleBackAction(this.gameObject);
+            StateManager.Instance.OpenFooter(null,null,false);
+        }
+        GlobalAnimator.Instance.FadeOutLoader();
     }
     public void OpenStreakDetail()
     {

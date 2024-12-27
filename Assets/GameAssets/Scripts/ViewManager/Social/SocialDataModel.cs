@@ -26,7 +26,7 @@ public class SocialDataModel : MonoBehaviour,ItemController
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "name", nameText.text }, { "id", userID }
+            { "name", nameText.text }, { "id", userID }, { "object", this.gameObject }
         };
         StateManager.Instance.OpenStaticScreen("social", userSessionManager.Instance.currentScreen, "profileScreen", mData, keepState: true);
         StateManager.Instance.CloseFooter();
