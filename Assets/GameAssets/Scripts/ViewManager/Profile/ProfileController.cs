@@ -26,7 +26,7 @@ public class ProfileController : MonoBehaviour,PageController
     private void Start()
     {
         //gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
-        Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/gifs/" + ApiDataHandler.Instance.GetClothes() + " front");
+        Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/GifSprites/" + ApiDataHandler.Instance.GetClothes() + " front");
         characterImage.sprite = loadedSprite;
         userNameText.text = userSessionManager.Instance.mProfileUsername;
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData()).ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();

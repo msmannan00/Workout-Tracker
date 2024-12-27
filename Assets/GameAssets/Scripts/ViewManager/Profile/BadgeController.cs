@@ -26,7 +26,7 @@ public class BadgeController : MonoBehaviour,PageController
     }
     public void SetBadge(string badge)
     {
-        currentBadge = badge;
+        currentBadge = badge.Replace(" ","");
     }
     public void Continu()
     {

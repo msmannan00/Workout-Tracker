@@ -39,6 +39,7 @@ public class WorkoutLogController : MonoBehaviour, PageController
     private Coroutine timerCoroutine;
     private Color enabledColor = Color.white;
     private Color disabledColor = Color.gray;
+    private DateTime dateTimeOfPause;
     bool back;
     Action<object> callback;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -150,7 +151,20 @@ public class WorkoutLogController : MonoBehaviour, PageController
             yield return null;
         }
     }
-
+    private void OnApplicationPause(bool isPause)
+    {
+        if (isTimerRunning)
+        {
+            if (isPause)
+            {
+                dateTimeOfPause = DateTime.Now;
+            }
+            else
+            {
+                elapsedTime += (float)(DateTime.Now - dateTimeOfPause).TotalSeconds;
+            }
+        }
+    }
     public void OnNameChanged(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

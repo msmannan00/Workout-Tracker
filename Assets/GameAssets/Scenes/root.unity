@@ -122,6 +122,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &105432906
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 105432908}
+  - component: {fileID: 105432907}
+  m_Layer: 0
+  m_Name: GlobalAnimator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &105432907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105432906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab46bc1c90cfe3b4fbf97e2c4436c5ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mFadeDuration: 0.3
+--- !u!4 &105432908
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105432906}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &114927553
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1359,6 +1404,83 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &874479873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 874479875}
+  - component: {fileID: 874479874}
+  m_Layer: 0
+  m_Name: userSessionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &874479874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874479873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc28580e9760ce41a8f8bc8d84453de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mProfileUsername: ali8
+  mProfileID: 
+  mSidebar: 0
+  currentScreen: {fileID: 0}
+  weeklyGoal: 0
+  joiningDate: May / 2024
+  badgeName: 
+  currentCoins: 0
+  userStreak: 0
+  characterLevel: 0
+  gifsPath: gifs/
+  darkPrimaryFont: {fileID: 0}
+  darkSecondaryFont: {fileID: 0}
+  lightPrimaryFontBold: {fileID: 0}
+  lightPrimaryFontMediumBold: {fileID: 0}
+  lightPrimaryFontSemiBold: {fileID: 0}
+  lightSecondaryFont: {fileID: 0}
+  darkButtonTextColor: {r: 0, g: 0, b: 0, a: 0}
+  lightButtonTextColor: {r: 0, g: 0, b: 0, a: 0}
+  darkButtonColor: {r: 0, g: 0, b: 0, a: 0}
+  lightButtonColor: {r: 0, g: 0, b: 0, a: 0}
+  darkPlaceholder: {r: 0, g: 0, b: 0, a: 0}
+  lightPlaceholder: {r: 0, g: 0, b: 0, a: 0}
+  darkInputFieldColor: {r: 0, g: 0, b: 0, a: 0}
+  lightInputFieldColor: {r: 0, g: 0, b: 0, a: 0}
+  darkLineColor: {r: 0, g: 0, b: 0, a: 0}
+  darkSwitchTextColor: {r: 0, g: 0, b: 0, a: 0}
+  lightXPbutton: {r: 0, g: 0, b: 0, a: 0}
+  darkXPbutton: {r: 0, g: 0, b: 0, a: 0}
+  selectedTemplete:
+    templeteName: Workout
+    templeteNotes: 
+    exerciseTemplete: []
+--- !u!4 &874479875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874479873}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &898495309
 GameObject:
   m_ObjectHideFlags: 0
@@ -1604,6 +1726,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1631644028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1631644030}
+  - component: {fileID: 1631644029}
+  m_Layer: 0
+  m_Name: StateManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1631644029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631644028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b11a823039757e64c80b4e2515fbf2d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inactivePages: []
+  footer: {fileID: 0}
+  isProcessing: 0
+--- !u!4 &1631644030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631644028}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1651153403
 GameObject:
   m_ObjectHideFlags: 0
@@ -2544,3 +2713,6 @@ SceneRoots:
   - {fileID: 1807668633}
   - {fileID: 1199866473}
   - {fileID: 1984161163}
+  - {fileID: 874479875}
+  - {fileID: 105432908}
+  - {fileID: 1631644030}

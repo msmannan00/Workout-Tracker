@@ -22,7 +22,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int currentCoins;
     public int userStreak;
     public int characterLevel;
-    public string gifsPath = "Resources/UIAssets/character/gifs/";
+    public string gifsPath = "gifs/";
 
     [Header("Theme Settings")]
     private Theme gameTheme;
