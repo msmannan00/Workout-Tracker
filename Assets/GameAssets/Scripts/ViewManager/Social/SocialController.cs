@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Firebase.Database;
 
 public class SocialController : MonoBehaviour,PageController
 {
@@ -96,6 +95,7 @@ public class SocialController : MonoBehaviour,PageController
     {
         string level = "";
         string badgeName = "";
+        string clothe = "";
 
         // Start Firebase request to get friend details
         var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
@@ -109,6 +109,11 @@ public class SocialController : MonoBehaviour,PageController
             DataSnapshot snapshot = dataTask.Result;
             level = snapshot.Child("CharacterLevel").Value.ToString();
             badgeName = snapshot.Child("BadgeName").Value.ToString();
+            if (snapshot.HasChild("clothes"))
+            {
+                clothe= snapshot.Child("clothes").Value.ToString();
+            }
+            else { clothe = "no clothes"; }
 
             // Output the fetched data
             Debug.Log("Friend Name: " + friendName + ", Level: " + level + ", Badge: " + badgeName);
@@ -117,7 +122,7 @@ public class SocialController : MonoBehaviour,PageController
             if (!string.IsNullOrEmpty(level) && !string.IsNullOrEmpty(badgeName))
             {
                 // Add friend to screen
-                AddFriendOnScreen(friendName, friendId, level, badgeName);
+                AddFriendOnScreen(friendName, friendId, level, badgeName,clothe);
             }
         }
         else
@@ -125,12 +130,12 @@ public class SocialController : MonoBehaviour,PageController
             Debug.LogWarning("Failed to fetch data for friend: " + friendName);
         }
     }
-    public void AddFriendOnScreen(string name,string id,string level,string badgeName)
+    public void AddFriendOnScreen(string name,string id,string level,string badgeName, string clotheName)
     {
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
             { "name", name }, { "userID", id },{ "level", level },
-            {"badge",badgeName}
+            {"badge",badgeName},{"clothe",clotheName}
         };
         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/social/friendDataModel");
         GameObject exerciseObject = Instantiate(exercisePrefab, content);

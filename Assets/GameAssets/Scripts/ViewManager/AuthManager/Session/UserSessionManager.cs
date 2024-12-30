@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using UnityEngine.TextCore.Text;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -22,7 +23,9 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int currentCoins;
     public int userStreak;
     public int characterLevel;
+    public string clotheName;
     public string gifsPath = "gifs/";
+    public string gifSpritePath = "UIAssets/character/GifSprites/";
 
     [Header("Theme Settings")]
     private Theme gameTheme;
@@ -241,6 +244,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -285,6 +289,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -329,6 +334,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -373,6 +379,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -418,6 +425,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -460,6 +468,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -504,6 +513,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -546,6 +556,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -587,6 +598,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -629,6 +641,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
@@ -815,6 +828,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         currentCoins += coins;
         ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
     }
+    public void SaveCompletedAchievementToFirebase(string achievementId,string itemId)
+    {
+        ApiDataHandler.Instance.SaveUserAchievementData(achievementId, itemId);
+    }
 
     public float ConvertLbsToKg(float pounds)
     {
@@ -849,5 +866,13 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         string formattedNumber = (number % 1 == 0) ? number.ToString("0") : number.ToString("0.##");
 
         return formattedNumber;
+    }
+    public string GetGifFolder()
+    {
+        int characterIndex = characterLevel / 4;
+
+        // Ensure the index is within the bounds of the array
+        characterIndex = Mathf.Clamp(characterIndex, 0, 1);
+        return characterIndex.ToString()+ "/";
     }
 }

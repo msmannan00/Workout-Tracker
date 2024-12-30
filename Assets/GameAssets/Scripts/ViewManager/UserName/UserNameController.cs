@@ -27,7 +27,7 @@ public class UserNameController : MonoBehaviour, PageController
             GlobalAnimator.Instance.ShowTextMessage(messageText, "Username: minimum 4 characters", 2);
         }
         else
-            CheckAndStoreUsername(userNameInput.text,userSessionManager.Instance.mProfileID);
+            CheckAndStoreUsername(stringWithoutSpaces, userSessionManager.Instance.mProfileID);
     }
     public void CheckAndStoreUsername(string username,string userID)
     {
@@ -74,7 +74,6 @@ public class UserNameController : MonoBehaviour, PageController
         }
 
         // Sanitize userID and username to ensure no invalid characters
-        userID = userID.Replace(".", "_").Replace("#", "_");
         username = username.Replace(".", "_").Replace("#", "_");
 
         Debug.Log("Saving username under path: users/" + userID + "/username");

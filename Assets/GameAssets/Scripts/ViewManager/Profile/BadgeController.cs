@@ -1,4 +1,6 @@
+using Firebase.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,12 +32,38 @@ public class BadgeController : MonoBehaviour,PageController
     }
     public void Continu()
     {
-        ApiDataHandler.Instance.SetBadgeNameToFirebase(currentBadge);
-        Back();
+        StartCoroutine(SetBadgeName(currentBadge));
+        //ApiDataHandler.Instance.SetBadgeNameToFirebase(currentBadge);
+        //Back();
     }
     public void Back()
     {
         StateManager.Instance.HandleBackAction(gameObject);
         StateManager.Instance.OpenFooter(null,null,false);
+    }
+    public IEnumerator SetBadgeName(string name)
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        // Build the reference path for the 'friends' node
+        string path = $"users/{FirebaseManager.Instance.user.UserId}/BadgeName/";
+
+        // Start deleting the friend from Firebase
+        //var deleteTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).RemoveValueAsync();
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).SetValueAsync(name);
+
+        // Wait until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Check for errors
+        if (dataTask.Exception != null)
+        {
+            Debug.LogError("Error while saving badge: " + dataTask.Exception);
+        }
+        else
+        {
+            userSessionManager.Instance.badgeName = name;
+        }
+        GlobalAnimator.Instance.FadeOutLoader();
+        Back();
     }
 }

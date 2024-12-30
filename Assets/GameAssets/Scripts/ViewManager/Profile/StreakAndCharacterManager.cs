@@ -93,7 +93,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 currentStreak++;
                 ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
                 characterLevel=userSessionManager.Instance.characterLevel;
-                characterLevel++;
+                characterLevel = Mathf.Clamp(characterLevel + 1, 0, 7);
                 ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
                 Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");
             }
@@ -102,7 +102,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 // Reset streak and decrease level
                 ApiDataHandler.Instance.SetUserStreakToFirebase(0);
                 characterLevel = userSessionManager.Instance.characterLevel;
-                characterLevel = Math.Max(0, characterLevel - 1); // Character level should not go below 1
+                characterLevel = Mathf.Clamp(characterLevel - 1, 0, 7);
                 ApiDataHandler.Instance.SetCharacterLevelToFirebase((int)characterLevel);
                 Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
             }

@@ -25,10 +25,14 @@ public class FriendProfileController : MonoBehaviour, PageController
     private PersonalBestData personalBestData = new PersonalBestData();
 
     private GameObject friendObject;
+    private string clothe;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
         friendObject = (GameObject)data["object"];
-        Sprite loadedSprite = Resources.Load<Sprite>("UIAssets/character/gifs/no clothes front");
+        clothe = (string)data["clothe"];
+        string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder() + clothe + " front";
+        print(spritePath);
+        Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
         characterImage.sprite = loadedSprite;
         StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
@@ -89,11 +93,14 @@ public class FriendProfileController : MonoBehaviour, PageController
             Back();
         }
     }
-
-    public void PersonalBest()
+    public void PersonalBestScreen()
     {
         AudioController.Instance.OnButtonClick();
-        StateManager.Instance.OpenStaticScreen("profile", gameObject, "personalBestScreen", null, true);
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            { "data", personalBestData }
+        };
+        StateManager.Instance.OpenStaticScreen("social", gameObject, "personalBestScreen", mData, true);
         StateManager.Instance.CloseFooter();
     }
     public void RemoveFriend()

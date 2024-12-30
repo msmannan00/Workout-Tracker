@@ -1,3 +1,4 @@
+using Firebase.Database;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,7 +49,8 @@ public class shopController : MonoBehaviour, PageController
     {
         if (shopItem.buyed)
         {
-            ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+            StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));
+            //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
             GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text+" Selected", 2);
         }
         else
@@ -82,7 +84,8 @@ public class shopController : MonoBehaviour, PageController
     {
         //GlobalAnimator.Instance.FadeOutLoader();
         shopItem.buyed = true;
-        ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+        StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));
+        //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
         string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
         ApiDataHandler.Instance.SetShopDataToFirebase(jsonString);
         priceText.text = "Bought";
@@ -134,5 +137,30 @@ public class shopController : MonoBehaviour, PageController
         }
 
         return item;
+    }
+    public IEnumerator SetClotheName(string name)
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        // Build the reference path for the 'friends' node
+        string path = $"users/{FirebaseManager.Instance.user.UserId}/clothes/";
+
+        // Start deleting the friend from Firebase
+        //var deleteTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).RemoveValueAsync();
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).SetValueAsync(name);
+
+        // Wait until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Check for errors
+        if (dataTask.Exception != null)
+        {
+            Debug.LogError("Error while saving clothe: " + dataTask.Exception);
+        }
+        else
+        {
+            userSessionManager.Instance.clotheName = name;
+        }
+        GlobalAnimator.Instance.FadeOutLoader();
+        Back();
     }
 }

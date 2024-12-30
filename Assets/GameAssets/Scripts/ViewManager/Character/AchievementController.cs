@@ -137,7 +137,7 @@ public class AchievementController : MonoBehaviour, PageController
     void SetCompleteAndTrophiesForMilestone()
     {
         (int completeTrophies, int totalTrophies) = ApiDataHandler.Instance.GetMilestoneCompletedTrophys();
-        trophysText.text = "Trophies " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
+        trophysText.text = "Stars " + completeTrophies.ToString() + " / " + totalTrophies.ToString();
         (int completeAchievemet, int totalAchievement) = ApiDataHandler.Instance.GetMilestoneCompletedAchievements();
         completedText.text = "Completed " + completeAchievemet.ToString() + " / " + totalAchievement.ToString();
     }
@@ -150,7 +150,7 @@ public class AchievementController : MonoBehaviour, PageController
     }
     public void Back()
     {
-        ApiDataHandler.Instance.SaveAchievementData();
+        //ApiDataHandler.Instance.SaveAchievementData();
         StateManager.Instance.HandleBackAction(gameObject);
         if(onFooter)
             StateManager.Instance.OpenFooter(null, null, false);
