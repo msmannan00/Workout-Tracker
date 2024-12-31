@@ -967,7 +967,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     {
                         userSessionManager.Instance.currentCoins = coin;
                         onSave?.Invoke(true);
-                        Debug.Log("coin seted: " + coin);
+                        Debug.Log("coin seted on firebase: " + coin);
                     }
                     else
                     {
