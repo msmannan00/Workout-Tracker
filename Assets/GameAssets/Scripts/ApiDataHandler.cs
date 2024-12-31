@@ -196,7 +196,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
                 string exerciseJson = exerciseJsonFile.text;
                 this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJson);
-                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
+                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("exercises")
                 .SetRawJsonValueAsync(exerciseJson).ContinueWith(task =>
                 {
                     if (task.IsCompleted)
@@ -583,16 +583,20 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
                 foreach (var achievementSnapshot in data.Children)
                 {
-                    string achievementId = achievementSnapshot.Key;  // Get the achievementId
+                    string achievementId = (string)achievementSnapshot.Key;  // Get the achievementId
+            print(achievementId);
                     AchievementTemplate achievementTemplate = GetAchievementTemplate(achievementId);  // Retrieve the template locally
 
                     if (achievementTemplate != null)
                     {
+                        print("not null");
                         foreach (var dataItem in achievementTemplate.achievementData)
                         {
+                    print("for");
                             if (achievementSnapshot.Child("completedItemIds").HasChild(dataItem.id))
                             {
                                 dataItem.isCompleted = true;  // Mark as completed
+                                print(true);
                             }
                         }
                     }
@@ -614,13 +618,28 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         // Return null if no matching achievement is found
         return null;
     }
-    public void SaveUserAchievementData(string achievementId, string completedItemId)
+
+ public void SaveUserAchievementData(string achievementId, string completedItemId)
     {
         // Get a reference to the user's achievement data
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("achievements").Child(achievementId).Child("completedItemIds");
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("achievements")
+            .Child(achievementId)
+            .Child("completedItemIds");
 
-        // Add the completed item ID (assuming you don't store duplicates)
-        reference.Push().SetValueAsync(completedItemId);
+        // Save the completed item ID as a key with 'true' as the value
+        reference.Child(completedItemId).SetValueAsync(true).ContinueWith(task => {
+            if (task.IsCompleted)
+            {
+                Debug.Log($"Achievement item {completedItemId} marked as completed in achievement {achievementId}");
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError($"Failed to save completed item {completedItemId}: {task.Exception}");
+            }
+        });
     }
     public void SaveAchievementData()
     {
@@ -742,6 +761,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadDataFromFirebase()
     {
+
         LoadAchievements();
         if (isSignUp)
         {
@@ -781,7 +801,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 string workoutTempletes = data.Child("workoutTempletes").GetRawJsonValue();
                 templateData = (TemplateData)LoadData(workoutTempletes, typeof(TemplateData));
                 // exercise
-                string exercise = data.GetRawJsonValue();
+                string exercise = data.Child("exercises").GetRawJsonValue();
                 exerciseData = (ExerciseData)LoadData(exercise, typeof(ExerciseData));
                 // measurements
                 string measurements = data.Child("measurements").GetRawJsonValue();
@@ -797,6 +817,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 //achievementData = (AchievementData)LoadData(achievements, typeof(AchievementData));
                 if (data.HasChild("achievements"))
                 {
+                    print("has achievement");
                     CheckCompletedAchievements(data.Child("achievements"));
                 }
                 // personalBest
@@ -853,6 +874,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public HistoryModel getHistoryData()
     {
+        if (this.historyData == null)
+            return this.historyData = new HistoryModel();
         return this.historyData;
     }
     public TemplateData getTemplateData()

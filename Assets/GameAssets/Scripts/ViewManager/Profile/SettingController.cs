@@ -166,7 +166,7 @@ public class SettingController : MonoBehaviour, PageController
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
         StateManager.Instance.DeleteFooter();
-        StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+        StateManager.Instance.OpenStaticScreen("auth", this.gameObject, "authScreen", mData);
     }
     public void TermsAndConditions()
     {

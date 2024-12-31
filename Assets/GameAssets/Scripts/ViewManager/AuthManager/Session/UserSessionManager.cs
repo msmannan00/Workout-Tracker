@@ -44,6 +44,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public DefaultTempleteModel selectedTemplete;
     private TemplateData templateData = new TemplateData();
     private HistoryModel historyData = new HistoryModel();
+
+    private object coinLock = new object();
     //public PersonalBest
 
     private void Start()
@@ -771,7 +773,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
     public int GetHighestExerciseInSingleSession(HistoryModel history)
     {
-        if (history.exerciseTempleteModel.Count < 2)
+        if (history.exerciseTempleteModel.Count < 1)
             return 0;
         // Get the highest count of exerciseTypeModel in the list
         int highestCount = history.exerciseTempleteModel
@@ -824,9 +826,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
     public void AddCoins(int coins)
     {
-        int currentCoins = this.currentCoins;
-        currentCoins += coins;
-        ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+        lock (coinLock)
+        {
+            this.currentCoins += coins;
+            print("set coins: " + currentCoins);
+            ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+        }
     }
     public void SaveCompletedAchievementToFirebase(string achievementId,string itemId)
     {

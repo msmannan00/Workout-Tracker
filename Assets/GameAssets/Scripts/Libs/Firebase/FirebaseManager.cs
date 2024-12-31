@@ -109,7 +109,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             else
             {
                 print("create");
-                user = task.Result.User;
+                //user = task.Result.User;
                 //OnSaveUser(email, password);
                 pCallbackSuccess.Invoke();
             }
