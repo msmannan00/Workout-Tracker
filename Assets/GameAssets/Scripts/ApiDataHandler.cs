@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using Firebase.Database;
 using System.Collections;
+using UnityEngine.Networking;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -572,7 +573,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         string achievementJson = achievementJsonFile.text;
         this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
     }
-    void CheckCompletedAchievements(DataSnapshot data)
+    public void CheckCompletedAchievements(DataSnapshot completedData,AchievementData achievements)
     {
         //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child("userId").Child("achievements");
 
@@ -581,11 +582,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         //    {
         //        var userAchievements = task.Result;
 
-                foreach (var achievementSnapshot in data.Children)
+                foreach (var achievementSnapshot in completedData.Children)
                 {
                     string achievementId = (string)achievementSnapshot.Key;  // Get the achievementId
             print(achievementId);
-                    AchievementTemplate achievementTemplate = GetAchievementTemplate(achievementId);  // Retrieve the template locally
+                    AchievementTemplate achievementTemplate = GetAchievementTemplate(achievementId, achievements);  // Retrieve the template locally
 
                     if (achievementTemplate != null)
                     {
@@ -605,10 +606,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         //});
 
     }
-    AchievementTemplate GetAchievementTemplate(string achievementId)
+    AchievementTemplate GetAchievementTemplate(string achievementId,AchievementData data)
     {
         // Assume 'achievementData' is an instance of AchievementData that contains all the achievement templates
-        foreach (AchievementTemplate template in achievementData.achievements)
+        foreach (AchievementTemplate template in data.achievements)
         {
             if (template.id == achievementId)
             {
@@ -761,7 +762,6 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadDataFromFirebase()
     {
-
         LoadAchievements();
         if (isSignUp)
         {
@@ -794,6 +794,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             if (data != null)
             {
+                print("retriving data");
                 // workoutHistory
                 string workoutHistory = data.Child("workoutHistory").GetRawJsonValue();
                 historyData = (HistoryModel)LoadData(workoutHistory, typeof(HistoryModel));
@@ -818,7 +819,18 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 if (data.HasChild("achievements"))
                 {
                     print("has achievement");
-                    CheckCompletedAchievements(data.Child("achievements"));
+                    CheckCompletedAchievements(data.Child("achievements"),achievementData);
+                }
+                //profile image link
+                if (data.HasChild("profileImageUrl"))
+                {
+                    string profileImageUrl = data.Child("profileImageUrl").Value.ToString();
+                    print(profileImageUrl);
+                    StartCoroutine(LoadImageFromUrl(profileImageUrl, (loadedSprite) => {
+                        // This callback will receive the newly loaded sprite
+                        userSessionManager.Instance.profileSprite = loadedSprite;  // Assuming profileImage is your UI Image component
+                    }));
+                    //StartCoroutine(LoadImageFromUrl(profileImageUrl,userSessionManager.Instance.profileSprite));
                 }
                 // personalBest
                 string personalBest = data.Child("personalBest").GetRawJsonValue();
@@ -1287,6 +1299,27 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         return PreferenceManager.Instance.GetString("clothes", "no clothes");
     }
     //------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    public IEnumerator LoadImageFromUrl(string imageUrl, Action<Sprite> onImageLoaded)
+    {
+        print("loading start");
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(imageUrl);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            Sprite newSprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            print("image loaded");
+            onImageLoaded?.Invoke(newSprite);
+        }
+        else
+        {
+            print("not load image");
+            Debug.LogError("Failed to load image from URL");
+        }
+        print("complete loading");
+    }
 
     public int GetBuyedCloths()
     {

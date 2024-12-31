@@ -8,6 +8,8 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using UnityEngine.TextCore.Text;
+using System.Collections;
+using UnityEngine.Networking;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -24,6 +26,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int userStreak;
     public int characterLevel;
     public string clotheName;
+    public Sprite profileSprite;
     public string gifsPath = "gifs/";
     public string gifSpritePath = "UIAssets/character/GifSprites/";
 
@@ -681,7 +684,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
 
     //------------------------------------------------------Helper Functions----------------------------------------------------------------------------------
-
+    
     public int GetUniqueExerciseCount(HistoryModel historyModel)
     {
         HashSet<string> uniqueExercises = new HashSet<string>();

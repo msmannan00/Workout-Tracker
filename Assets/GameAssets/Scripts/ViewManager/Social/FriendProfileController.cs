@@ -16,7 +16,9 @@ public class FriendProfileController : MonoBehaviour, PageController
     public TextMeshProUGUI goalText;
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI levelText;
+    public TextMeshProUGUI loadingText;
     public Image badgeIamge;
+    public Image profileImage;
     public Button backButton;
     public Button removeButton;
     [SerializeField]
@@ -40,6 +42,11 @@ public class FriendProfileController : MonoBehaviour, PageController
         backButton.onClick.AddListener(Back);
         removeButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         removeButton.onClick.AddListener(RemoveFriend);
+
+
+        TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+        string achievementJson = achievementJsonFile.text;
+        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
 
     }
     private void Update()
@@ -77,12 +84,33 @@ public class FriendProfileController : MonoBehaviour, PageController
 
             goalText.text= snapshot.Child("weeklyGoal").Value.ToString();
 
-            string achievements = snapshot.Child("achievements").GetRawJsonValue();
-            achievementData = (AchievementData)ApiDataHandler.Instance.LoadData(achievements, typeof(AchievementData));
-            achievementText.text=ApiDataHandler.Instance.GetCompletedAchievements(achievementData).ToString()+" / "+achievementData.achievements.Count.ToString();
-            
+            if (snapshot.HasChild("achievement"))
+            {
+                
+                ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), achievementData);
+                achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(achievementData).ToString() + " / " + achievementData.achievements.Count.ToString();
+            }
+            else
+            {
+                achievementText.text="0 / " + achievementData.achievements.Count.ToString();
+            }
+
             string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
             personalBestData = (PersonalBestData)ApiDataHandler.Instance.LoadData(personalBest, typeof(PersonalBestData));
+
+            if (snapshot.HasChild("profileImageUrl"))
+            {
+                loadingText.gameObject.SetActive(true);
+                string url= snapshot.Child("profileImageUrl").Value.ToString();
+                StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
+                    // This callback will receive the newly loaded sprite
+                    profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
+                    loadingText.gameObject.SetActive(false);
+                }));
+            }
+            else
+                loadingText.gameObject.SetActive(false);
+
 
             GlobalAnimator.Instance.FadeOutLoader();
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Storage;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     public FirebaseUser user;
     public DependencyStatus dependencyStatus = DependencyStatus.UnavilableMissing;
     public DatabaseReference databaseReference { get; private set; }
+    public StorageReference storageReference { get; private set; }
     public bool firebaseInitialized;
 
     private void Start()
@@ -32,6 +34,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
                 dependencyStatus = DependencyStatus.Available;
                 auth = FirebaseAuth.DefaultInstance;
                 databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+                storageReference = FirebaseStorage.DefaultInstance.RootReference;
                 firebaseInitialized = true;
                 user = auth.CurrentUser;
                 if (user != null)

@@ -1,42 +1,88 @@
 using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+using Firebase.Storage;
+using Firebase.Extensions;
+using System.IO;
 
 public class ProfileImagePicker : MonoBehaviour
 {
-    public string FinalPath;
-    public Image IMAGE;
-    public void LoadFile()
+    //public string FinalPath;
+    public Image profileImage;
+    private void OnEnable()
     {
-        string FileType = NativeFilePicker.ConvertExtensionToFileType("*");
-        NativeFilePicker.Permission permission = NativeFilePicker.PickFile((path) =>
+        if(userSessionManager.Instance.profileSprite != null)
         {
-            if (path == null)
-                Debug.Log("Operation cancelled");
+            profileImage.sprite = userSessionManager.Instance.profileSprite;
+        }
+    }
+    public void PickImage()
+    {
+        NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
+        {
+            if (path != null)
+            {
+                StartCoroutine(LoadImage(path));
+            }
+        });
+    }
+    private IEnumerator LoadImage(string path)
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            userSessionManager.Instance.profileSprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            profileImage.sprite= userSessionManager.Instance.profileSprite;
+            UploadImageToFirebase(texture);
+        }
+        else
+        {
+            Debug.LogError("Failed to load image from gallery");
+        }
+    }
+    public void UploadImageToFirebase(Texture2D texture)
+    {
+        byte[] imageBytes = texture.EncodeToPNG();
+        string fileName = "profile_" + FirebaseManager.Instance.user.UserId + ".png";
+        StorageReference profileImageRef = FirebaseManager.Instance.storageReference.Child("profile_images/" + fileName);
+
+        profileImageRef.PutBytesAsync(imageBytes).ContinueWithOnMainThread(task => {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Image uploaded successfully");
+                // Optionally, save the file URL in Firestore or Realtime Database
+                GetDownloadUrl(profileImageRef);
+            }
             else
             {
-                FinalPath = path;
-                Debug.Log("Picked file: " + FinalPath);
+                Debug.LogError("Error uploading image: " + task.Exception);
             }
-        }, new string[] { FileType });
+        });
     }
-    public void SaveFile()
+    private void GetDownloadUrl(StorageReference profileImageRef)
     {
-        // Create a dummy text file
-        string filePath = Path.Combine(Application.temporaryCachePath, "test.txt");
-        File.WriteAllText(filePath, "Hello world!");
-        // Export the file
-        NativeFilePicker.Permission permission = NativeFilePicker.ExportFile(filePath, (success) =>
-        Debug.Log("File exported: " +
-        success));
+        profileImageRef.GetDownloadUrlAsync().ContinueWithOnMainThread(task => {
+            if (task.IsCompleted)
+            {
+                string downloadUrl = task.Result.ToString();
+                Debug.Log("Image URL: " + downloadUrl);
+                // Save the URL in Firestore to associate it with the user account
+                SaveImageUrlToFirestore(downloadUrl);
+            }
+        });
     }
-    IEnumerator LoadTexture()
+    private void SaveImageUrlToFirestore(string url)
     {
-        WWW www = new WWW(FinalPath);
-        while(!www.isDone)
-            yield return null;
-        //IMAGE.aprite = www.texture;
-        print("loded");
+        var userRef = FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
+            .Child("profileImageUrl");
+        userRef.SetValueAsync(url);
+
+        GlobalAnimator.Instance.FadeOutLoader();
     }
+
 }

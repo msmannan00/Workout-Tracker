@@ -148,14 +148,14 @@ public class AuthController : MonoBehaviour, PageController
     void GmailSignIn()
     {
 
-        if (GoogleAuth.SavedAuth != null)
-        {
-            GoogleAuth.SignIn(OnSignIn, caching: true);
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-            onSignIn();
-        }
+        //if (GoogleAuth.SavedAuth != null)
+        //{
+        //    GoogleAuth.SignIn(OnSignIn, caching: true);
+        //    userSessionManager.Instance.OnInitialize(mAuthType, "");
+        //    onSignIn();
+        //}
 
-        else
+        //else
         {
             GlobalAnimator.Instance.FadeInLoader();
             GoogleAuth.SignIn(OnSignIn, caching: true);
