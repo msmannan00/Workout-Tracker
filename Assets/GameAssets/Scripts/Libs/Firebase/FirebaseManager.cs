@@ -60,7 +60,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         PlayerPrefs.Save();
     }
 
-    public void OnTryLogin(string email, string password, Action<string, string> onSuccess, Action<FirebaseException> onFailure)
+    public void OnTryLogin(string email, string password, Action onSuccess, Action<FirebaseException> onFailure)
     {
         print("out");
         if (!firebaseInitialized)
@@ -88,7 +88,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
                 string username = HelperMethods.Instance.ExtractUsernameFromEmail(email);
                 string userId = user.UserId;
                 print(username + "  " + userId);
-                onSuccess?.Invoke(username, userId);
+                onSuccess?.Invoke();
             }
         });
     }
@@ -101,18 +101,40 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             print("checking");
             if (task.IsCanceled)
             {
-                print("cancel");
                 onFailure(task.Exception);
+                return;
             }
-            else if (task.IsFaulted)
+            if (task.IsFaulted)
             {
-                print("fault");
-                onFailure(task.Exception);
+                // Handle specific error codes here
+                FirebaseException firebaseException = task.Exception?.InnerException as FirebaseException;
+                if (firebaseException != null)
+                {
+                    AuthError errorCode = (AuthError)firebaseException.ErrorCode;
+                    if (errorCode == AuthError.EmailAlreadyInUse)
+                    {
+                        // add code for sign in
+                        //Debug.Log("This email is already in use.");
+                        OnTryLogin(email, password, pCallbackSuccess, null);
+                    }
+                    else
+                    {
+                        //Debug.Log("Error checking email: " + firebaseException.Message);
+                    }
+                }
+                else
+                {
+                    // General error handling if we don't get a FirebaseException
+                    //Debug.Log("An unknown error occurred: " + task.Exception?.Message);
+                }
+                return;
             }
-            else
+
+
+            if (task.IsCompleted)
             {
                 print("create");
-                //user = task.Result.User;
+                user = task.Result.User;
                 //OnSaveUser(email, password);
                 pCallbackSuccess.Invoke();
             }

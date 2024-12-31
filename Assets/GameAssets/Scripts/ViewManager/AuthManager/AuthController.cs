@@ -179,9 +179,16 @@ public class AuthController : MonoBehaviour, PageController
         if (success)
         {
             GlobalAnimator.Instance.FadeOutLoader();
-            mAuthType = success ? $"{userInfo.name}" : error;
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-            onSignIn();
+            Action mCallbackSuccess = () =>
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                userSessionManager.Instance.mProfileID=FirebaseManager.Instance.user.UserId;
+                onSignIn();
+            };
+            FirebaseManager.Instance.OnTryRegisterNewAccount(userInfo.email, "z4zazgS4LaejfKcs", mCallbackSuccess, null);
+            //mAuthType = success ? $"{userInfo.name}" : error;
+            //userSessionManager.Instance.OnInitialize(mAuthType, "");
+            //onSignIn();
         }
 
     }
@@ -351,10 +358,10 @@ public class AuthController : MonoBehaviour, PageController
         AudioController.Instance.OnButtonClick();
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
-            Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>
+            Action/*<string, string>*/ mCallbackSuccess = (/*string pResult1, string pResult2*/) =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-                userSessionManager.Instance.OnInitialize(pResult1, pResult2);
+                //userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
             };
             Action<FirebaseException> callbackFailure = (pError) =>

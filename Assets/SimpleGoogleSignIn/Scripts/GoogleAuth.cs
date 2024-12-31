@@ -75,19 +75,19 @@ namespace Assets.SimpleGoogleSignIn.Scripts
 
             Initialize();
 
-            if (SavedAuth == null)
-            {
+            //if (SavedAuth == null)
+            //{
                 Auth();
-            }
-            else if (caching && SavedAuth.UserInfo != null)
-            {
-                //print("Call saved login");
-                callback(true, null, SavedAuth.UserInfo);
-            }
-            else
-            {
-                UseSavedToken();
-            }
+            //}
+            //else if (caching && SavedAuth.UserInfo != null)
+            //{
+            //    //print("Call saved login");
+            //    callback(true, null, SavedAuth.UserInfo);
+            //}
+            //else
+            //{
+            //    UseSavedToken();
+            //}
         }
 
         /// <summary>
