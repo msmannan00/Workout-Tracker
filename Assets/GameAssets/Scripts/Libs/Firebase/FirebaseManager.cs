@@ -141,6 +141,21 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         });
     }
 
+    public void OnTryPasswordReset(string email, Action onSuccess, Action<FirebaseException> onFailure)
+    {
+        auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted|| task.IsCanceled)
+            {
+                onFailure?.Invoke(task.Exception.GetBaseException() as FirebaseException);
+                return;
+            }
+            if (task.IsCompleted)
+            {
+                onSuccess?.Invoke();
+            }
+        });
+    }
     public void OnLogout()
     {
         auth.SignOut();
