@@ -72,6 +72,9 @@ public class SocialController : MonoBehaviour,PageController
     {
         FirebaseDatabase.DefaultInstance.GetReference("users").Child(FirebaseManager.Instance.user.UserId).
         Child("friend").Child(friendUserName).SetValueAsync(friendID);
+        userSessionManager.Instance.addedFriends += 1;
+        FirebaseDatabase.DefaultInstance.GetReference("users").Child(FirebaseManager.Instance.user.UserId).
+        Child("addedFriends").SetValueAsync(userSessionManager.Instance.addedFriends);
         ApiDataHandler.Instance.GetFriendsData().Add(friendUserName, friendID);
 
         //(string level, string badgeName) = FirebaseManager.Instance.FetchFriendDetails(friendID);

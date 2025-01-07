@@ -119,6 +119,7 @@ MonoBehaviour:
     type: 0
     category_exercise: []
     achievementData: []
+    id: 
 --- !u!114 &3344215587642864948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,11 +138,10 @@ MonoBehaviour:
   xpBar: {fileID: 0}
   xpButton: {fileID: 0}
   characterScreenOffOn: {fileID: 0}
-  primaryText:
+  primaryText: []
+  primaryBoldText: []
+  primarySemiBoldText:
   - {fileID: 3035027792474933463}
-  primaryBoldText:
-  - {fileID: 3035027792474933463}
-  primarySemiBoldText: []
   primaryMediumBoldText: []
   secondaryText:
   - {fileID: 2782462557278700257}
@@ -475,7 +475,7 @@ MonoBehaviour:
   m_enableAutoSizing: 1
   m_fontSizeMin: 10
   m_fontSizeMax: 10
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535

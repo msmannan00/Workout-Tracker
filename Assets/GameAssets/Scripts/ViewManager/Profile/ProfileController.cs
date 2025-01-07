@@ -86,6 +86,12 @@ public class ProfileController : MonoBehaviour,PageController
 
         
     }
+    public void OpenGymStartDate()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object> { { "firstTime", false }};
+        StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData,true);
+        StateManager.Instance.CloseFooter();
+    }
     public void OpenStreakDetail()
     {
         PopupController.Instance.OpenPopup("profile","levelDetailPopup",null,null);

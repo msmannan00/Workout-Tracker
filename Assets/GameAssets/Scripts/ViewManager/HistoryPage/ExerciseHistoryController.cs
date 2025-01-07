@@ -35,6 +35,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 break;
         }
         List<ExerciseWithDate> _exerciseHistory = _SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
+        _exerciseHistory.Reverse();
         if (exercise.exerciseType == ExerciseType.WeightAndReps )
         {
             ExerciseWithDate heaviestSet = GetTopPerformance(_exerciseHistory, HistoryPerformance.HeaviestLifted);

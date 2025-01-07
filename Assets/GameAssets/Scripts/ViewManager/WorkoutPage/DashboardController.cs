@@ -4,9 +4,10 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class DashboardController : MonoBehaviour, PageController
+public class DashboardController : MonoBehaviour, PageController, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     //public List<TextMeshProUGUI> headingTexts;
     //public TextMeshProUGUI headingColorText;
@@ -205,5 +206,74 @@ public class DashboardController : MonoBehaviour, PageController
                 break;
         }
     }
+    //--------------------------------------------------------------------------------------
+    public ScrollRect scrollRect; 
+    public ScrollRect currentChildScrollRect; 
+    private bool isHorizontalDrag;
 
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        print("drag begin");
+        // Detect drag direction (horizontal or vertical)
+        Vector2 delta = eventData.delta;
+        isHorizontalDrag = Mathf.Abs(delta.x) > Mathf.Abs(delta.y);
+
+        if (isHorizontalDrag)
+        {
+            // Forward drag event to the parent ScrollRect
+            scrollRect.OnBeginDrag(eventData);
+        }
+        else
+        {
+            // Find the current child ScrollRect under the pointer
+            currentChildScrollRect = FindChildScrollRect(eventData);
+            if (currentChildScrollRect != null)
+            {
+                currentChildScrollRect.OnBeginDrag(eventData);
+            }
+        }
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (isHorizontalDrag)
+        {
+            // Forward drag event to the parent ScrollRect
+            scrollRect.OnDrag(eventData);
+        }
+        else if (currentChildScrollRect != null)
+        {
+            // Forward drag event to the active child ScrollRect
+            currentChildScrollRect.OnDrag(eventData);
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (isHorizontalDrag)
+        {
+            // Forward end drag event to the parent ScrollRect
+            scrollRect.OnEndDrag(eventData);
+        }
+        else if (currentChildScrollRect != null)
+        {
+            // Forward end drag event to the active child ScrollRect
+            currentChildScrollRect.OnEndDrag(eventData);
+            currentChildScrollRect = null; // Reset the active child ScrollRect
+        }
+    }
+
+    private ScrollRect FindChildScrollRect(PointerEventData eventData)
+    {
+        // Check if the pointer is over a vertical ScrollRect
+        foreach (ScrollRect scrollRect in GetComponentsInChildren<ScrollRect>())
+        {
+            if (scrollRect != scrollRect && RectTransformUtility.RectangleContainsScreenPoint(scrollRect.GetComponent<RectTransform>(), eventData.position))
+            {
+                return scrollRect; // Return the ScrollRect under the pointer
+            }
+        }
+
+        return null; // No matching child ScrollRect found
+    }
 }

@@ -86,10 +86,14 @@ public class shopController : MonoBehaviour, PageController
         shopItem.buyed = true;
         StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));
         //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
-        string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
-        ApiDataHandler.Instance.SetShopDataToFirebase(jsonString);
+
+        //string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
+        //ApiDataHandler.Instance.SetShopDataToFirebase(jsonString);
+
+        ApiDataHandler.Instance.SaveUserPurchaseData(shopItem.id);
+
+        userSessionManager.Instance.CheckAchievementStatus();
         priceText.text = "Bought";
-        print("success end");
     }
     void SearchItems(string searchTerm)
     {

@@ -25,6 +25,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int currentCoins;
     public int userStreak;
     public int characterLevel;
+    public int addedFriends;
+    public int removedFriends;
     public string clotheName;
     public Sprite profileSprite;
     public string gifsPath = "gifs/";
@@ -236,6 +238,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 continue; // Skip if it's already completed
             }
             int totalWeight = 0;
+            totalWeight += (int)GetPerformedTotalWeight(ApiDataHandler.Instance.getHistoryData(), data.category_exercise);
             foreach (string exerciseName in data.category_exercise)
             {
                 PersonalBestDataItem matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.ToLower() == exerciseName.ToLower());
@@ -684,7 +687,27 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
 
     //------------------------------------------------------Helper Functions----------------------------------------------------------------------------------
-    
+
+
+    public float GetPerformedTotalWeight(HistoryModel historyModel, List<string> exerciseNames)
+    {
+        float totalWeight = 0;
+
+        foreach (var templete in historyModel.exerciseTempleteModel)
+        {
+            foreach (var exerciseType in templete.exerciseTypeModel)
+            {
+                if (exerciseNames.Contains(exerciseType.exerciseName))
+                {
+                    // Add the weight of all sets for this exercise to the total
+                    totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
+                }
+            }
+        }
+
+        return totalWeight;
+    }
+
     public int GetUniqueExerciseCount(HistoryModel historyModel)
     {
         HashSet<string> uniqueExercises = new HashSet<string>();

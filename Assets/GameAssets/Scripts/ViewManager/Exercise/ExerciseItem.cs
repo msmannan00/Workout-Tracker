@@ -28,7 +28,11 @@ public class ExerciseItem : MonoBehaviour, IPointerClickHandler, ItemController
         {
             exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseData.exerciseName);
             categoryNameText.text = exerciseData.category;
-            Sprite sp= Resources.Load<Sprite>("UIAssets/ExcerciseIcons/"+exerciseData.exerciseName+"-1");
+            Sprite sp = null;
+            if (exerciseData.exerciseName == "Pec deck")
+                sp = Resources.Load<Sprite>("UIAssets/ExcerciseIcons/Chest fly (machine)-1");
+            else
+                sp = Resources.Load<Sprite>("UIAssets/ExcerciseIcons/" + exerciseData.exerciseName + "-1");
             if (sp != null)
                 exerciseImage.sprite = sp;
         }

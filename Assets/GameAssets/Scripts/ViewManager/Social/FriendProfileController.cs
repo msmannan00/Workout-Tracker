@@ -158,10 +158,17 @@ public class FriendProfileController : MonoBehaviour, PageController
         }
         else
         {
+            userSessionManager.Instance.removedFriends += 1;
+            string path2 = $"users/{FirebaseManager.Instance.user.UserId}/removedFriends";
+            var removedFriend = FirebaseDatabase.DefaultInstance.RootReference.Child(path2)
+                .SetValueAsync(userSessionManager.Instance.removedFriends);
+            yield return new WaitUntil(() => removedFriend.IsCompleted);
+            userSessionManager.Instance.CheckAchievementStatus();
             ApiDataHandler.Instance.GetFriendsData().Remove(userNameText.text);
             Destroy(friendObject);
             StateManager.Instance.HandleBackAction(this.gameObject);
             StateManager.Instance.OpenFooter(null,null,false);
+            // need to implement delay for remove friends
         }
         GlobalAnimator.Instance.FadeOutLoader();
     }

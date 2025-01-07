@@ -44,6 +44,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
         //inputFieldManager.inputFields.Add(exerciseNotes);
         exerciseNameText.text = userSessionManager.Instance.FormatStringAbc(exerciseTypeModel.name);
         exerciseHistory = GetExerciseData(ApiDataHandler.Instance.getHistoryData(), exerciseTypeModel.name, exerciseTypeModel.exerciseType);
+        exerciseHistory.Reverse();
         switch (exerciseTypeModel.exerciseType)
         {
             case ExerciseType.RepsOnly:
