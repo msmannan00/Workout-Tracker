@@ -93,13 +93,13 @@ public class CharacterController : MonoBehaviour,PageController
         switch (currentSide)
         {
             case CharacterSide.Front:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + userSessionManager.Instance.GetGifFolder() + userSessionManager.Instance.clotheName + " front.gif");
+                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
                 break;
             case CharacterSide.Side:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + userSessionManager.Instance.GetGifFolder() + userSessionManager.Instance.clotheName + " side.gif");
+                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " side.gif");
                 break;
             case CharacterSide.Back:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + userSessionManager.Instance.GetGifFolder() + userSessionManager.Instance.clotheName + " back.gif");
+                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " back.gif");
                 break;
         }
     }
