@@ -26,6 +26,11 @@ public class SocialController : MonoBehaviour,PageController
             GlobalAnimator.Instance.ShowTextMessage(messageText, "Entered ID is your, please enter friend now", 2);
             return;
         }
+        if (searchBar.text == "")
+        {
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Please enter valid id", 2);
+            return;
+        }
         if(ApiDataHandler.Instance.GetFriendsData().ContainsKey(searchBar.text))
         {
             GlobalAnimator.Instance.ShowTextMessage(messageText, "This user is already on your friends list.", 2);
