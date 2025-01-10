@@ -3,10 +3,10 @@ using TMPro;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using Assets.SimpleGoogleSignIn.Scripts;
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
+using Google;
 
 public class AuthController : MonoBehaviour, PageController
 {
@@ -30,7 +30,6 @@ public class AuthController : MonoBehaviour, PageController
     private string mAuthType;
 
 
-    public GoogleAuth GoogleAuth;
     public Text Log;
     public Text Output;
     public bool isRegistering;
@@ -72,8 +71,6 @@ public class AuthController : MonoBehaviour, PageController
         StartCoroutine(prelaodAssets());
         userSessionManager.Instance.mSidebar = false;
         aUsername.text = "";
-        GoogleAuth = new GoogleAuth();
-        GoogleAuth.TryResume(OnSignIn, OnGetAccessToken);
 
         onVerifyFirstLogin();
     }
@@ -130,80 +127,58 @@ public class AuthController : MonoBehaviour, PageController
         }
     }
 
-    IEnumerator CallSavedlogins()
-    {
-
-
-        if (GoogleAuth.SavedAuth != null)
-        {
-            GlobalAnimator.Instance.FadeInLoader();
-            yield return new WaitForSeconds(2);
-            GoogleAuth.SignIn(OnSignIn, caching: true);
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-            onSignIn();
-        }
-
-
-    }
+ 
     void GmailSignIn()
     {
+        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
-        //if (GoogleAuth.SavedAuth != null)
-        //{
-        //    GoogleAuth.SignIn(OnSignIn, caching: true);
-        //    userSessionManager.Instance.OnInitialize(mAuthType, "");
-        //    onSignIn();
-        //}
-
-        //else
+        var configuration = new GoogleSignInConfiguration
         {
-            GlobalAnimator.Instance.FadeInLoader();
-            GoogleAuth.SignIn(OnSignIn, caching: true);
-        }
-        
+            WebClientId = "345076095675-klro15dq9uf5o852r9mbakns0gc4hvgl.apps.googleusercontent.com", // Replace with your Firebase project's Web Client ID
+            RequestIdToken = true
+        };
 
-    }
+        GoogleSignIn.Configuration = configuration;
 
-    public void SignOut()
-    {
-        GoogleAuth.SignOut(revokeAccessToken: true);
-    }
+        GlobalAnimator.Instance.FadeInLoader();
 
-    public void GetAccessToken()
-    {
-        GoogleAuth.GetAccessToken(OnGetAccessToken);
-    }
-
-    private void OnSignIn(bool success, string error, Assets.SimpleGoogleSignIn.Scripts.UserInfo userInfo)
-    {
-        if (success)
+        // Start the Google Sign-In process
+        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(task =>
         {
-            GlobalAnimator.Instance.FadeOutLoader();
-            Action mCallbackSuccess = () =>
+            if (task.IsCanceled || task.IsFaulted)
+            {
+                Debug.LogError("Google Sign-In failed.");
+                GlobalAnimator.Instance.FadeOutLoader();
+                return;
+            }
+
+            GoogleSignInUser googleUser = task.Result;
+
+            // Authenticate with Firebase using the Google ID token
+            Credential credential = GoogleAuthProvider.GetCredential(googleUser.IdToken, null);
+
+            auth.SignInWithCredentialAsync(credential).ContinueWith(authTask =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-                userSessionManager.Instance.mProfileID=FirebaseManager.Instance.user.UserId;
+
+                if (authTask.IsCanceled || authTask.IsFaulted)
+                {
+                    Debug.LogError("Firebase Google Sign-In failed: " + authTask.Exception);
+                    return;
+                }
+
+                FirebaseUser firebaseUser = authTask.Result;
+                Debug.Log($"Firebase user signed in successfully: {firebaseUser.DisplayName} ({firebaseUser.Email})");
+
+                // Update user session and proceed
+                userSessionManager.Instance.mProfileID = firebaseUser.UserId;
+                userSessionManager.Instance.OnInitialize(firebaseUser.Email, firebaseUser.DisplayName);
                 onSignIn();
-            };
-            FirebaseManager.Instance.OnTryRegisterNewAccount(userInfo.email, "z4zazgS4LaejfKcs", mCallbackSuccess, null);
-            //mAuthType = success ? $"{userInfo.name}" : error;
-            //userSessionManager.Instance.OnInitialize(mAuthType, "");
-            //onSignIn();
-        }
-
+            });
+        });
     }
 
-    private void OnGetAccessToken(bool success, string error, Assets.SimpleGoogleSignIn.Scripts.TokenResponse tokenResponse)
-    {
-        if (!success) return;
-
-        var jwt = new Assets.SimpleGoogleSignIn.Scripts.JWT(tokenResponse.IdToken);
-
-        Debug.Log($"JSON Web Token (JWT) Payload: {jwt.Payload}");
-
-        jwt.ValidateSignature(GoogleAuth.ClientId, OnValidateSignature);
-    }
-
+ 
     private void OnValidateSignature(bool success, string error)
     {
     }
