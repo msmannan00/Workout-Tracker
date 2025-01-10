@@ -837,6 +837,11 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             if (data != null)
             {
                 print("retriving data");
+                if (!data.HasChild("workoutTempletes"))
+                {
+                    isSignUp = true;
+                    LoadDataFromFirebase();
+                }
                 // workoutHistory
                 string workoutHistory = data.Child("workoutHistory").GetRawJsonValue();
                 historyData = (HistoryModel)LoadData(workoutHistory, typeof(HistoryModel));
