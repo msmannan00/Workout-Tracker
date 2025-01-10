@@ -128,57 +128,6 @@ public class AuthController : MonoBehaviour, PageController
     }
 
  
-    void GmailSignIn()
-    {
-        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-
-        var configuration = new GoogleSignInConfiguration
-        {
-            WebClientId = "345076095675-klro15dq9uf5o852r9mbakns0gc4hvgl.apps.googleusercontent.com", // Replace with your Firebase project's Web Client ID
-            RequestIdToken = true
-        };
-
-        GoogleSignIn.Configuration = configuration;
-
-        GlobalAnimator.Instance.FadeInLoader();
-
-        // Start the Google Sign-In process
-        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(task =>
-        {
-            if (task.IsCanceled || task.IsFaulted)
-            {
-                Debug.LogError("Google Sign-In failed.");
-                GlobalAnimator.Instance.FadeOutLoader();
-                return;
-            }
-
-            GoogleSignInUser googleUser = task.Result;
-
-            // Authenticate with Firebase using the Google ID token
-            Credential credential = GoogleAuthProvider.GetCredential(googleUser.IdToken, null);
-
-            auth.SignInWithCredentialAsync(credential).ContinueWith(authTask =>
-            {
-                GlobalAnimator.Instance.FadeOutLoader();
-
-                if (authTask.IsCanceled || authTask.IsFaulted)
-                {
-                    Debug.LogError("Firebase Google Sign-In failed: " + authTask.Exception);
-                    return;
-                }
-
-                FirebaseUser firebaseUser = authTask.Result;
-                Debug.Log($"Firebase user signed in successfully: {firebaseUser.DisplayName} ({firebaseUser.Email})");
-
-                // Update user session and proceed
-                userSessionManager.Instance.mProfileID = firebaseUser.UserId;
-                userSessionManager.Instance.OnInitialize(firebaseUser.Email, firebaseUser.DisplayName);
-                onSignIn();
-            });
-        });
-    }
-
- 
     private void OnValidateSignature(bool success, string error)
     {
     }
@@ -482,7 +431,10 @@ public class AuthController : MonoBehaviour, PageController
       
     }
 
-
+    void GmailSignIn(){
+        
+    }
+    
     public void OnResetErrors()
     {
         GlobalAnimator.Instance.FadeOut(aUsername.gameObject);
