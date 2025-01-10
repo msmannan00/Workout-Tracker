@@ -115,8 +115,13 @@ public class WeightController : MonoBehaviour,PageController
         if (save)
         {
             ApiDataHandler.Instance.SetWeightUnit((int)weightUnit);
-            if (isFirstTime)
-                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
+            if (isFirstTime){
+                Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                    { "firstTime", true }
+                 };
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData);
+            }
             else
                 Back();
         }

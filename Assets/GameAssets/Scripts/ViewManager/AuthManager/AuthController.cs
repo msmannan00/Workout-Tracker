@@ -330,7 +330,11 @@ public class AuthController : MonoBehaviour, PageController
             else
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
+                Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                    { "firstTime", true }
+                 };
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData);
             }
         });
     }
