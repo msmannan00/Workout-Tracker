@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -231,6 +232,8 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     }
     public void GetExerciseNotes(ExerciseTypeModel exercise)
     {
+        if (ApiDataHandler.Instance.getNotesHistory() == null)
+            return;
         foreach(var item in ApiDataHandler.Instance.getNotesHistory().exercises)
         {
             if(item.exerciseName.ToLower() == exercise.name.ToLower())

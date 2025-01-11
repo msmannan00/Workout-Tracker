@@ -57,7 +57,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
             // Set width, height, and pixel per unit
             RectTransform firstRectTransform = firstImageObject.GetComponent<RectTransform>();
             firstRectTransform.sizeDelta = new Vector2(25, 25); // Set width and height as 25
-            firstImage.pixelsPerUnitMultiplier = 1.75f; // Set pixel per unit to 1.75
+            firstImage.pixelsPerUnitMultiplier = 7.5f; // Set pixel per unit to 1.75
 
             // Add Mask component to the first image
             firstImageObject.AddComponent<Mask>();

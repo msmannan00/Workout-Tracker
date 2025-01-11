@@ -26,7 +26,7 @@ public class ProfileController : MonoBehaviour,PageController
     private void Start()
     {
         //gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
-        Sprite loadedSprite = Resources.Load<Sprite>(userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder() + userSessionManager.Instance.clotheName + " front");
+        Sprite loadedSprite = Resources.Load<Sprite>(userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(userSessionManager.Instance.characterLevel) + userSessionManager.Instance.clotheName + " front");
         characterImage.sprite = loadedSprite;
         userNameText.text = userSessionManager.Instance.mProfileUsername;
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData()).ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
@@ -39,6 +39,7 @@ public class ProfileController : MonoBehaviour,PageController
     {
         levelText.text= "Level "+userSessionManager.Instance.characterLevel.ToString();
         streakText.text = "Streak: " + userSessionManager.Instance.userStreak.ToString();
+        joinedText.text = userSessionManager.Instance.joiningDate.ToString();
         goalText.text = userSessionManager.Instance.weeklyGoal.ToString();
         string badgeName = userSessionManager.Instance.badgeName;
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);

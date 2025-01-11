@@ -396,17 +396,20 @@ public class WorkoutLogController : MonoBehaviour, PageController
             if (exerciseType.exerciseNotes != string.Empty)
             {
                 bool exerciseExist = false;
-                var exercises = ApiDataHandler.Instance.getNotesHistory().exercises;
-                for (int index = 0; index < exercises.Count; index++)
+                if (ApiDataHandler.Instance.getNotesHistory() != null)
                 {
-                    ExerciseNotesHistoryItem exercise = exercises[index];
-                    if (exercise.exerciseName.ToLower() == exerciseType.name.ToLower())
+                    var exercises = ApiDataHandler.Instance.getNotesHistory().exercises;
+                    for (int index = 0; index < exercises.Count; index++)
                     {
-                        exercise.notes = exerciseType.exerciseNotes;
-                        ApiDataHandler.Instance.SaveNotesHistory(exercise,index);
-                        exerciseExist = true;
-                        Debug.Log("Item found at index: " + index);
-                        break;
+                        ExerciseNotesHistoryItem exercise = exercises[index];
+                        if (exercise.exerciseName.ToLower() == exerciseType.name.ToLower())
+                        {
+                            exercise.notes = exerciseType.exerciseNotes;
+                            ApiDataHandler.Instance.SaveNotesHistory(exercise, index);
+                            exerciseExist = true;
+                            Debug.Log("Item found at index: " + index);
+                            break;
+                        }
                     }
                 }
                 if (!exerciseExist)
@@ -416,8 +419,16 @@ public class WorkoutLogController : MonoBehaviour, PageController
                         exerciseName = exerciseType.name,
                         notes = exerciseType.exerciseNotes
                     };
-                    ApiDataHandler.Instance.SaveNotesHistory(newExercise, ApiDataHandler.Instance.getNotesHistory().exercises.Count);
-                    ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
+                    if (ApiDataHandler.Instance.getNotesHistory() != null)
+                    {
+                        ApiDataHandler.Instance.SaveNotesHistory(newExercise, ApiDataHandler.Instance.getNotesHistory().exercises.Count);
+                        ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
+                    }
+                    else
+                    {
+                        ApiDataHandler.Instance.SaveNotesHistory(newExercise, 0);
+                        ApiDataHandler.Instance.getNotesHistory().exercises.Add(newExercise);
+                    }
                 }
             }
             //print(historyExerciseType.categoryName + "/" + exerciseType.categoryName);

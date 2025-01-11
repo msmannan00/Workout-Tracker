@@ -32,10 +32,7 @@ public class FriendProfileController : MonoBehaviour, PageController
     {
         friendObject = (GameObject)data["object"];
         clothe = (string)data["clothe"];
-        string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder() + clothe + " front";
-        print(spritePath);
-        Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
-        characterImage.sprite = loadedSprite;
+       
         StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
@@ -72,7 +69,14 @@ public class FriendProfileController : MonoBehaviour, PageController
 
             userNameText.text = friendName;
 
-            levelText.text = "Level " + snapshot.Child("CharacterLevel").Value.ToString();
+            string level = snapshot.Child("CharacterLevel").Value.ToString();
+            levelText.text = "Level " + level.ToString();
+
+            int lv = int.Parse(level);
+            string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(lv) + clothe + " front";
+            print(spritePath);
+            Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
+            characterImage.sprite = loadedSprite;
 
             string badgeName = snapshot.Child("BadgeName").Value.ToString();
             Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);

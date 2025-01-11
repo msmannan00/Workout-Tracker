@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class SocialController : MonoBehaviour,PageController
 {
     public TextMeshProUGUI messageText;
+    public TextMeshProUGUI noFriendText;
     public TMP_InputField searchBar;
     public Button addFriendButton;
 
@@ -148,5 +149,6 @@ public class SocialController : MonoBehaviour,PageController
         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/social/friendDataModel");
         GameObject exerciseObject = Instantiate(exercisePrefab, content);
         exerciseObject.GetComponent<SocialDataModel >().onInit(mData, null);
+        noFriendText.gameObject.SetActive(false);
     }
 }

@@ -186,7 +186,6 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     public void Back()
     {
         StateManager.Instance.HandleBackAction(gameObject);
-        StateManager.Instance.OpenFooter(null, null, false);
     }
 
     public List<HistoryExerciseModel> SearchExerciseByName(HistoryModel history, string exerciseName)

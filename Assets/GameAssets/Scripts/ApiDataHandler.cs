@@ -514,7 +514,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             if (task.IsCompleted)
             {
-                Debug.Log("Workout template added.");
+                Debug.Log("notes history added.");
             }
             else
             {
@@ -524,6 +524,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public ExerciseNotesHistory getNotesHistory()
     {
+        if (notesHistory == null)
+        {
+            notesHistory = new ExerciseNotesHistory();
+        }
         return notesHistory;
     }
     
@@ -970,7 +974,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 if (task.IsCompleted)
                 {
                     userSessionManager.Instance.joiningDate = dateInString;
-                    Debug.Log("weekly goal seted");
+                    Debug.Log("joining date seted");
                 }
                 else
                 {

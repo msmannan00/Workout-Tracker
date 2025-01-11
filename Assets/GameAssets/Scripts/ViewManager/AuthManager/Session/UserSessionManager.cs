@@ -898,9 +898,9 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
 
         return formattedNumber;
     }
-    public string GetGifFolder()
+    public string GetGifFolder(int level)
     {
-        int characterIndex = characterLevel / 4;
+        int characterIndex = level / 4;
 
         // Ensure the index is within the bounds of the array
         characterIndex = Mathf.Clamp(characterIndex, 0, 1);
