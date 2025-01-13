@@ -14,18 +14,20 @@ public class ProfileImagePicker : MonoBehaviour
     {
         if(userSessionManager.Instance.profileSprite != null)
         {
+            profileImage.rectTransform.anchoredPosition= new Vector2(0, 0);
+            profileImage.rectTransform.sizeDelta= new Vector2(90, 90);
             profileImage.sprite = userSessionManager.Instance.profileSprite;
         }
     }
     public void PickImage()
     {
-        NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
-        {
-            if (path != null)
-            {
-                StartCoroutine(LoadImage(path));
-            }
-        });
+        //NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
+        //{
+        //    if (path != null)
+        //    {
+        //        StartCoroutine(LoadImage(path));
+        //    }
+        //});
     }
     private IEnumerator LoadImage(string path)
     {

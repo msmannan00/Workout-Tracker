@@ -337,6 +337,12 @@ public class AuthController : MonoBehaviour, PageController
                 aError.gameObject.SetActive(true);
                 return;
             }
+            if (aPassword.text.Length < 6)
+            {
+                aError.text = "Password: minimum 6 characters";
+                aError.gameObject.SetActive(true);
+                return;
+            }
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();

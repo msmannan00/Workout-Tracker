@@ -29,6 +29,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     [SerializeField]
     private Dictionary<string, string> friendsData = new Dictionary<string, string>();
     [SerializeField]
+    private FriendModel friendDataModel = new FriendModel();
+    [SerializeField]
     private string userName;
 
     [Header("Theme Settings")]
@@ -37,7 +39,19 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public bool isSignUp;
 
-
+    public void LogOut()
+    {
+        exerciseData = new ExerciseData();
+        achievementData = new AchievementData();
+        personalBestData = new PersonalBestData();
+        templateData= new TemplateData();
+        historyData= new HistoryModel();
+        measurementData=new MeasurementModel();
+        measurementHistory = new MeasurementHistory();
+        notesHistory = new ExerciseNotesHistory();
+        shopData=new ShopModel();
+        friendsData=new Dictionary<string, string>();
+    }
     public void SaveTheme(Theme theme)
     {
         PreferenceManager.Instance.SetInt("SelectedTheme", (int)theme);
@@ -58,6 +72,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
          return PlayerPrefs.GetInt("Weight", 0);
     }
+
     public void SaveTemplateData()
     {
         string json = JsonUtility.ToJson(templateData);
@@ -924,10 +939,74 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 foreach (var child in friendData.Children)
                 {
                     friendsData.Add(child.Key, child.Value.ToString());
+                    StartCoroutine(FetchFriendDetails(child.Value.ToString(), child.Key));
                 }
-
             }
         });
+    }
+
+
+    private IEnumerator FetchFriendDetails(string friendId, string friendName)
+    {
+        FriendData friendDetails = new FriendData();
+
+        // Start Firebase request to get friend details
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
+
+        // Yield until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Once the task completes, process the result
+        if (dataTask.IsCompleted && dataTask.Result != null)
+        {
+            DataSnapshot snapshot = dataTask.Result;
+
+            friendDetails.userName = friendName;
+
+            string level = snapshot.Child("CharacterLevel").Value.ToString();
+            friendDetails.level = int.Parse(level);
+
+            friendDetails.badgeName = snapshot.Child("BadgeName").Value.ToString();
+
+            if (snapshot.HasChild("clothes"))
+            {
+                friendDetails.clothe = snapshot.Child("clothes").Value.ToString();
+            }
+            else { friendDetails.clothe = "no clothes"; }
+
+            string streak = snapshot.Child("streak").Value.ToString();
+            friendDetails.streak = int.Parse(streak);
+
+            string goal = snapshot.Child("weeklyGoal").Value.ToString();
+            friendDetails.goal = int.Parse(goal);
+
+            friendDetails.joiningDate = snapshot.Child("joiningDate").Value.ToString();
+
+            TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+            string achievementJson = achievementJsonFile.text;
+            friendDetails.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+            ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), friendDetails.achievementData);
+
+            string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
+            friendDetails.personalBestData = (PersonalBestData)LoadData(personalBest, typeof(PersonalBestData));
+
+            if (snapshot.HasChild("profileImageUrl"))
+            {
+                friendDetails.profileImageUrl= snapshot.Child("profileImageUrl").Value.ToString();
+            }
+
+            friendDataModel.friendData.Add(friendDetails);
+        }
+        else
+        {
+            Debug.LogWarning("Failed to fetch data for friend: " + friendName);
+        }
+    }
+    public FriendModel getAllFriendDetails()
+    {
+        if (this.friendDataModel == null)
+            this.friendDataModel = new FriendModel();
+        return this.friendDataModel;
     }
     public ExerciseData getExerciseData()
     {

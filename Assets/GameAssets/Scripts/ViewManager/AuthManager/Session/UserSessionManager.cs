@@ -75,7 +75,21 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         darkXPbutton = new Color32(241, 183, 32, 255);
 
     }
-
+    public void Logout()
+    {
+        mProfileUsername = "";
+        mProfileID = "";
+        weeklyGoal = 0;
+        joiningDate = "";
+        badgeName = "";
+        currentCoins = 0;
+        userStreak = 0;
+        characterLevel = 0;
+        addedFriends = 0;
+        removedFriends = 0;
+        clotheName = "";
+        profileSprite = null;
+}
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
         this.mProfileID = pProfileID;

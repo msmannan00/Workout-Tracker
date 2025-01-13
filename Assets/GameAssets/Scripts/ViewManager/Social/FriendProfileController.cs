@@ -21,30 +21,61 @@ public class FriendProfileController : MonoBehaviour, PageController
     public Image profileImage;
     public Button backButton;
     public Button removeButton;
-    [SerializeField]
-    private AchievementData achievementData = new AchievementData();
-    [SerializeField]
-    private PersonalBestData personalBestData = new PersonalBestData();
+    //[SerializeField]
+    //private AchievementData achievementData = new AchievementData();
+    //[SerializeField]
+    //private PersonalBestData personalBestData = new PersonalBestData();
 
     private GameObject friendObject;
     private string clothe;
+    public FriendData friendData;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
+        friendData = (FriendData)data["data"];
         friendObject = (GameObject)data["object"];
-        clothe = (string)data["clothe"];
        
-        StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
+        //StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
+        
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         backButton.onClick.AddListener(Back);
         removeButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         removeButton.onClick.AddListener(RemoveFriend);
 
+        //TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+        //string achievementJson = achievementJsonFile.text;
+        //this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
 
-        TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
-        string achievementJson = achievementJsonFile.text;
-        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+        userNameText.text = friendData.userName;
+        levelText.text = "Level " + friendData.level.ToString();
 
+        string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(friendData.level) + friendData.clothe + " front";
+        Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
+        characterImage.sprite = loadedSprite;
+
+        Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + friendData.badgeName);
+        badgeIamge.sprite = sprite;
+
+        streakText.text = "Streak: " + friendData.streak.ToString();
+
+        joinedText.text = friendData.joiningDate;
+
+        goalText.text = friendData.goal.ToString();
+
+        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(friendData.achievementData).ToString() + " / " + friendData.achievementData.achievements.Count.ToString();
+        
+        if (friendData.profileImageUrl!=null)
+        {
+            loadingText.gameObject.SetActive(true);
+            string url = friendData.profileImageUrl;
+            StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
+                // This callback will receive the newly loaded sprite
+                profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
+                loadingText.gameObject.SetActive(false);
+            }));
+        }
+        else
+            loadingText.gameObject.SetActive(false);
     }
     private void Update()
     {
@@ -55,82 +86,83 @@ public class FriendProfileController : MonoBehaviour, PageController
     }
     private IEnumerator FetchFriendDetails(string friendId, string friendName)
     {
-        GlobalAnimator.Instance.FadeInLoader();
-        // Start Firebase request to get friend details
-        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
+        yield return null;
+        //GlobalAnimator.Instance.FadeInLoader();
+        //// Start Firebase request to get friend details
+        //var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
 
-        // Yield until the task completes
-        yield return new WaitUntil(() => dataTask.IsCompleted);
+        //// Yield until the task completes
+        //yield return new WaitUntil(() => dataTask.IsCompleted);
 
-        // Once the task completes, process the result
-        if (dataTask.IsCompleted && dataTask.Result != null)
-        {
-            DataSnapshot snapshot = dataTask.Result;
+        //// Once the task completes, process the result
+        //if (dataTask.IsCompleted && dataTask.Result != null)
+        //{
+        //    DataSnapshot snapshot = dataTask.Result;
 
-            userNameText.text = friendName;
+        //    userNameText.text = friendName;
 
-            string level = snapshot.Child("CharacterLevel").Value.ToString();
-            levelText.text = "Level " + level.ToString();
+        //    string level = snapshot.Child("CharacterLevel").Value.ToString();
+        //    levelText.text = "Level " + level.ToString();
 
-            int lv = int.Parse(level);
-            string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(lv) + clothe + " front";
-            print(spritePath);
-            Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
-            characterImage.sprite = loadedSprite;
+        //    int lv = int.Parse(level);
+        //    string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(lv) + clothe + " front";
+        //    print(spritePath);
+        //    Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
+        //    characterImage.sprite = loadedSprite;
 
-            string badgeName = snapshot.Child("BadgeName").Value.ToString();
-            Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
-            badgeIamge.sprite = sprite;
+        //    string badgeName = snapshot.Child("BadgeName").Value.ToString();
+        //    Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
+        //    badgeIamge.sprite = sprite;
 
-            streakText.text = "Streak: " + snapshot.Child("streak").Value.ToString();
+        //    streakText.text = "Streak: " + snapshot.Child("streak").Value.ToString();
 
-            joinedText.text= snapshot.Child("joiningDate").Value.ToString();
+        //    joinedText.text= snapshot.Child("joiningDate").Value.ToString();
 
-            goalText.text= snapshot.Child("weeklyGoal").Value.ToString();
+        //    goalText.text= snapshot.Child("weeklyGoal").Value.ToString();
 
-            if (snapshot.HasChild("achievement"))
-            {
+        //    if (snapshot.HasChild("achievement"))
+        //    {
                 
-                ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), achievementData);
-                achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(achievementData).ToString() + " / " + achievementData.achievements.Count.ToString();
-            }
-            else
-            {
-                achievementText.text="0 / " + achievementData.achievements.Count.ToString();
-            }
+        //        ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), achievementData);
+        //        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(achievementData).ToString() + " / " + achievementData.achievements.Count.ToString();
+        //    }
+        //    else
+        //    {
+        //        achievementText.text="0 / " + achievementData.achievements.Count.ToString();
+        //    }
 
-            string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
-            personalBestData = (PersonalBestData)ApiDataHandler.Instance.LoadData(personalBest, typeof(PersonalBestData));
+        //    string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
+        //    personalBestData = (PersonalBestData)ApiDataHandler.Instance.LoadData(personalBest, typeof(PersonalBestData));
 
-            if (snapshot.HasChild("profileImageUrl"))
-            {
-                loadingText.gameObject.SetActive(true);
-                string url= snapshot.Child("profileImageUrl").Value.ToString();
-                StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
-                    // This callback will receive the newly loaded sprite
-                    profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
-                    loadingText.gameObject.SetActive(false);
-                }));
-            }
-            else
-                loadingText.gameObject.SetActive(false);
+        //    if (snapshot.HasChild("profileImageUrl"))
+        //    {
+        //        loadingText.gameObject.SetActive(true);
+        //        string url= snapshot.Child("profileImageUrl").Value.ToString();
+        //        StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
+        //            // This callback will receive the newly loaded sprite
+        //            profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
+        //            loadingText.gameObject.SetActive(false);
+        //        }));
+        //    }
+        //    else
+        //        loadingText.gameObject.SetActive(false);
 
 
-            GlobalAnimator.Instance.FadeOutLoader();
-        }
-        else
-        {
-            Debug.LogWarning("Failed to fetch data for friend: " + friendName);
-            GlobalAnimator.Instance.FadeOutLoader();
-            Back();
-        }
+        //    GlobalAnimator.Instance.FadeOutLoader();
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("Failed to fetch data for friend: " + friendName);
+        //    GlobalAnimator.Instance.FadeOutLoader();
+        //    Back();
+        //}
     }
     public void PersonalBestScreen()
     {
         AudioController.Instance.OnButtonClick();
         Dictionary<string, object> mData = new Dictionary<string, object>
         {
-            { "data", personalBestData }
+            { "data", friendData.personalBestData }
         };
         StateManager.Instance.OpenStaticScreen("social", gameObject, "personalBestScreen", mData, true);
         StateManager.Instance.CloseFooter();
@@ -169,6 +201,7 @@ public class FriendProfileController : MonoBehaviour, PageController
             yield return new WaitUntil(() => removedFriend.IsCompleted);
             userSessionManager.Instance.CheckAchievementStatus();
             ApiDataHandler.Instance.GetFriendsData().Remove(userNameText.text);
+            ApiDataHandler.Instance.getAllFriendDetails().friendData.Remove(friendData);
             Destroy(friendObject);
             StateManager.Instance.HandleBackAction(this.gameObject);
             StateManager.Instance.OpenFooter(null,null,false);

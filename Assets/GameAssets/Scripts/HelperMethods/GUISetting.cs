@@ -85,8 +85,8 @@ public class GUISetting : MonoBehaviour
                 SetButtonColor(userSessionManager.Instance.lightButtonColor);
                 SetButtonTextColor(Color.white);
                 SetButton2Color(userSessionManager.Instance.lightInputFieldColor);
-                SetInputFields(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
-                SetDropdowns(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,userSessionManager.Instance.lightInputFieldColor);
+                SetInputFields(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,Color.white);
+                SetDropdowns(userSessionManager.Instance.lightPrimaryFontBold, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightPlaceholder,Color.white);
                 SetOutlines(userSessionManager.Instance.lightButtonColor);
                 SetWorkoutLogDropdownToggle(userSessionManager.Instance.lightInputFieldColor);
                 SetLineColor(userSessionManager.Instance.lightPlaceholder);

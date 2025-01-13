@@ -589,6 +589,7 @@ public class ExerciseController : MonoBehaviour, PageController
             // Instantiate text prefab
             GameObject newTextObj = Instantiate(bodyPartPrefab, bodyPartsContent);
             newTextObj.transform.GetChild(1).gameObject.SetActive(true);
+            newTextObj.GetComponent<Image>().color = new Color32(237, 231, 211, 255);
             TextMeshProUGUI textComponent = newTextObj.GetComponentInChildren<TextMeshProUGUI>();
             textComponent.text = text;
             textComponent.color = new Color32(51, 23, 23, 255);

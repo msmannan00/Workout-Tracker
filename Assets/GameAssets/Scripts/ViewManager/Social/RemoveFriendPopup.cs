@@ -29,11 +29,11 @@ public class RemoveFriendPopup : MonoBehaviour, IPrefabInitializer
     }
     public void Closs()
     {
-        callback?.Invoke(null);
         PopupController.Instance.ClosePopup("RemoveFriendPopup");
     }
     public void RemoveFriend()
     {
+        callback?.Invoke(null);
         Closs();
     }
 }

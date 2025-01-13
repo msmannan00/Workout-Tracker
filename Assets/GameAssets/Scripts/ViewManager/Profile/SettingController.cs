@@ -160,6 +160,8 @@ public class SettingController : MonoBehaviour, PageController
     public void LogOut()
     {
         FirebaseManager.Instance.OnLogout();
+        ApiDataHandler.Instance.LogOut();
+        userSessionManager.Instance.Logout();
         PlayerPrefs.DeleteAll();
         Dictionary<string, object> mData = new Dictionary<string, object>
             {

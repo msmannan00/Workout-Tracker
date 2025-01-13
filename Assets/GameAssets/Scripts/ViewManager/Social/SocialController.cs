@@ -18,7 +18,17 @@ public class SocialController : MonoBehaviour,PageController
     {
         addFriendButton.onClick.AddListener(AddFriendButton);
         addFriendButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
-        StartCoroutine(FetchFriendDetailsForAll(ApiDataHandler.Instance.GetFriendsData()));
+
+        foreach(FriendData friendData in ApiDataHandler.Instance.getAllFriendDetails().friendData)
+        {
+            AddLoadedFriendOnScreen(friendData);
+        }
+        //StartCoroutine(FetchFriendDetailsForAll(ApiDataHandler.Instance.GetFriendsData()));
+    }
+    private void OnEnable()
+    {
+        if (ApiDataHandler.Instance.getAllFriendDetails().friendData.Count == 0)
+            noFriendText.gameObject.SetActive(true);
     }
     private void AddFriendButton()
     {
@@ -102,9 +112,7 @@ public class SocialController : MonoBehaviour,PageController
 
     private IEnumerator FetchFriendDetails(string friendId, string friendName)
     {
-        string level = "";
-        string badgeName = "";
-        string clothe = "";
+        FriendData friendDetails = new FriendData();
 
         // Start Firebase request to get friend details
         var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
@@ -116,23 +124,43 @@ public class SocialController : MonoBehaviour,PageController
         if (dataTask.IsCompleted && dataTask.Result != null)
         {
             DataSnapshot snapshot = dataTask.Result;
-            level = snapshot.Child("CharacterLevel").Value.ToString();
-            badgeName = snapshot.Child("BadgeName").Value.ToString();
+
+            friendDetails.userName = friendName;
+
+            string level = snapshot.Child("CharacterLevel").Value.ToString();
+            friendDetails.level = int.Parse(level);
+
+            friendDetails.badgeName = snapshot.Child("BadgeName").Value.ToString();
+
             if (snapshot.HasChild("clothes"))
             {
-                clothe= snapshot.Child("clothes").Value.ToString();
+                friendDetails.clothe = snapshot.Child("clothes").Value.ToString();
             }
-            else { clothe = "no clothes"; }
+            else { friendDetails.clothe = "no clothes"; }
 
-            // Output the fetched data
-            Debug.Log("Friend Name: " + friendName + ", Level: " + level + ", Badge: " + badgeName);
-            print(level + "  " + badgeName);
-            // Check if we have valid data before adding the friend
-            if (!string.IsNullOrEmpty(level) && !string.IsNullOrEmpty(badgeName))
+            string streak = snapshot.Child("streak").Value.ToString();
+            friendDetails.streak = int.Parse(streak);
+
+            string goal = snapshot.Child("weeklyGoal").Value.ToString();
+            friendDetails.goal = int.Parse(goal);
+
+            friendDetails.joiningDate = snapshot.Child("joiningDate").Value.ToString();
+
+            TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+            string achievementJson = achievementJsonFile.text;
+            friendDetails.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+            ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), friendDetails.achievementData);
+
+            string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
+            friendDetails.personalBestData = (PersonalBestData)ApiDataHandler.Instance.LoadData(personalBest, typeof(PersonalBestData));
+
+            if (snapshot.HasChild("profileImageUrl"))
             {
-                // Add friend to screen
-                AddFriendOnScreen(friendName, friendId, level, badgeName,clothe);
+                friendDetails.profileImageUrl = snapshot.Child("profileImageUrl").Value.ToString();
             }
+
+            ApiDataHandler.Instance.getAllFriendDetails().friendData.Add(friendDetails);
+            AddLoadedFriendOnScreen(friendDetails);
         }
         else
         {
@@ -149,6 +177,17 @@ public class SocialController : MonoBehaviour,PageController
         GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/social/friendDataModel");
         GameObject exerciseObject = Instantiate(exercisePrefab, content);
         exerciseObject.GetComponent<SocialDataModel >().onInit(mData, null);
+        noFriendText.gameObject.SetActive(false);
+    }
+    public void AddLoadedFriendOnScreen(FriendData friendData)
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object>
+        {
+            {"data",friendData}
+        };
+        GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/social/friendDataModel");
+        GameObject exerciseObject = Instantiate(exercisePrefab, content);
+        exerciseObject.GetComponent<SocialDataModel>().onInit(mData, null);
         noFriendText.gameObject.SetActive(false);
     }
 }
