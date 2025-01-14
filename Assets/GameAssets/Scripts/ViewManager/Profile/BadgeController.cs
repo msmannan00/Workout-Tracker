@@ -12,16 +12,26 @@ public class BadgeController : MonoBehaviour,PageController
     public Button backButton;
     [SerializeField]
     private string currentBadge;
+    bool firstTime = false;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
+        if (data.ContainsKey("firstTime"))
+        {
+            firstTime = true;
+            backButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            backButton.gameObject.SetActive(true);
+            backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+            backButton.onClick.AddListener(Back);
+        }
         continuButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         continuButton.onClick.AddListener(Continu);
-        backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
-        backButton.onClick.AddListener(Back);
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape)&&!firstTime)
         {
             Back();
         }
@@ -43,6 +53,7 @@ public class BadgeController : MonoBehaviour,PageController
     }
     public IEnumerator SetBadgeName(string name)
     {
+        ApiDataHandler.Instance.isSignUp = true;
         GlobalAnimator.Instance.FadeInLoader();
         // Build the reference path for the 'friends' node
         string path = $"users/{FirebaseManager.Instance.user.UserId}/BadgeName/";
@@ -64,6 +75,14 @@ public class BadgeController : MonoBehaviour,PageController
             userSessionManager.Instance.badgeName = name;
         }
         GlobalAnimator.Instance.FadeOutLoader();
-        Back();
+        if (firstTime)
+        {
+            StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+        }
+        else
+        {
+            Back();
+        }
+
     }
 }

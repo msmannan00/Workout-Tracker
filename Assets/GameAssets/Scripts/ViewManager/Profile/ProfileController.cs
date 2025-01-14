@@ -67,7 +67,8 @@ public class ProfileController : MonoBehaviour,PageController
     }
     public void BadgeSelection()
     {
-        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", null, true);
+        Dictionary<string, object> mData = new Dictionary<string, object> {  };
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", mData, true);
         StateManager.Instance.CloseFooter();
     }
     public void WeeklyGoal()

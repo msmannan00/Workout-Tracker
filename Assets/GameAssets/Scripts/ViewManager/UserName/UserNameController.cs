@@ -26,6 +26,10 @@ public class UserNameController : MonoBehaviour, PageController
         {
             GlobalAnimator.Instance.ShowTextMessage(messageText, "Username: minimum 4 characters", 2);
         }
+        else if (lengthWithoutSpaces > 17)
+        {
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Username: maximum 17 characters", 2);
+        }
         else
             CheckAndStoreUsername(stringWithoutSpaces, userSessionManager.Instance.mProfileID);
     }

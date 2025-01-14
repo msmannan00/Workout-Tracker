@@ -32,6 +32,7 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
         startNewWorkout.onClick.AddListener(AudioController.Instance.OnButtonClick);
         workout.onClick.AddListener(AudioController.Instance.OnButtonClick);
         split.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        StreakAndCharacterManager.Instance.UpdateStreak();
     }
     private void OnEnable()
     {

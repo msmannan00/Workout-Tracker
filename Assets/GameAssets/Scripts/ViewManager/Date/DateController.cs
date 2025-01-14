@@ -57,16 +57,18 @@ public class DateController : MonoBehaviour,PageController
     }
     public void ContinueButton()
     {
-        ApiDataHandler.Instance.isSignUp = true;
         if ( month >= 1 && month <= 12 && year > 1980 && year <= DateTime.Now.Year)
         {
             DateTime date=new DateTime(year,month,1);
             if (date <= DateTime.Now)
             {
                 ApiDataHandler.Instance.SetJoiningDate(date);
+                userSessionManager.Instance.joiningDate= date.ToString("MMM / yyyy");
                 if (firstTime)
                 {
-                    StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                    Dictionary<string, object> mData = new Dictionary<string, object> { { "firstTime", true } };
+                    StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", mData);
+                    //StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
                 }
                 else
                 {

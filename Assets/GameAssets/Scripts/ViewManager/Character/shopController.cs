@@ -76,6 +76,8 @@ public class shopController : MonoBehaviour, PageController
         TextMeshProUGUI priceText = (TextMeshProUGUI)list[1];
         TextMeshProUGUI nameText = (TextMeshProUGUI)list[2];
         int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
+        userSessionManager.Instance.currentCoins= newCoins;
+        print("new coin: " + newCoins);
         ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
         GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
         SuccessfullyBuy(shopItem, priceText, nameText);

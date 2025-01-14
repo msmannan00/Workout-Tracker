@@ -246,8 +246,7 @@ public class AuthController : MonoBehaviour, PageController
                         string date = data.Value.ToString();
                         userSessionManager.Instance.joiningDate = date;
                         Debug.Log("joining date: " + date);
-                        GlobalAnimator.Instance.FadeOutLoader();
-                        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                        CheckBadgeNameSet();
                     }
                 });
             }
@@ -256,9 +255,35 @@ public class AuthController : MonoBehaviour, PageController
                 GlobalAnimator.Instance.FadeOutLoader();
                 Dictionary<string, object> mData = new Dictionary<string, object>
                 {
-                    { "firstTime", true }
                  };
                 StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData);
+            }
+        });
+    }
+    public void CheckBadgeNameSet()
+    {
+        print("check badge name");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string date = data.Value.ToString();
+                        userSessionManager.Instance.joiningDate = date;
+                        Debug.Log("badge name: " + date);
+                        GlobalAnimator.Instance.FadeOutLoader();
+                        StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object> { { "firstTime", true } };
+                StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", mData);
             }
         });
     }

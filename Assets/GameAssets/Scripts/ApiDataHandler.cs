@@ -839,7 +839,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             LoadUserStreak();
             LoadCharacterLevel();
             LoadCurrentWeekStartDateFromFirebase();
-            LoadBadgeName();
+            //LoadBadgeName();
             LoadFriendData();
             SetClotheOnFirebase("no clothes");
         }
@@ -1113,7 +1113,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     if (task.IsCompleted)
                     {
-                        userSessionManager.Instance.currentCoins = coin;
+                        //userSessionManager.Instance.currentCoins = coin;
                         onSave?.Invoke(true);
                         Debug.Log("coin seted on firebase: " + coin);
                     }
