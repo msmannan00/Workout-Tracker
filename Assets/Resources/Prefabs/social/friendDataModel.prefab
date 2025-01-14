@@ -346,6 +346,19 @@ MonoBehaviour:
   badgeImage: {fileID: 7320926986391984801}
   userID: 
   clothe: 
+  friendData:
+    userName: 
+    badgeName: 
+    streak: 0
+    level: 0
+    goal: 0
+    joiningDate: 
+    clothe: 
+    profileImageUrl: 
+    achievementData:
+      achievements: []
+    personalBestData:
+      exercises: []
 --- !u!222 &8263308827075176033
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -462,8 +475,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 7}
-  m_SizeDelta: {x: 75, y: 75}
+  m_AnchoredPosition: {x: 0, y: -10}
+  m_SizeDelta: {x: 45, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7579953659330572565
 CanvasRenderer:
@@ -486,14 +499,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7294118, g: 0.6745098, b: 0.6745098, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c2672bf8976cb3641a907e0299871a15, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a0bb9f0740ca4904d93fb2da0b2ff8fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

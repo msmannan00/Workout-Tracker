@@ -289,7 +289,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
@@ -334,7 +334,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text= "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -379,7 +379,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -424,7 +424,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -470,7 +470,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -513,7 +513,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -558,7 +558,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
@@ -601,7 +601,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
@@ -643,7 +643,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
@@ -694,7 +694,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         if (progressText != null && descriptionText != null)
         {
             coinText.gameObject.SetActive(false);
-            progressText.gameObject.SetActive(false);
+            progressText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -711,14 +711,17 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             foreach (var exerciseType in templete.exerciseTypeModel)
             {
-                if (exerciseNames.Contains(exerciseType.exerciseName))
+                if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
                 {
                     // Add the weight of all sets for this exercise to the total
                     totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
                 }
+                print(exerciseType.exerciseName);
+                foreach (string name in exerciseNames)
+                    print(name);
             }
         }
-
+        print(totalWeight);
         return totalWeight;
     }
 

@@ -34,6 +34,8 @@ public class ProfileController : MonoBehaviour,PageController
 
         settingButton.onClick.AddListener(Settings);
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
+        levelText.GetComponent<Button>().onClick.AddListener(LevelDetailPopup);
+        
     }
     private void OnEnable()
     {
@@ -96,5 +98,9 @@ public class ProfileController : MonoBehaviour,PageController
     public void OpenStreakDetail()
     {
         PopupController.Instance.OpenPopup("profile","levelDetailPopup",null,null);
+    }
+    public void LevelDetailPopup()
+    {
+        PopupController.Instance.OpenPopup("character", "levelDetailPopup", null, null);
     }
 }
