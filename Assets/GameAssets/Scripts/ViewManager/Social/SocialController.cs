@@ -161,6 +161,7 @@ public class SocialController : MonoBehaviour,PageController
 
             ApiDataHandler.Instance.getAllFriendDetails().friendData.Add(friendDetails);
             AddLoadedFriendOnScreen(friendDetails);
+            userSessionManager.Instance.CheckAchievementStatus();
         }
         else
         {

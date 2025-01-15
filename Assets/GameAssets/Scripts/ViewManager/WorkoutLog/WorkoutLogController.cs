@@ -472,7 +472,6 @@ public class WorkoutLogController : MonoBehaviour, PageController
     }
     public void Finish()
     {
-
         isTimerRunning = false;
         DateTime currentDateTime = DateTime.Now;
         var historyTemplate = new HistoryTempleteModel

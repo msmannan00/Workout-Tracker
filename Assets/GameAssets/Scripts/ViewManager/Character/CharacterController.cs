@@ -93,6 +93,7 @@ public class CharacterController : MonoBehaviour,PageController
         switch (currentSide)
         {
             case CharacterSide.Front:
+
                 gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + userSessionManager.Instance.GetGifFolder(userSessionManager.Instance.characterLevel) + userSessionManager.Instance.clotheName + " front.gif");
                 break;
             case CharacterSide.Side:

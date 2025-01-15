@@ -12,6 +12,7 @@ public class AchievementController : MonoBehaviour, PageController
     public TextMeshProUGUI trophysText;
     public TextMeshProUGUI completedText;
     public RectTransform selectionLine;
+    public ScrollRect scrollRect;
     public Transform content;
     public Button backButton;
     public Button rankButton;
@@ -49,6 +50,7 @@ public class AchievementController : MonoBehaviour, PageController
     public void Rank()
     {
         if (isRank) return;
+        scrollRect.verticalNormalizedPosition = 1f;
         isRank = true;
         SetRankSelectionColor();
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, -100f, 0.25f);
@@ -79,6 +81,7 @@ public class AchievementController : MonoBehaviour, PageController
     public void Milestone()
     {
         if (!isRank) return;
+        scrollRect.verticalNormalizedPosition = 1f;
         isRank = false;
         SetMilestoneSelectionColor();
         GlobalAnimator.Instance.AnimateRectTransformX(selectionLine, 100f, 0.25f);
@@ -152,7 +155,13 @@ public class AchievementController : MonoBehaviour, PageController
     {
         //ApiDataHandler.Instance.SaveAchievementData();
         StateManager.Instance.HandleBackAction(gameObject);
-        if(onFooter)
+        GameObject obj1 = GameObject.FindWithTag("completeWorkoutPopup");
+        GameObject obj2 = FindObjectOfType<PersonalBestController>().gameObject;
+        if (obj1 != null || obj2 != null)
+            onFooter = false;
+        else
+            onFooter = true;
+        if (onFooter)
             StateManager.Instance.OpenFooter(null, null, false);
     }
     public List<AchievementTemplate> GetAchievementsForMilestone()

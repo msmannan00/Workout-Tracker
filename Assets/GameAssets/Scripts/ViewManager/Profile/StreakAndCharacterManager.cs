@@ -14,11 +14,20 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
     public int currentStreak = 0; // User's current streak
     public int characterLevel = 0;
     public string enfOfWeekDate;
-
+    public List<Message> completedMessages = new List<Message>();
+    public List<Message> notCompletedMessages = new List<Message>();
     private void Start()
     {
-        // Initialize start of the week based on today's date
-        //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek(); //GetStartOfWeek(DateTime.Now);
+        // Add completed messages with improved titles
+        completedMessages.Add(new Message("Victory Unlocked!", "Congratulations! You've completed your weekly goal! Your streak has increased, and you've leveled up. Keep up the great work!"));
+        completedMessages.Add(new Message("Champion's Progress!", "Well done! You've crushed your weekly goal! Your streak and level have both increased. Keep the momentum going!"));
+        completedMessages.Add(new Message("Level Up Achieved!", "Amazing! You've accomplished your weekly goal! Your streak is stronger, and you've climbed to the next level."));
+
+        // Add not completed messages with improved titles
+        notCompletedMessages.Add(new Message("Bounce Back Stronger!", "You missed your weekly goal. Your streak has been reset to 0, and your level has decreased. Don't give up—start fresh and aim for success next week!"));
+        notCompletedMessages.Add(new Message("A New Chance Awaits!", "This week didn't go as planned. Your streak is reset, and your level is reduced, but it's a chance to start stronger. You've got this!"));
+        notCompletedMessages.Add(new Message("Every Failure is a Step!", "You missed your weekly goal. Your streak has been reset, and your level has dropped slightly. But remember, every setback is a setup for a comeback!"));
+
     }
 
     /// <summary>
@@ -91,19 +100,26 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 // Increment streak and level up character
                 currentStreak=userSessionManager.Instance.userStreak;
                 currentStreak++;
+                userSessionManager.Instance.userStreak= currentStreak;
                 ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
                 characterLevel=userSessionManager.Instance.characterLevel;
                 characterLevel = Mathf.Clamp(characterLevel + 1, 0, 7);
+                userSessionManager.Instance.characterLevel= characterLevel;
                 ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
+                ShowRandomMessageOnPopup(true);
                 Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");
             }
             else
             {
                 // Reset streak and decrease level
-                ApiDataHandler.Instance.SetUserStreakToFirebase(0);
+                currentStreak = 0;
+                userSessionManager.Instance.userStreak = currentStreak;
+                ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
                 characterLevel = userSessionManager.Instance.characterLevel;
                 characterLevel = Mathf.Clamp(characterLevel - 1, 0, 7);
+                userSessionManager.Instance.characterLevel = characterLevel;
                 ApiDataHandler.Instance.SetCharacterLevelToFirebase((int)characterLevel);
+                ShowRandomMessageOnPopup(false);
                 Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
             }
 
@@ -132,5 +148,31 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
         weeklyGoal = userSessionManager.Instance.weeklyGoal;
         Debug.Log($"Visits in current 7-day period: {visitCount}/{weeklyGoal}");
         return visitCount >= weeklyGoal;
+    }
+    public void ShowRandomMessageOnPopup(bool isGoalCompleted)
+    {
+        List<Message> messages = isGoalCompleted ? completedMessages : notCompletedMessages;
+
+        if (messages.Count > 0)
+        {
+            // Randomly select a title and a description
+            string randomTitle = messages[UnityEngine.Random.Range(0, messages.Count)].title;
+            string randomDescription = messages[UnityEngine.Random.Range(0, messages.Count)].description;
+
+            List<object> initialData = new List<object> { isGoalCompleted, randomTitle, randomDescription};
+            PopupController.Instance.OpenPopup("shared", "LevelAndStreakPopup", null, initialData);
+        }
+    }
+}
+[System.Serializable]
+public class Message
+{
+    public string title;
+    public string description;
+
+    public Message(string title, string description)
+    {
+        this.title = title;
+        this.description = description;
     }
 }

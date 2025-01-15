@@ -81,6 +81,8 @@ public class BadgeController : MonoBehaviour,PageController
         }
         else
         {
+            userSessionManager.Instance.badgeChange = true;
+            userSessionManager.Instance.CheckAchievementStatus();
             Back();
         }
 
