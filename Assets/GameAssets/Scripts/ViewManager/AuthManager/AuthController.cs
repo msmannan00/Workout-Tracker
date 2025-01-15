@@ -272,7 +272,7 @@ public class AuthController : MonoBehaviour, PageController
                     if (data.Exists)  // Ensure that data exists
                     {
                         string date = data.Value.ToString();
-                        userSessionManager.Instance.joiningDate = date;
+                        userSessionManager.Instance.badgeName = date;
                         Debug.Log("badge name: " + date);
                         GlobalAnimator.Instance.FadeOutLoader();
                         StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
