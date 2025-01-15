@@ -155,12 +155,12 @@ public class AchievementController : MonoBehaviour, PageController
     {
         //ApiDataHandler.Instance.SaveAchievementData();
         StateManager.Instance.HandleBackAction(gameObject);
-        GameObject obj1 = GameObject.FindWithTag("completeWorkoutPopup");
-        GameObject obj2 = FindObjectOfType<PersonalBestController>().gameObject;
-        if (obj1 != null || obj2 != null)
-            onFooter = false;
-        else
-            onFooter = true;
+        //GameObject obj1 = GameObject.FindWithTag("completeWorkoutPopup");
+        //GameObject obj2 = FindObjectOfType<PersonalBestController>().gameObject;
+        //if (obj1 != null || obj2 != null)
+        //    onFooter = false;
+        //else
+        //    onFooter = true;
         if (onFooter)
             StateManager.Instance.OpenFooter(null, null, false);
     }

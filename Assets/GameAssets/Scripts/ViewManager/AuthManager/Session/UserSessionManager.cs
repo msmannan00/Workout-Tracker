@@ -173,12 +173,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         //ApiDataHandler.Instance.SaveAchievementData();
         if (completedItemsInSingleCheck.Count == 1)
         {
-            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "SingleAchievementCompletePopup", true };
+            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "SingleAchievementCompletePopup", false };
             PopupController.Instance.OpenPopup("shared", "SingleAchievementCompletePopup", null, initialData);
         }
         else if (completedItemsInSingleCheck.Count > 1)
         {
-            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "MultipleAchievementCompletePopup", true };
+            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "MultipleAchievementCompletePopup", false };
             PopupController.Instance.OpenPopup("shared", "MultipleAchievementCompletePopup", null, initialData);
         }
     }
