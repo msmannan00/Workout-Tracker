@@ -1,4 +1,4 @@
-﻿// Created by SwanDEV 2017
+// Created by SwanDEV 2017
 
 using UnityEngine;
 using System.Collections;
@@ -457,6 +457,7 @@ public abstract class ProGifPlayerComponent : MonoBehaviour
             _loadingFile = true;
 
 #if UNITY_2017_3_OR_NEWER
+path = path.Replace("\\","/");
             using (UnityWebRequest uwr = UnityWebRequest.Get(path))
             {
                 uwr.SendWebRequest();

@@ -42,7 +42,7 @@ public class historyScreenDataModel : MonoBehaviour, ItemController
                 totalExercises++;
             }
             float imageY = line.GetComponent<RectTransform>().sizeDelta.y;
-            Vector2 newSize = new Vector2(line.GetComponent<RectTransform>().sizeDelta.x, imageY * totalExercises);
+            Vector2 newSize = new Vector2(line.GetComponent<RectTransform>().sizeDelta.x, (imageY) * totalExercises*1.1f);
             line.GetComponent<RectTransform>().sizeDelta = newSize;
         }
 
