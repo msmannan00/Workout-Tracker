@@ -3,10 +3,10 @@ using TMPro;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Assets.SimpleGoogleSignIn.Scripts;
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
-using Google;
 
 public class AuthController : MonoBehaviour, PageController
 {
@@ -30,6 +30,7 @@ public class AuthController : MonoBehaviour, PageController
     private string mAuthType;
 
 
+    public GoogleAuth GoogleAuth;
     public Text Log;
     public Text Output;
     public bool isRegistering;
@@ -71,6 +72,8 @@ public class AuthController : MonoBehaviour, PageController
         StartCoroutine(prelaodAssets());
         userSessionManager.Instance.mSidebar = false;
         aUsername.text = "";
+        GoogleAuth = new GoogleAuth();
+        GoogleAuth.TryResume(OnSignIn, OnGetAccessToken);
 
         onVerifyFirstLogin();
     }
@@ -105,21 +108,21 @@ public class AuthController : MonoBehaviour, PageController
 
     public void onVerifyFirstLogin()
     {
-        //string mUsername = PreferenceManager.Instance.GetString("login_username");
-        ////print(mUsername);
-        //if (mUsername.Length > 2)
-        //{
-        //    if (mUsername.Contains("@"))
-        //    {
-        //        mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
-        //    }
-        //    userSessionManager.Instance.OnInitialize(mUsername, mUsername);
-        //    onSignIn();
-        //}
-        //else if (mUsername == "")
-        //{
-        //    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
-        //}
+        string mUsername = PreferenceManager.Instance.GetString("login_username");
+        print(mUsername);
+        if (mUsername.Length > 2)
+        {
+           if (mUsername.Contains("@"))
+           {
+               mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
+           }
+           userSessionManager.Instance.OnInitialize(mUsername, mUsername);
+           onSignIn();
+        }
+        else if (mUsername == "")
+        {
+           PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
+        }
         if (FirebaseManager.Instance.user != null)
         {
             onSignIn();
@@ -127,7 +130,80 @@ public class AuthController : MonoBehaviour, PageController
         }
     }
 
- 
+    IEnumerator CallSavedlogins()
+    {
+
+
+        if (GoogleAuth.SavedAuth != null)
+        {
+            GlobalAnimator.Instance.FadeInLoader();
+            yield return new WaitForSeconds(2);
+            GoogleAuth.SignIn(OnSignIn, caching: true);
+            userSessionManager.Instance.OnInitialize(mAuthType, "");
+            onSignIn();
+        }
+
+
+    }
+    void GmailSignIn()
+    {
+
+        //if (GoogleAuth.SavedAuth != null)
+        //{
+        //    GoogleAuth.SignIn(OnSignIn, caching: true);
+        //    userSessionManager.Instance.OnInitialize(mAuthType, "");
+        //    onSignIn();
+        //}
+
+        //else
+        {
+            GlobalAnimator.Instance.FadeInLoader();
+            GoogleAuth.SignIn(OnSignIn, caching: true);
+        }
+        
+
+    }
+
+    public void SignOut()
+    {
+        GoogleAuth.SignOut(revokeAccessToken: true);
+    }
+
+    public void GetAccessToken()
+    {
+        GoogleAuth.GetAccessToken(OnGetAccessToken);
+    }
+
+    private void OnSignIn(bool success, string error, Assets.SimpleGoogleSignIn.Scripts.UserInfo userInfo)
+    {
+        if (success)
+        {
+            GlobalAnimator.Instance.FadeOutLoader();
+            Action mCallbackSuccess = () =>
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                userSessionManager.Instance.mProfileID=FirebaseManager.Instance.user.UserId;
+                onSignIn();
+            };
+            FirebaseManager.Instance.OnTryRegisterNewAccount(userInfo.email, "z4zazgS4LaejfKcs", mCallbackSuccess, null);
+            //mAuthType = success ? $"{userInfo.name}" : error;
+            //userSessionManager.Instance.OnInitialize(mAuthType, "");
+            //onSignIn();
+        }
+
+    }
+
+    private void OnGetAccessToken(bool success, string error, Assets.SimpleGoogleSignIn.Scripts.TokenResponse tokenResponse)
+    {
+        if (!success) return;
+
+        var jwt = new Assets.SimpleGoogleSignIn.Scripts.JWT(tokenResponse.IdToken);
+
+        Debug.Log($"JSON Web Token (JWT) Payload: {jwt.Payload}");
+
+        jwt.ValidateSignature(GoogleAuth.ClientId, OnValidateSignature);
+    }
+
     private void OnValidateSignature(bool success, string error)
     {
     }
@@ -246,34 +322,6 @@ public class AuthController : MonoBehaviour, PageController
                         string date = data.Value.ToString();
                         userSessionManager.Instance.joiningDate = date;
                         Debug.Log("joining date: " + date);
-                        CheckBadgeNameSet();
-                    }
-                });
-            }
-            else
-            {
-                GlobalAnimator.Instance.FadeOutLoader();
-                Dictionary<string, object> mData = new Dictionary<string, object>
-                {
-                 };
-                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData);
-            }
-        });
-    }
-    public void CheckBadgeNameSet()
-    {
-        print("check badge name");
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", result =>
-        {
-            if (result)
-            {
-                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", data =>
-                {
-                    if (data.Exists)  // Ensure that data exists
-                    {
-                        string date = data.Value.ToString();
-                        userSessionManager.Instance.joiningDate = date;
-                        Debug.Log("badge name: " + date);
                         GlobalAnimator.Instance.FadeOutLoader();
                         StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
                     }
@@ -282,8 +330,7 @@ public class AuthController : MonoBehaviour, PageController
             else
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-                Dictionary<string, object> mData = new Dictionary<string, object> { { "firstTime", true } };
-                StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", mData);
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", null);
             }
         });
     }
@@ -362,12 +409,6 @@ public class AuthController : MonoBehaviour, PageController
                 aError.gameObject.SetActive(true);
                 return;
             }
-            if (aPassword.text.Length < 6)
-            {
-                aError.text = "Password: minimum 6 characters";
-                aError.gameObject.SetActive(true);
-                return;
-            }
             Action callbackSuccess = () =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
@@ -407,16 +448,22 @@ public class AuthController : MonoBehaviour, PageController
             FirebaseManager.Instance.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
         }
     }
+    private void OnSignInSuccess(string userId)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        userSessionManager.Instance.OnInitialize(userId, aUsername.text);
+        onSignIn();
+    }
 
+    private void OnSignInFailure(string error)
+    {
+        GlobalAnimator.Instance.FadeOutLoader();
+        GlobalAnimator.Instance.FadeIn(aError.gameObject);
+        aError.text = error; // You can customize the error message here.
+    }
 
     public void OnForgotPassword()
     {
-        if (aUsername.text == "")
-        {
-            aError.text = "Invalid or emtpy email";
-            GlobalAnimator.Instance.FadeIn(aError.gameObject);
-            return;
-        }
         Action callbackSuccess = () =>
         {
             Action callbackSuccess = () =>
@@ -434,24 +481,22 @@ public class AuthController : MonoBehaviour, PageController
             GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
         };
 
-        Action<FirebaseException> callbackFailure = (pError) =>
-        {
-            GlobalAnimator.Instance.FadeOutLoader();
-            GlobalAnimator.Instance.FadeIn(aError.gameObject);
-            string errorMessage = pError?.InnerException != null
-                ? pError.InnerException.Message
-                : pError?.Message ?? "An unknown error occurred.";
-            aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
-            GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
-            GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
-            alertsContainer.transform.SetAsLastSibling();
-            GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
-            AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
-            alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");
-            GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
-        };
-        GlobalAnimator.Instance.FadeInLoader();
-        FirebaseManager.Instance.OnTryPasswordReset(aUsername.text, callbackSuccess, callbackFailure);
+        //Action<PlayFabError> callbackFailure = (pError) =>
+        //{
+        //    GlobalAnimator.Instance.FadeOutLoader();
+        //    GlobalAnimator.Instance.FadeIn(aError.gameObject);
+        //    aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
+
+        //    GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
+        //    GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
+        //    alertsContainer.transform.SetAsLastSibling();
+        //    GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
+        //    AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
+        //    alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");
+        //    GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
+        //};
+        //GlobalAnimator.Instance.FadeInLoader();
+        //aPlayFabManager.InitiatePasswordRecovery(aUsername.text, callbackSuccess, callbackFailure);
     }
 
 
@@ -462,10 +507,7 @@ public class AuthController : MonoBehaviour, PageController
       
     }
 
-    void GmailSignIn(){
-        
-    }
-    
+
     public void OnResetErrors()
     {
         GlobalAnimator.Instance.FadeOut(aUsername.gameObject);
@@ -494,4 +536,3 @@ public class AuthController : MonoBehaviour, PageController
     }
 
 }
-
