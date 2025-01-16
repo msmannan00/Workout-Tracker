@@ -172,6 +172,7 @@ public class ProGifPlayerPanel : MonoBehaviour
 	public void LoadAndPlay(string path)
 	{
 		gifPath= path;
+		print(path);
 		Play();
 	}
 	public void Play()

@@ -51,6 +51,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         notesHistory = new ExerciseNotesHistory();
         shopData=new ShopModel();
         friendsData=new Dictionary<string, string>();
+        friendDataModel=new FriendModel();
     }
     public void SaveTheme(Theme theme)
     {
