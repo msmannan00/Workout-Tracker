@@ -105,6 +105,7 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
                 characterLevel=userSessionManager.Instance.characterLevel;
                 characterLevel = Mathf.Clamp(characterLevel + 1, 0, 7);
                 userSessionManager.Instance.characterLevel= characterLevel;
+                userSessionManager.Instance.AddCoins(10);
                 ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
                 ShowRandomMessageOnPopup(true);
                 Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");

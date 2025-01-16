@@ -30,8 +30,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string clotheName;
     public bool badgeChange;
     public Sprite profileSprite;
-    public string gifsPath = "gifs/";
-    public string gifSpritePath = "UIAssets/character/GifSprites/";
+    public string gifsPath = "gifs";
     public List<AchievementTemplateDataItem> completedItemsInSingleCheck = new List<AchievementTemplateDataItem>();
     public List<string> completedItemsTitles = new List<string>();
     [Header("Theme Settings")]
@@ -869,7 +868,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             // Calculate the gap in days between the two latest dates
             int gapInDays = (sortedDates[0] - sortedDates[1]).Days;
 
-            return gapInDays;
+            if (gapInDays >= 14)
+                return gapInDays;
+            else
+                return 0;
         }
         catch (Exception ex)
         {

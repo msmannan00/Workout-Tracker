@@ -49,8 +49,9 @@ public class FriendProfileController : MonoBehaviour, PageController
         userNameText.text = friendData.userName;
         levelText.text = "Level " + friendData.level.ToString();
 
-        string spritePath = userSessionManager.Instance.gifSpritePath + userSessionManager.Instance.GetGifFolder(friendData.level) + friendData.clothe + " front";
-        Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
+        string clothName = friendData.clothe + " front";
+        string path = ($"{userSessionManager.Instance.gifsPath}{userSessionManager.Instance.GetGifFolder(friendData.level)}{clothName}/{clothName}_1");
+        Sprite loadedSprite = Resources.Load<Sprite>(path);
         characterImage.sprite = loadedSprite;
 
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + friendData.badgeName);

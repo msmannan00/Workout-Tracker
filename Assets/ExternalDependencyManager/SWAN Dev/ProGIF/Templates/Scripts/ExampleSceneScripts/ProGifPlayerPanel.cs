@@ -194,7 +194,11 @@ public class ProGifPlayerPanel : MonoBehaviour
 		case DataPathTypeDebug.StreamingAssetsPath:
 			gifPath = System.IO.Path.Combine(Application.streamingAssetsPath, gifPath);
 			if(!gifPath.ToLower().Contains(".gif")) gifPath += ".gif";
-			break;
+            if (System.IO.File.Exists(gifPath))
+            {
+                print("File exists at: " + gifPath);
+            }
+            break;
 		}
 
 		if(m_GifRawImage) m_GifRawImage.gameObject.SetActive(false);
