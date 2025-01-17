@@ -37,6 +37,7 @@ public class SocialDataModel : MonoBehaviour,ItemController
                 loadingText.gameObject.SetActive(false);
                 profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
                 profileImage.rectTransform.sizeDelta = new Vector2(55, 55);
+                profileSprite = loadedSprite;
             }));
         }
         else
