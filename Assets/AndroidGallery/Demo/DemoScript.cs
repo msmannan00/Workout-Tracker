@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Firebase.Storage;
 using Firebase.Extensions;
-//NOTE: we're using LukeWaffel.AndroidGallery, without this it won't work
-using LukeWaffel.AndroidGallery;
 using System.IO; // For file operations
 
 public class DemoScript : MonoBehaviour {
@@ -27,35 +25,51 @@ public class DemoScript : MonoBehaviour {
     // This function is called by the Button
     public void OpenGalleryButton()
     {
-        // Open the Android image picker
-        AndroidGallery.Instance.OpenGallery(ImageLoaded);
-    }
+        if (NativeGallery.IsMediaPickerBusy())
+        {
+            Debug.LogWarning("Gallery is busy, please wait.");
+            return;
+        }
 
-    // Callback function for when the image is loaded
-    public void ImageLoaded()
-    {
-        Debug.Log("The image has successfully loaded!");
+        NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
+        {
+            if (path != null)
+            {
+                Texture2D texture = LoadTextureFromPath(path);
+                if (texture != null)
+                {
+                    Sprite loadedSprite = TextureToSprite(texture);
+                    frame.sprite = loadedSprite;
 
-        // Get the loaded sprite
-        Sprite loadedSprite = AndroidGallery.Instance.GetSprite();
-        frame.sprite = loadedSprite;
-        UploadImageToFirebase(ConvertSpriteToTexture2D(loadedSprite));
+                    // Save the image data to persistent storage
+                    SaveImage(texture);
 
-        // Save the image data to persistent storage
-        SaveImage(loadedSprite.texture);
-        frame.rectTransform.anchoredPosition = new Vector2(0, 0);
-        frame.rectTransform.sizeDelta = new Vector2(90, 90);
+                    // Upload the image to Firebase
+                    UploadImageToFirebase(texture);
+
+                    frame.rectTransform.anchoredPosition = new Vector2(0, 0);
+                    frame.rectTransform.sizeDelta = new Vector2(90, 90);
+
+                    Debug.Log("Image successfully loaded from gallery and processed.");
+                }
+                else
+                {
+                    Debug.LogError("Failed to load image from path: " + path);
+                }
+            }
+        }, "Select an image", "image/*");
+
+        if (permission != NativeGallery.Permission.Granted)
+        {
+            Debug.LogWarning("Permission not granted to access the gallery.");
+        }
     }
 
     // Save the texture to a file
     private void SaveImage(Texture2D texture)
     {
-        // Convert the texture to PNG format
         byte[] imageBytes = texture.EncodeToPNG();
-
-        // Save the image to the file system
         File.WriteAllBytes(imagePath, imageBytes);
-
         Debug.Log($"Image saved to: {imagePath}");
     }
 
@@ -64,14 +78,10 @@ public class DemoScript : MonoBehaviour {
     {
         if (File.Exists(imagePath))
         {
-            // Load the image bytes from file
             byte[] imageBytes = File.ReadAllBytes(imagePath);
-
-            // Create a Texture2D from the bytes
-            Texture2D texture = new Texture2D(2, 2); // Placeholder size; will be replaced when loading
+            Texture2D texture = new Texture2D(2, 2);
             if (texture.LoadImage(imageBytes))
             {
-                // Create a sprite from the loaded texture
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 frame.sprite = sprite;
 
@@ -91,11 +101,25 @@ public class DemoScript : MonoBehaviour {
         }
     }
 
-    // This function exits the app
-    public void Exit()
+    // Convert a texture to a sprite
+    private Sprite TextureToSprite(Texture2D texture)
     {
-        Application.Quit();
+        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
+
+    // Load a texture from a file path
+    private Texture2D LoadTextureFromPath(string path)
+    {
+        byte[] imageBytes = File.ReadAllBytes(path);
+        Texture2D texture = new Texture2D(2, 2);
+        if (texture.LoadImage(imageBytes))
+        {
+            return texture;
+        }
+        return null;
+    }
+
+    // Upload the image to Firebase
     public void UploadImageToFirebase(Texture2D texture)
     {
         GlobalAnimator.Instance.FadeInLoader();
@@ -107,7 +131,6 @@ public class DemoScript : MonoBehaviour {
             if (task.IsCompleted)
             {
                 Debug.Log("Image uploaded successfully");
-                // Optionally, save the file URL in Firestore or Realtime Database
                 GetDownloadUrl(profileImageRef);
             }
             else
@@ -116,6 +139,7 @@ public class DemoScript : MonoBehaviour {
             }
         });
     }
+
     private void GetDownloadUrl(StorageReference profileImageRef)
     {
         profileImageRef.GetDownloadUrlAsync().ContinueWithOnMainThread(task => {
@@ -123,11 +147,11 @@ public class DemoScript : MonoBehaviour {
             {
                 string downloadUrl = task.Result.ToString();
                 Debug.Log("Image URL: " + downloadUrl);
-                // Save the URL in Firestore to associate it with the user account
                 SaveImageUrlToFirestore(downloadUrl);
             }
         });
     }
+
     private void SaveImageUrlToFirestore(string url)
     {
         var userRef = FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
@@ -135,35 +159,5 @@ public class DemoScript : MonoBehaviour {
         userRef.SetValueAsync(url);
 
         GlobalAnimator.Instance.FadeOutLoader();
-    }
-    Texture2D ConvertSpriteToTexture2D(Sprite sprite)
-    {
-        if (sprite == null)
-        {
-            Debug.LogError("Sprite is null.");
-            return null;
-        }
-
-        // Get the texture from the sprite
-        Texture2D originalTexture = sprite.texture;
-
-        // Get the sprite's pixel data
-        Rect spriteRect = sprite.rect;
-        Color[] pixels = originalTexture.GetPixels(
-            Mathf.FloorToInt(spriteRect.x),
-            Mathf.FloorToInt(spriteRect.y),
-            Mathf.FloorToInt(spriteRect.width),
-            Mathf.FloorToInt(spriteRect.height)
-        );
-
-        // Create a new Texture2D and apply the pixels
-        Texture2D newTexture = new Texture2D(
-            Mathf.FloorToInt(spriteRect.width),
-            Mathf.FloorToInt(spriteRect.height)
-        );
-        newTexture.SetPixels(pixels);
-        newTexture.Apply();
-
-        return newTexture;
     }
 }
