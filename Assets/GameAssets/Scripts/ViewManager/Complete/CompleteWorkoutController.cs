@@ -64,7 +64,8 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
                     break;
             }
         }
-        Invoke("onParticleSystem", 0.5f);
+        StartCoroutine(ParticleAndCoinWait());
+        //Invoke("onParticleSystem", 0.5f);
         //Destroy(workoutScreen);
     }
     
@@ -77,7 +78,17 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
         AudioController.Instance.OnComplete();
         particleComplete.Play();
         userSessionManager.Instance.CheckAchievementStatus();
-        //ApiDataHandler.Instance.SaveAchievementData();
+    }
+    IEnumerator ParticleAndCoinWait()
+    {
+        yield return new WaitForSeconds(0.5f);
+        AudioController.Instance.OnComplete();
+        particleComplete.Play();
+        yield return new WaitForSeconds(0.2f);
+        StreakAndCharacterManager.Instance.AddVisit(DateTime.Now.ToString("yyyy-MM-dd"));
+        userSessionManager.Instance.AddCoins(5);
+        yield return new WaitForSeconds(0.2f);
+        userSessionManager.Instance.CheckAchievementStatus();
     }
     private void Update()
     {
@@ -103,7 +114,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             ChangeTextColorAndFount(text, userSessionManager.Instance.lightButtonTextColor, userSessionManager.Instance.lightSecondaryFont);
             text.enableAutoSizing = false;
             text.fontSize = 14;
-            text.text = data.reps.ToString();
+            text.text = data.reps.ToString() + " @ " + data.rir.ToString();
         }
     }
     void ShowOnlyTime(HistoryExerciseTypeModel exercise, GameObject parent, GameObject prefab)
@@ -118,11 +129,11 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             text.fontSize = 14;
             if (data.time > 60)
             {
-                text.text = ((int)data.time / 60).ToString() + " m";
+                text.text = ((int)data.time / 60).ToString() + " m"+" @ "+data.rpe.ToString();
             }
             else
             {
-                text.text = data.time.ToString() + " s";
+                text.text = data.time.ToString() + " s" + data.rpe.ToString();
             }
         }
     }
@@ -141,10 +152,10 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
             {
                 case WeightUnit.kg:
-                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString("F1");
+                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString("F1")+" @ "+data.rir.ToString();
                     break;
                 case WeightUnit.lbs:
-                    text.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString("F1");
+                    text.text = /*Mathf.RoundToInt*/(userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("F2") + " lbs x " + data.reps.ToString("F1") + " @ " + data.rir.ToString();
                     break;
             }
         }
@@ -168,7 +179,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             {
                 time = data.time.ToString() + " s";
             }
-            text.text = data.mile.ToString() + " mile x " + time;
+            text.text = data.mile.ToString() + " mile x " + time + data.rpe.ToString();
             text.fontSize = 14;
         }
     }

@@ -22,6 +22,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int weeklyGoal;
     public string joiningDate;
     public string badgeName;
+    public DateTime weeklyGoalSetDate;
     public int currentCoins;
     public int userStreak;
     public int characterLevel;

@@ -5,6 +5,8 @@ using System;
 using Firebase.Database;
 using System.Collections;
 using UnityEngine.Networking;
+using SDev.GiphyAPI;
+using System.Runtime.InteropServices.ComTypes;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -843,11 +845,13 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             //LoadBadgeName();
             LoadFriendData();
             SetClotheOnFirebase("no clothes");
+            SetWeeklyGoalStatusOnFirebase(false);
+            LoadGymVisitsFromFirebase();
         }
         else
             LoadCompleteData();
-      
-        LoadGymVisitsFromFirebase();
+
+        
         gameTheme = LoadTheme();
     }
     public void LoadCompleteData()
@@ -866,6 +870,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 // exercise
                 string exercise = data.Child("exercises").GetRawJsonValue();
                 exerciseData = (ExerciseData)LoadData(exercise, typeof(ExerciseData));
+                SyncExercise();
                 // measurements
                 string measurements = data.Child("measurements").GetRawJsonValue();
                 measurementData = (MeasurementModel)LoadData(measurements, typeof(MeasurementModel));
@@ -879,10 +884,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 if (data.HasChild("achievements"))
                 {
                     print("has achievement");
-                    CheckCompletedAchievements(data.Child("achievements"),achievementData);
+                    CheckCompletedAchievements(data.Child("achievements"), achievementData);
                 }
                 //shop
-                
+
                 if (data.HasChild("shop"))
                 {
                     CheckPurchaseItems(data.Child("shop"), shopData);
@@ -892,7 +897,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     string profileImageUrl = data.Child("profileImageUrl").Value.ToString();
                     print(profileImageUrl);
-                    StartCoroutine(LoadImageFromUrl(profileImageUrl, (loadedSprite) => {
+                    StartCoroutine(LoadImageFromUrl(profileImageUrl, (loadedSprite) =>
+                    {
                         // This callback will receive the newly loaded sprite
                         userSessionManager.Instance.profileSprite = loadedSprite;  // Assuming profileImage is your UI Image component
                     }));
@@ -925,15 +931,24 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     SetClotheOnFirebase("no clothes");
                 }
+                // added friend
                 if (data.HasChild("addedFriends"))
                 {
-                    string addedFriends= data.Child("addedFriends").Value.ToString();
+                    string addedFriends = data.Child("addedFriends").Value.ToString();
                     userSessionManager.Instance.addedFriends = int.Parse(addedFriends);
                 }
+                // removed friend
                 if (data.HasChild("removedFriends"))
                 {
                     string addedFriends = data.Child("removedFriends").Value.ToString();
                     userSessionManager.Instance.removedFriends = int.Parse(addedFriends);
+                }
+                // weekly goal status
+                if (data.HasChild("WeeklyGoalStatus"))
+                {
+                    string value = data.Child("WeeklyGoalStatus").Value.ToString();
+                    bool staus = bool.Parse(value);
+                    StreakAndCharacterManager.Instance.weeklyGoalStatus = staus;
                 }
                 // friends
                 DataSnapshot friendData = data.Child("friend");
@@ -942,11 +957,40 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     friendsData.Add(child.Key, child.Value.ToString());
                     StartCoroutine(FetchFriendDetails(child.Value.ToString(), child.Key));
                 }
+                // GymVisits
+                if (data.HasChild("GymVisits"))
+                {
+                    DataSnapshot visits = data.Child("GymVisits");
+                    foreach (var child in visits.Children)
+                    {
+                        StreakAndCharacterManager.Instance.gymVisits.Add(child.Value.ToString());
+                    }
+                }
+                // WeeklyGoalSetDate
+                if (data.HasChild("WeeklyGoalSetDate"))
+                {
+                    string dateString = data.Child("WeeklyGoalSetDate").Value.ToString();
+                    userSessionManager.Instance.weeklyGoalSetDate = DateTime.ParseExact(dateString, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
             }
         });
     }
 
+    public void SyncExercise()
+    {
+        TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
+        string exerciseJson = exerciseJsonFile.text;
+        ExerciseData localExercises = JsonUtility.FromJson<ExerciseData>(exerciseJson);
 
+        foreach (var exercise in localExercises.exercises)
+        {
+            if (!this.exerciseData.exercises.Any(e => e.exerciseName == exercise.exerciseName))
+            {
+                this.exerciseData.exercises.Add(exercise);
+            }
+        }
+
+    }
     private IEnumerator FetchFriendDetails(string friendId, string friendName)
     {
         FriendData friendDetails = new FriendData();
@@ -1360,6 +1404,41 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
             });
     }
+    public void SetWeeklyGoalStatusOnFirebase(bool status)
+    {
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("WeeklyGoalStatus")
+            .SetValueAsync(status).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    StreakAndCharacterManager.Instance.weeklyGoalStatus = status;
+                    Debug.Log("WeeklyGoalStatus saved to Firebase: " + status);
+                }
+                else
+                {
+                    Debug.LogError("Failed to save WeeklyGoalStatus: " + task.Exception);
+                }
+            });
+    }
+    public void WeeklyGoalSetDate(DateTime date)
+    {
+        string dateString = date.ToString("yyyy-MM-dd");
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("WeeklyGoalSetDate")
+            .SetValueAsync(dateString).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    userSessionManager.Instance.weeklyGoalSetDate = date;
+                    Debug.Log("WeeklyGoalStatus saved to Firebase: " + date);
+                }
+                else
+                {
+                    Debug.LogError("Failed to save WeeklyGoalStatus: " + task.Exception);
+                }
+            });
+    }
     public DateTime GetStartOfCurrentWeek()
     {
         return DateTime.Now;
@@ -1388,7 +1467,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
                 else
                 {
-                    //Debug.LogError("Failed to load gym visits: " + task.Exception);
+                    Debug.LogError("Failed to load gym visits: " + task.Exception);
                     //onLoaded(new List<string>());
                 }
             });

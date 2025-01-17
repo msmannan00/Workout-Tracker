@@ -133,7 +133,7 @@ public class SettingController : MonoBehaviour, PageController
         AudioController.Instance.OnButtonClick();
         DateTime now = DateTime.Now;
         //print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
-        TimeSpan timeDifference = now - StreakAndCharacterManager.Instance.startOfCurrentWeek;
+        TimeSpan timeDifference = now - userSessionManager.Instance.weeklyGoalSetDate;
         if (timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };
@@ -144,6 +144,7 @@ public class SettingController : MonoBehaviour, PageController
         {
             if (!onMessage)
             {
+                print(timeDifference.TotalDays);
                 onMessage = true;
                 GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2 weeks.", 2f);
                 StartCoroutine(OffMessageText(2));

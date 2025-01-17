@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class FriendProfileController : MonoBehaviour, PageController
 {
@@ -33,9 +34,15 @@ public class FriendProfileController : MonoBehaviour, PageController
     {
         friendData = (FriendData)data["data"];
         friendObject = (GameObject)data["object"];
-       
+        Sprite profile = (Sprite)data["profileImage"];
+        if(profile != null)
+        {
+            profileImage.sprite = profile;  
+            profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
+            profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
+        }
         //StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
-        
+
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         backButton.onClick.AddListener(Back);
@@ -65,18 +72,20 @@ public class FriendProfileController : MonoBehaviour, PageController
 
         achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(friendData.achievementData).ToString() + " / " + friendData.achievementData.achievements.Count.ToString();
         
-        if (friendData.profileImageUrl!=null)
-        {
-            loadingText.gameObject.SetActive(true);
-            string url = friendData.profileImageUrl;
-            StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
-                // This callback will receive the newly loaded sprite
-                profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
-                loadingText.gameObject.SetActive(false);
-            }));
-        }
-        else
-            loadingText.gameObject.SetActive(false);
+        //if (friendData.profileImageUrl!=null)
+        //{
+        //    loadingText.gameObject.SetActive(true);
+        //    string url = friendData.profileImageUrl;
+        //    StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
+        //        // This callback will receive the newly loaded sprite
+        //        profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
+        //        loadingText.gameObject.SetActive(false);
+        //        profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
+        //        profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
+        //    }));
+        //}
+        //else
+        //    loadingText.gameObject.SetActive(false);
     }
     private void Update()
     {

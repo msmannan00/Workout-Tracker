@@ -246,7 +246,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnRpeChanged(int newRepsIndex)
     {
-        exerciseModel.rpe = newRepsIndex+1;
+        exerciseModel.rpe = newRepsIndex;
         UpdateToggleInteractableState();
     }
     private void OnTimerInput(string input)

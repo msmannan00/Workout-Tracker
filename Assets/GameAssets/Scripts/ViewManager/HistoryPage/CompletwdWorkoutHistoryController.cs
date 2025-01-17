@@ -87,7 +87,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
         {
             GameObject textObj = Instantiate(prefab, parent.transform);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
-            text.text = data.reps.ToString("F1");
+            text.text = data.reps.ToString("F1") + " @ " + data.rir.ToString();
             text.fontSize = 14;
             SetFontAndColor(text);
         }
@@ -101,11 +101,11 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
             text.fontSize = 14;
             if (data.time > 60)
             {
-                text.text = ((int)data.time / 60).ToString() + " m";
+                text.text = ((int)data.time / 60).ToString() + " m" + " @ " + data.rpe.ToString();
             }
             else
             {
-                text.text = data.time.ToString() + " s";
+                text.text = data.time.ToString() + " s" + " @ " + data.rpe.ToString();
             }
             SetFontAndColor(text);
         }
@@ -119,10 +119,10 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
             switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
             {
                 case WeightUnit.kg:
-                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
+                    text.text = data.weight.ToString() + " kg x " + data.reps.ToString() + " @ " + data.rir.ToString();
                     break;
                 case WeightUnit.lbs:
-                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("f0") + " lbs x " + data.reps.ToString("F1");
+                    text.text = (userSessionManager.Instance.ConvertKgToLbs(data.weight)).ToString("f0") + " lbs x " + data.reps.ToString("F1") + " @ " + data.rir.ToString();
                     break;
             }
             //text.text = data.weight.ToString() + " kg x " + data.reps.ToString();
@@ -145,7 +145,7 @@ public class CompletwdWorkoutHistoryController : MonoBehaviour, PageController
             {
                 time = data.time.ToString() + " s";
             }
-            text.text = data.mile.ToString() + " mile x " + time;
+            text.text = data.mile.ToString() + " mile x " + time + " @ " + data.rpe.ToString();
             text.fontSize = 14;
             SetFontAndColor(text);
         }

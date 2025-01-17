@@ -24,6 +24,7 @@ public class PopupController : GenericSingletonClass<PopupController>
         {
             popupInitializer.InitPrefab(onFinish, data);
         }
+        popup.transform.SetAsLastSibling();
     }
     public void OpenSidePopup(string folderName, string popupTagName, Action<List<object>> onFinish, List<object> data, RectTransform buttonTransform)
     {
