@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using SDev.GiphyAPI;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -232,18 +233,25 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
 
     }
-    public void SaveExerciseData(ExerciseDataItem exercise,int index)
+
+    public void SaveExerciseData(ExerciseDataItem exercise, int index, Action onSuccess = null)
     {
         string json = JsonUtility.ToJson(exercise);
 
-        // Reference the "exercises" node directly
-        var exercisesRef = FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("exercises").Child("exercises").Child(index.ToString());
+        var exercisesRef = FirebaseManager.Instance.databaseReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("exercises")
+            .Child("exercises")
+            .Child(index.ToString());
 
-        exercisesRef.SetRawJsonValueAsync(json).ContinueWith(addTask =>
+        exercisesRef.SetRawJsonValueAsync(json).ContinueWith(async addTask =>
         {
-            if (addTask.IsCompleted)
+            if (addTask.IsCompleted && addTask.Exception == null)
             {
                 Debug.Log("Exercise added at index: " + index);
+                this.exerciseData.exercises.Add(exercise);
+                onSuccess?.Invoke();
             }
             else
             {
@@ -251,6 +259,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             }
         });
     }
+
     public object LoadData(string jsonData, Type targetType)
     {
         return JsonUtility.FromJson(jsonData, targetType);
@@ -978,18 +987,21 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void SyncExercise()
     {
-        TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
-        string exerciseJson = exerciseJsonFile.text;
-        ExerciseData localExercises = JsonUtility.FromJson<ExerciseData>(exerciseJson);
+        try{
+            TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
+            string exerciseJson = exerciseJsonFile.text;
+            ExerciseData localExercises = JsonUtility.FromJson<ExerciseData>(exerciseJson);
 
-        foreach (var exercise in localExercises.exercises)
-        {
-            if (!this.exerciseData.exercises.Any(e => e.exerciseName == exercise.exerciseName))
+            foreach (var exercise in localExercises.exercises)
             {
-                this.exerciseData.exercises.Add(exercise);
+                if (!this.exerciseData.exercises.Any(e => e.exerciseName == exercise.exerciseName))
+                {
+                    this.exerciseData.exercises.Add(exercise);
+                }
             }
+        }catch (Exception ex){
+            print("asd");
         }
-
     }
     private IEnumerator FetchFriendDetails(string friendId, string friendName)
     {

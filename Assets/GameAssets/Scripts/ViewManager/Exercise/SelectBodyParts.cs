@@ -99,9 +99,13 @@ public class SelectBodyParts : MonoBehaviour,PageController
         // Iterate over each HistoryTempleteModel in the historyData
         foreach (var template in excerciseData.exercises)
         {
-            if (!template.category.Contains("/"))
-            {
-                uniqueExercises.Add(template.category);
+            try{
+                if (!template.category.Contains("/"))
+                {
+                    uniqueExercises.Add(template.category);
+                }
+            }catch(Exception ex){
+                continue;
             }
         }
 
@@ -116,25 +120,29 @@ public class SelectBodyParts : MonoBehaviour,PageController
         // Iterate over each ExerciseDataItem in the exerciseData
         foreach (var template in exerciseData.exercises)
         {
+            try{
             // Check if the template's category contains "/"
-            if (template.category.Contains("/"))
-            {
-                // Split the category into parts using "/"
-                var categories = template.category.Split('/');
+                if (template.category.Contains("/"))
+                {
+                    // Split the category into parts using "/"
+                    var categories = template.category.Split('/');
 
-                // Trim each part and check if any matches the provided category string
-                if (categories.Any(cat => cat.Trim().Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase)))
-                {
-                    matchingCount++; // Increment the counter if there's a match
+                    // Trim each part and check if any matches the provided category string
+                    if (categories.Any(cat => cat.Trim().Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        matchingCount++; // Increment the counter if there's a match
+                    }
                 }
-            }
-            else
-            {
-                // Check if the template's category matches the provided category string
-                if (template.category.Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    matchingCount++; // Increment the counter if there's a match
+                    // Check if the template's category matches the provided category string
+                    if (template.category.Equals(categoryToMatch, StringComparison.OrdinalIgnoreCase))
+                    {
+                        matchingCount++; // Increment the counter if there's a match
+                    }
                 }
+            }catch(Exception ex){
+                continue;
             }
         }
 

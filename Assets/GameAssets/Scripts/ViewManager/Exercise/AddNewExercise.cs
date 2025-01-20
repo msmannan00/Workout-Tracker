@@ -33,6 +33,11 @@ public class AddNewExercise : MonoBehaviour, PageController
     }
     private void Update()
     {
+        if(dataUpdated){
+            dataUpdated = false;
+            GlobalAnimator.Instance.FadeOutLoader();
+            OnClose();
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             OnClose();
@@ -110,6 +115,7 @@ public class AddNewExercise : MonoBehaviour, PageController
         //exerciseDataItem.isWeightExercise = value;
     }
 
+    bool dataUpdated = false;
     public void Save()
     {
         if (!string.IsNullOrEmpty(exerciseDataItem.exerciseName))
@@ -119,9 +125,17 @@ public class AddNewExercise : MonoBehaviour, PageController
                 //DataManager.Instance.SaveData(exerciseDataItem);
                 //FirebaseExerciseManager.Instance.AddNewExercise(exerciseDataItem);
 
-                ApiDataHandler.Instance.SaveExerciseData(exerciseDataItem,ApiDataHandler.Instance.getExerciseData().exercises.Count);
-                callback.Invoke(exerciseDataItem);
-                OnClose();
+                GlobalAnimator.Instance.FadeInLoader();
+                ApiDataHandler.Instance.SaveExerciseData(
+                        exerciseDataItem, 
+                        ApiDataHandler.Instance.getExerciseData().exercises.Count, 
+                        onSuccess: () =>
+                        {
+                            ApiDataHandler.Instance.SyncExercise();
+                            this.callback.Invoke(exerciseDataItem);
+                            dataUpdated = true;
+                        }
+                    );
             }
             else
             {
@@ -153,9 +167,13 @@ public class AddNewExercise : MonoBehaviour, PageController
         // Loop through the exercises and check if any exerciseName matches the input string
         foreach (var exercise in ApiDataHandler.Instance.getExerciseData().exercises)
         {
-            if (exercise.exerciseName.ToLower() == nameToCheck.ToLower())
-            {
-                return true; // Return true if a match is found
+            try{
+                if (exercise.exerciseName.ToLower() == nameToCheck.ToLower())
+                {
+                    return true; // Return true if a match is found
+                }
+            }catch (Exception ex){
+                continue;
             }
         }
 

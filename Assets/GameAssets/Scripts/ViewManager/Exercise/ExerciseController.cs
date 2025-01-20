@@ -68,6 +68,23 @@ public class ExerciseController : MonoBehaviour, PageController
        
     }
 
+private void OnEnable()
+{
+    // Clear any existing list items
+    foreach (Transform child in content)
+    {
+        Destroy(child.gameObject);
+    }
+
+    // Optionally reset the scroll position
+    if (content.parent.TryGetComponent<ScrollRect>(out ScrollRect scrollRect))
+    {
+        scrollRect.verticalNormalizedPosition = 1f; // Reset to top
+    }
+
+    LoadExercises("");
+}
+
 
     void Start()
     {
@@ -298,60 +315,64 @@ public class ExerciseController : MonoBehaviour, PageController
 
         foreach (ExerciseDataItem exercise in exerciseData.exercises)
         {
-            string lowerFilter = filter.Replace(" ", "").ToLower();
+            try{
+                string lowerFilter = filter.Replace(" ", "").ToLower();
 
-            if (!showAll &&
-                !(exercise.exerciseName.Replace(" ", "").ToLower().Contains(lowerFilter) ||
-                  exercise.category.ToLower().Contains(lowerFilter)))
-            {
+                if (!showAll &&
+                    !(exercise.exerciseName.Replace(" ", "").ToLower().Contains(lowerFilter) ||
+                    exercise.category.ToLower().Contains(lowerFilter)))
+                {
+                    continue;
+                }
+
+                char firstLetter = char.ToUpper(exercise.exerciseName[0]);
+                GameObject targetLabel = alphabetLabels.Find(label => label.name == $"Label_{firstLetter}");
+
+                if (targetLabel != null)
+                {
+                    if (!relevantLabels.Contains(targetLabel))
+                    {
+                        relevantLabels.Add(targetLabel);
+                    }
+
+                    GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
+                    GameObject newExerciseObject = Instantiate(exercisePrefab, content);
+
+                    int labelIndex = targetLabel.transform.GetSiblingIndex();
+                    newExerciseObject.transform.SetSiblingIndex(labelIndex + 1);
+
+                    ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
+
+                    Dictionary<string, object> initData = new Dictionary<string, object>
+                    {
+                        { "data", exercise },
+                    };
+
+                    newExerciseItem.onInit(initData);
+
+                    Button button = newExerciseObject.GetComponent<Button>();
+                    if (button != null)
+                    {
+                        if (exerciseAddOnPage == ExerciseAddOnPage.HistoryPage)
+                        {
+                            button.onClick.AddListener(() => {
+                                ShowExerciseHistory(exercise);
+                                AudioController.Instance.OnButtonClick();
+                            });
+                        }
+                        else
+                        {
+                            button.onClick.AddListener(() =>{
+                                SelectAndDeselectExercise(newExerciseObject, exercise);
+                                AudioController.Instance.OnButtonClick();
+                            });
+                        }
+                    }
+
+                    exerciseItems.Add(newExerciseObject);
+                }
+            }catch(Exception es){
                 continue;
-            }
-
-            char firstLetter = char.ToUpper(exercise.exerciseName[0]);
-            GameObject targetLabel = alphabetLabels.Find(label => label.name == $"Label_{firstLetter}");
-
-            if (targetLabel != null)
-            {
-                if (!relevantLabels.Contains(targetLabel))
-                {
-                    relevantLabels.Add(targetLabel);
-                }
-
-                GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/exercise/exerciseScreenDataModel");
-                GameObject newExerciseObject = Instantiate(exercisePrefab, content);
-
-                int labelIndex = targetLabel.transform.GetSiblingIndex();
-                newExerciseObject.transform.SetSiblingIndex(labelIndex + 1);
-
-                ExerciseItem newExerciseItem = newExerciseObject.GetComponent<ExerciseItem>();
-
-                Dictionary<string, object> initData = new Dictionary<string, object>
-                {
-                    { "data", exercise },
-                };
-
-                newExerciseItem.onInit(initData);
-
-                Button button = newExerciseObject.GetComponent<Button>();
-                if (button != null)
-                {
-                    if (exerciseAddOnPage == ExerciseAddOnPage.HistoryPage)
-                    {
-                        button.onClick.AddListener(() => {
-                            ShowExerciseHistory(exercise);
-                            AudioController.Instance.OnButtonClick();
-                        });
-                    }
-                    else
-                    {
-                        button.onClick.AddListener(() =>{
-                            SelectAndDeselectExercise(newExerciseObject, exercise);
-                            AudioController.Instance.OnButtonClick();
-                        });
-                    }
-                }
-
-                exerciseItems.Add(newExerciseObject);
             }
         }
         foreach (GameObject label in alphabetLabels)
@@ -584,6 +605,10 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     public void CreateBodyPartChecks()
     {
+        foreach (Transform child in bodyPartsContent)
+        {
+            Destroy(child.gameObject);
+        }
         foreach (string text in selectedBodyParts)
         {
             // Instantiate text prefab
@@ -657,7 +682,6 @@ public class ExerciseController : MonoBehaviour, PageController
     }
     void OnAddExercise(object data)
     {
-        OnSearchChanged("");
     }
 
     public void AddExerciseToWorkoutLog()
