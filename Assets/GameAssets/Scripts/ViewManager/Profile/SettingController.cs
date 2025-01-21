@@ -153,6 +153,11 @@ public class SettingController : MonoBehaviour, PageController
 
 
     }
+    public void ContactUsPopup()
+    {
+        back = false;
+        PopupController.Instance.OpenPopup("profile", "ContactUsPopup", OnBackCheck, null);
+    }
     public void RPE_RIR_Popup()
     {
         back = false;
