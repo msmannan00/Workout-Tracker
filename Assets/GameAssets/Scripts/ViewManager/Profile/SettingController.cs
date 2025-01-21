@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Mail;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -155,8 +156,10 @@ public class SettingController : MonoBehaviour, PageController
     }
     public void ContactUsPopup()
     {
-        back = false;
-        PopupController.Instance.OpenPopup("profile", "ContactUsPopup", OnBackCheck, null);
+        string mailto = $"mailto:{"stregnthclanfitness@gmail.com"}";
+        Application.OpenURL(mailto);
+        //back = false;
+        //PopupController.Instance.OpenPopup("profile", "ContactUsPopup", OnBackCheck, null);
     }
     public void RPE_RIR_Popup()
     {
