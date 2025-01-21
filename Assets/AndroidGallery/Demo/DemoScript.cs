@@ -40,7 +40,6 @@ public class DemoScript : MonoBehaviour {
                 {
                     Sprite loadedSprite = TextureToSprite(texture);
                     frame.sprite = loadedSprite;
-
                     // Save the image data to persistent storage
                     SaveImage(texture);
 
@@ -50,6 +49,8 @@ public class DemoScript : MonoBehaviour {
                     frame.rectTransform.anchoredPosition = new Vector2(0, 0);
                     frame.rectTransform.sizeDelta = new Vector2(90, 90);
 
+                    RectTransform mask = frame.transform.parent.GetComponent<RectTransform>();
+                    userSessionManager.Instance.FitImage(frame, mask);
                     Debug.Log("Image successfully loaded from gallery and processed.");
                 }
                 else
@@ -88,6 +89,8 @@ public class DemoScript : MonoBehaviour {
                 frame.rectTransform.anchoredPosition = new Vector2(0, 0);
                 frame.rectTransform.sizeDelta = new Vector2(90, 90);
 
+                RectTransform mask = frame.transform.parent.GetComponent<RectTransform>();
+                userSessionManager.Instance.FitImage(frame, mask);
                 Debug.Log("Last image loaded successfully!");
             }
             else

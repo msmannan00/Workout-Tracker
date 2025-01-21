@@ -943,4 +943,39 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         characterIndex = Mathf.Clamp(characterIndex, 0, 1);
         return characterIndex.ToString()+ "/";
     }
+
+    public void FitImage(Image targetImage, RectTransform mask)
+    {
+        if (targetImage == null || mask == null) return;
+
+        targetImage.SetNativeSize();
+        // Get the dimensions of the image and the mask
+        float imageWidth = targetImage.sprite.texture.width;
+        float imageHeight = targetImage.sprite.texture.height;
+
+        // Get the dimensions of the mask
+        float maskWidth = mask.rect.width;
+        float maskHeight = mask.rect.height;
+
+        // Calculate aspect ratios
+        float imageAspectRatio = imageWidth / imageHeight;
+        float maskAspectRatio = maskWidth / maskHeight;
+
+        // Scale uniformly to ensure the image fills the mask
+        if (imageAspectRatio > maskAspectRatio)
+        {
+            // Image is wider than the mask; scale height to fill
+            float scaleFactor = maskHeight / imageHeight;
+            targetImage.rectTransform.sizeDelta = new Vector2(imageWidth * scaleFactor, maskHeight);
+        }
+        else
+        {
+            // Image is taller than the mask; scale width to fill
+            float scaleFactor = maskWidth / imageWidth;
+            targetImage.rectTransform.sizeDelta = new Vector2(maskWidth, imageHeight * scaleFactor);
+        }
+
+        // Ensure the image stays centered within the mask
+        targetImage.rectTransform.anchoredPosition = Vector2.zero;
+    }
 }

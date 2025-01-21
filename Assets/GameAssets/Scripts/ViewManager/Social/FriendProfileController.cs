@@ -39,7 +39,10 @@ public class FriendProfileController : MonoBehaviour, PageController
         {
             profileImage.sprite = profile;  
             profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
-            profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
+            //profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
+
+            RectTransform mask = profileImage.transform.parent.GetComponent<RectTransform>();
+            userSessionManager.Instance.FitImage(profileImage, mask);
         }
         //StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
 
