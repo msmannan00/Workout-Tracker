@@ -35,15 +35,20 @@ public class FriendProfileController : MonoBehaviour, PageController
         friendData = (FriendData)data["data"];
         friendObject = (GameObject)data["object"];
         Sprite profile = (Sprite)data["profileImage"];
-        if(profile != null)
-        {
-            profileImage.sprite = profile;  
-            profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
-            //profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
 
-            RectTransform mask = profileImage.transform.parent.GetComponent<RectTransform>();
-            userSessionManager.Instance.FitImage(profileImage, mask);
-        }
+        if (friendData.profileImageUrl != null)
+            StartCoroutine(ApiDataHandler.Instance.CheckFriendSpriteDownloaded(friendData, profileImage, loadingText.gameObject));
+        else
+            loadingText.gameObject.SetActive(false);
+        //if (profile != null)
+        //{
+        //    profileImage.sprite = profile;  
+        //    profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
+        //    //profileImage.rectTransform.sizeDelta = new Vector2(90, 90);
+
+        //    RectTransform mask = profileImage.transform.parent.GetComponent<RectTransform>();
+        //    userSessionManager.Instance.FitImage(profileImage, mask);
+        //}
         //StartCoroutine(FetchFriendDetails((string)data["id"], (string)data["name"]));
 
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);

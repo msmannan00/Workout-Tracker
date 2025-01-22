@@ -8,6 +8,8 @@ using UnityEngine.Networking;
 using SDev.GiphyAPI;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
+using System.Security.Policy;
+using UnityEngine.UI;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -1050,6 +1052,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             if (snapshot.HasChild("profileImageUrl"))
             {
                 friendDetails.profileImageUrl= snapshot.Child("profileImageUrl").Value.ToString();
+                StartCoroutine(LoadImageFromUrl(friendDetails.profileImageUrl, (loadedSprite) => {
+                    // This callback will receive the newly loaded sprite
+                    friendDetails.profileImage = loadedSprite;
+                }));
             }
 
             friendDataModel.friendData.Add(friendDetails);
@@ -1547,6 +1553,19 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             Debug.LogError("Failed to load image from URL");
         }
         print("complete loading");
+    }
+
+    public IEnumerator CheckFriendSpriteDownloaded(FriendData data, Image image, GameObject loading)
+    {
+        while (data.profileImage == null)
+        {
+            loading.SetActive(true);
+            yield return new WaitForSeconds(3);
+        }
+        loading.SetActive(false);
+        image.sprite = data.profileImage;
+        RectTransform mask = image.transform.parent.GetComponent<RectTransform>();
+        userSessionManager.Instance.FitImage(image, mask);
     }
 
     public int GetBuyedCloths()

@@ -19,6 +19,7 @@ public class FriendData
     public string joiningDate;
     public string clothe;
     public string profileImageUrl;
+    public Sprite profileImage;
     public AchievementData achievementData = new AchievementData();
     public PersonalBestData personalBestData = new PersonalBestData();
 }

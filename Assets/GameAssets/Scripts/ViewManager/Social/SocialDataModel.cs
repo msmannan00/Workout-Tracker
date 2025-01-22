@@ -30,18 +30,21 @@ public class SocialDataModel : MonoBehaviour,ItemController
         if (friendData.profileImageUrl != null)
         {
             loadingText.gameObject.SetActive(true);
-            string url = friendData.profileImageUrl;
-            StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
-                // This callback will receive the newly loaded sprite
-                profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
-                loadingText.gameObject.SetActive(false);
-                profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
-                profileImage.rectTransform.sizeDelta = new Vector2(55, 55);
-                profileSprite = loadedSprite;
 
-                RectTransform mask = profileImage.transform.parent.GetComponent<RectTransform>();
-                userSessionManager.Instance.FitImage(profileImage, mask);
-            }));
+            StartCoroutine(ApiDataHandler.Instance.CheckFriendSpriteDownloaded(friendData, profileImage, loadingText.gameObject));
+
+            //string url = friendData.profileImageUrl;
+            //StartCoroutine(ApiDataHandler.Instance.LoadImageFromUrl(url, (loadedSprite) => {
+            //    // This callback will receive the newly loaded sprite
+            //    profileImage.sprite = loadedSprite;  // Assuming profileImage is your UI Image component
+            //    loadingText.gameObject.SetActive(false);
+            //    profileImage.rectTransform.anchoredPosition = new Vector2(0, 0);
+            //    profileImage.rectTransform.sizeDelta = new Vector2(55, 55);
+            //    profileSprite = loadedSprite;
+
+            //    RectTransform mask = profileImage.transform.parent.GetComponent<RectTransform>();
+            //    userSessionManager.Instance.FitImage(profileImage, mask);
+            //}));
         }
         else
             loadingText.gameObject.SetActive(false);
