@@ -258,16 +258,18 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 continue; // Skip if it's already completed
             }
-            int totalWeight = 0;
-            totalWeight += (int)GetPerformedTotalWeight(ApiDataHandler.Instance.getHistoryData(), data.category_exercise);
+            int totalWeightInLatestWorkout = 0;
+            totalWeightInLatestWorkout += (int)GetPerformedTotalWeight(ApiDataHandler.Instance.getHistoryData(), data.category_exercise);
+            int totalWeightInPersonBest = 0;
             foreach (string exerciseName in data.category_exercise)
             {
                 PersonalBestDataItem matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.ToLower() == exerciseName.ToLower());
                 if (matchingExercise != null)
                 {
-                    totalWeight += matchingExercise.weight;
+                    totalWeightInPersonBest += matchingExercise.weight;
                 }
             }
+            int totalWeight=Math.Max(totalWeightInLatestWorkout, totalWeightInPersonBest);
             float value = achievementDataItem.value * ApiDataHandler.Instance.getMeasurementData().weight;
             if (totalWeight >= (int)value)
             {
@@ -728,18 +730,39 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     {
         float totalWeight = 0;
 
-        foreach (var templete in historyModel.exerciseTempleteModel)
+        // Find the latest template based on dateTime
+        var latestTemplate = historyModel.exerciseTempleteModel
+            .OrderByDescending(t => DateTime.Parse(t.dateTime))
+            .FirstOrDefault();
+
+        if (latestTemplate == null)
+            return totalWeight; // No templates, return 0
+
+        // Calculate the total weight for the latest template
+        foreach (var exerciseType in latestTemplate.exerciseTypeModel)
         {
-            foreach (var exerciseType in templete.exerciseTypeModel)
+            if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
             {
-                if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
-                {
-                    // Add the weight of all sets for this exercise to the total
-                    totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
-                }
+                // Add the weight of all sets for this exercise to the total
+                totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
             }
         }
+
         return totalWeight;
+        //float totalWeight = 0;
+
+        //foreach (var templete in historyModel.exerciseTempleteModel)
+        //{
+        //    foreach (var exerciseType in templete.exerciseTypeModel)
+        //    {
+        //        if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
+        //        {
+        //            // Add the weight of all sets for this exercise to the total
+        //            totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
+        //        }
+        //    }
+        //}
+        //return totalWeight;
     }
 
     public int GetUniqueExerciseCount(HistoryModel historyModel)

@@ -179,6 +179,10 @@ public class SettingController : MonoBehaviour, PageController
         StateManager.Instance.DeleteFooter();
         StateManager.Instance.OpenStaticScreen("auth", this.gameObject, "authScreen", mData);
     }
+    public void Subscrition()
+    {
+        IAPManager.Instance.Subscription_Btn_Pressed();
+    }
     public void TermsAndConditions()
     {
         StateManager.Instance.OpenStaticScreen("profile", gameObject, "TermsAndConditions", null, true);

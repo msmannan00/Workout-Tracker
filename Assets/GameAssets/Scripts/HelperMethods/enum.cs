@@ -82,3 +82,7 @@ public enum CharacterSide
     Side,
     Back
 }
+public enum ShopProductNames
+{
+    Subscription
+}

@@ -528,6 +528,61 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1199866473}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &545868274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 545868276}
+  - component: {fileID: 545868275}
+  m_Layer: 0
+  m_Name: IAP Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &545868275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545868274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5bab6f920100c44d876b0992f00df4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subItem:
+    Name: 
+    Id: Subscrition
+    desc: 
+    price: 5
+    timeDuration: 0
+  noInternet: {fileID: 0}
+  IAPInitialized: 0
+  isSubscripted: 0
+  removedButton: {fileID: 0}
+  removeAdsButton: {fileID: 0}
+--- !u!4 &545868276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545868274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &546157595
 GameObject:
   m_ObjectHideFlags: 0
@@ -2370,3 +2425,4 @@ SceneRoots:
   - {fileID: 105432908}
   - {fileID: 1631644030}
   - {fileID: 1260667503}
+  - {fileID: 545868276}
