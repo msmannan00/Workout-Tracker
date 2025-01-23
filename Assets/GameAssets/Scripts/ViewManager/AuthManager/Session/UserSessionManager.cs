@@ -258,45 +258,54 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 continue; // Skip if it's already completed
             }
-            int totalWeightInLatestWorkout = 0;
-            totalWeightInLatestWorkout += (int)GetPerformedTotalWeight(ApiDataHandler.Instance.getHistoryData(), data.category_exercise);
-            int totalWeightInPersonBest = 0;
+
+            // Calculate the total weight by comparing latest workout and personal best for each exercise
+            int totalWeight = 0;
+
             foreach (string exerciseName in data.category_exercise)
             {
-                PersonalBestDataItem matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.ToLower() == exerciseName.ToLower());
+                // Get weight for the exercise from the latest workout
+                float latestWorkoutWeight = GetPerformedWeightForExercise(ApiDataHandler.Instance.getHistoryData(), exerciseName);
+
+                // Get weight for the exercise from personal best
+                float personalBestWeight = 0;
+                var matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.Equals(exerciseName, StringComparison.OrdinalIgnoreCase));
                 if (matchingExercise != null)
-                {
-                    totalWeightInPersonBest += matchingExercise.weight;
-                }
+                    personalBestWeight = matchingExercise.weight;
+
+                // Add the greater weight to the total
+                totalWeight += (int)Math.Max(latestWorkoutWeight, personalBestWeight);
             }
-            int totalWeight=Math.Max(totalWeightInLatestWorkout, totalWeightInPersonBest);
+
+            // Calculate the required value based on the achievement multiplier
             float value = achievementDataItem.value * ApiDataHandler.Instance.getMeasurementData().weight;
-            if (totalWeight >= (int)value)
+
+            if ((float)totalWeight >= value)
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
                 SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
+
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
                     completedItemsInSingleCheck.Add(achievementDataItem);
                     completedItemsTitles.Add(data.title);
-                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, true };
-                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
             {
                 if (progressText != null && descriptionText != null)
                 {
-                    progressText.text = totalWeight.ToString() + "kg / " + value.ToString()+"kg";
+                    progressText.text = totalWeight.ToString() + "kg / " + value.ToString() + "kg";
                     descriptionText.text = achievementDataItem.description;
-                    coinText.text=achievementDataItem.coins.ToString();
+                    coinText.text = achievementDataItem.coins.ToString();
                 }
                 return;
             }
         }
+
         if (progressText != null && descriptionText != null)
         {
             progressText.gameObject.SetActive(false);
@@ -726,43 +735,27 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     //------------------------------------------------------Helper Functions----------------------------------------------------------------------------------
 
 
-    public float GetPerformedTotalWeight(HistoryModel historyModel, List<string> exerciseNames)
+    public float GetPerformedWeightForExercise(HistoryModel historyModel, string exerciseName)
     {
-        float totalWeight = 0;
+        float maxWeight = 0;
 
-        // Find the latest template based on dateTime
-        var latestTemplate = historyModel.exerciseTempleteModel
-            .OrderByDescending(t => DateTime.Parse(t.dateTime))
-            .FirstOrDefault();
-
-        if (latestTemplate == null)
-            return totalWeight; // No templates, return 0
-
-        // Calculate the total weight for the latest template
-        foreach (var exerciseType in latestTemplate.exerciseTypeModel)
+        // Iterate through all templates and check for the maximum weight of the exercise
+        foreach (var template in historyModel.exerciseTempleteModel)
         {
-            if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
+            var exerciseType = template.exerciseTypeModel
+                .FirstOrDefault(type => type.exerciseName.Equals(exerciseName, StringComparison.OrdinalIgnoreCase));
+
+            if (exerciseType != null && exerciseType.exerciseModel.Any())
             {
-                // Add the weight of all sets for this exercise to the total
-                totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
+                // Get the maximum weight for the sets of this exercise
+                float currentMaxWeight = exerciseType.exerciseModel.Max(set => set.weight);
+
+                // Keep track of the overall maximum weight
+                maxWeight = Math.Max(maxWeight, currentMaxWeight);
             }
         }
 
-        return totalWeight;
-        //float totalWeight = 0;
-
-        //foreach (var templete in historyModel.exerciseTempleteModel)
-        //{
-        //    foreach (var exerciseType in templete.exerciseTypeModel)
-        //    {
-        //        if (exerciseNames.Any(name => name.Equals(exerciseType.exerciseName, StringComparison.OrdinalIgnoreCase)))
-        //        {
-        //            // Add the weight of all sets for this exercise to the total
-        //            totalWeight += exerciseType.exerciseModel.Sum(set => set.weight);
-        //        }
-        //    }
-        //}
-        //return totalWeight;
+        return maxWeight; // Return the maximum weight found
     }
 
     public int GetUniqueExerciseCount(HistoryModel historyModel)
