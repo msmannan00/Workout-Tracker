@@ -14,11 +14,21 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
     public int currentStreak = 0; // User's current streak
     public int characterLevel = 0;
     public string enfOfWeekDate;
-
+    public bool weeklyGoalStatus;
+    public List<Message> completedMessages = new List<Message>();
+    public List<Message> notCompletedMessages = new List<Message>();
     private void Start()
     {
-        // Initialize start of the week based on today's date
-        //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek(); //GetStartOfWeek(DateTime.Now);
+        // Add completed messages with improved titles
+        completedMessages.Add(new Message("Victory Unlocked!", "Congratulations! You've completed your weekly goal! Your streak has increased, and you've leveled up. Keep up the great work!"));
+        completedMessages.Add(new Message("Champion's Progress!", "Well done! You've crushed your weekly goal! Your streak and level have both increased. Keep the momentum going!"));
+        completedMessages.Add(new Message("Level Up Achieved!", "Amazing! You've accomplished your weekly goal! Your streak is stronger, and you've climbed to the next level."));
+
+        // Add not completed messages with improved titles
+        notCompletedMessages.Add(new Message("Bounce Back Stronger!", "You missed your weekly goal. Your streak has been reset to 0, and your level has decreased. Don't give up—start fresh and aim for success next week!"));
+        notCompletedMessages.Add(new Message("A New Chance Awaits!", "This week didn't go as planned. Your streak is reset, and your level is reduced, but it's a chance to start stronger. You've got this!"));
+        notCompletedMessages.Add(new Message("Every Failure is a Step!", "You missed your weekly goal. Your streak has been reset, and your level has dropped slightly. But remember, every setback is a setup for a comeback!"));
+
     }
 
     /// <summary>
@@ -70,47 +80,159 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
     /// <summary>
     /// Updates the streak based on gym visits within the 7-day period.
     /// </summary>
+    //public void UpdateStreak()
+    //{
+    //    // Check if the current week has ended
+    //    //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek();
+    //    DateTime endOfCurrentWeek = startOfCurrentWeek.AddDays(7);
+    //    print(startOfCurrentWeek.ToString("yyyy-MM-dd"));
+    //    print(endOfCurrentWeek.ToString("yyyy-MM-dd"));
+    //    if (DateTime.TryParse(enfOfWeekDate, out DateTime parsedDate))
+    //    {
+    //        DateTime _now = parsedDate;
+    //    }
+    //    else
+    //        parsedDate = DateTime.Now;
+    //    if (parsedDate >= endOfCurrentWeek)
+    //    {
+    //        // Check if the user met the goal in the last 7-day period
+    //        if (HasMetWeeklyGoal())
+    //        {
+    //            // Increment streak and level up character
+
+    //            currentStreak = userSessionManager.Instance.userStreak;
+    //            currentStreak++;
+    //            userSessionManager.Instance.userStreak = currentStreak;
+    //            ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
+    //            characterLevel = userSessionManager.Instance.characterLevel;
+    //            characterLevel = Mathf.Clamp(characterLevel + 1, 0, 7);
+    //            userSessionManager.Instance.characterLevel = characterLevel;
+    //            userSessionManager.Instance.AddCoins(10);
+    //            ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
+    //            ShowRandomMessageOnPopup(true);
+    //            Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");
+    //        }
+    //        else
+    //        {
+    //            // Reset streak and decrease level
+    //            currentStreak = 0;
+    //            userSessionManager.Instance.userStreak = currentStreak;
+    //            ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
+    //            characterLevel = userSessionManager.Instance.characterLevel;
+    //            characterLevel = Mathf.Clamp(characterLevel - 1, 0, 7);
+    //            userSessionManager.Instance.characterLevel = characterLevel;
+    //            ApiDataHandler.Instance.SetCharacterLevelToFirebase((int)characterLevel);
+    //            ShowRandomMessageOnPopup(false);
+    //            Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
+    //        }
+
+    //        // Move start of the week to the next period
+    //        ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
+    //        startOfCurrentWeek = DateTime.Now;
+
+    //        List<string> currentWeekVisits = new List<string>();
+
+    //        foreach (string visit in gymVisits)
+    //        {
+    //            if (DateTime.TryParse(visit, out DateTime visitDate) &&
+    //                visitDate >= startOfCurrentWeek)
+    //            {
+    //                currentWeekVisits.Add(visit);
+    //            }
+    //        }
+    //        ApiDataHandler.Instance.SetGymVisitsToFirebase(currentWeekVisits);
+    //    }
+    //}
+
     public void UpdateStreak()
     {
-        // Check if the current week has ended
-        //startOfCurrentWeek = ApiDataHandler.Instance.GetStartOfCurrentWeek();
+        // Get the end of the current week
         DateTime endOfCurrentWeek = startOfCurrentWeek.AddDays(7);
         print(startOfCurrentWeek.ToString("yyyy-MM-dd"));
         print(endOfCurrentWeek.ToString("yyyy-MM-dd"));
-        if (DateTime.TryParse(enfOfWeekDate, out DateTime parsedDate))
-        {
-            DateTime _now = parsedDate;
-        }
-        else
-            parsedDate = DateTime.Now;
-        if (parsedDate >= endOfCurrentWeek)
-        {
-            // Check if the user met the goal in the last 7-day period
-            if (HasMetWeeklyGoal())
-            {
-                // Increment streak and level up character
-                currentStreak=userSessionManager.Instance.userStreak;
-                currentStreak++;
-                ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
-                characterLevel=userSessionManager.Instance.characterLevel;
-                characterLevel++;
-                ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
-                Debug.Log($"Weekly goal met! Streak: {currentStreak}, Level: {characterLevel}");
-            }
-            else
-            {
-                // Reset streak and decrease level
-                ApiDataHandler.Instance.SetUserStreakToFirebase(0);
-                characterLevel = userSessionManager.Instance.characterLevel;
-                characterLevel = Math.Max(0, characterLevel - 1); // Character level should not go below 1
-                ApiDataHandler.Instance.SetCharacterLevelToFirebase((int)characterLevel);
-                Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
-            }
 
-            // Move start of the week to the next period
-            ApiDataHandler.Instance.SetCurrentWeekStartDate(DateTime.Now);
-            //startOfCurrentWeek = ApiDataHandler.Instance.GetCurrentWeekStartDate();//GetStartOfWeek(DateTime.Now);
+        // Get the current time or use a parsed date if available
+        DateTime currentDate = DateTime.TryParse(enfOfWeekDate, out DateTime parsedDate) ? parsedDate : DateTime.Now;
+
+        // Check if the weekly goal has already been completed
+        bool isWeeklyGoalCompleted = weeklyGoalStatus;
+
+        if (isWeeklyGoalCompleted && currentDate < endOfCurrentWeek)
+        {
+            Debug.Log("Weekly goal already completed. No further updates required.");
+            return; // Exit if the goal is already completed and it's not the end of the week
         }
+
+        // If the week has ended, reset for a new week
+        if (currentDate >= endOfCurrentWeek)
+        {
+            ResetForNewWeek();
+            return;
+        }
+
+        // Check if the user met the weekly goal
+        if (!isWeeklyGoalCompleted && HasMetWeeklyGoal())
+        {
+            // Increment streak and level up character
+            currentStreak = userSessionManager.Instance.userStreak + 1;
+            userSessionManager.Instance.userStreak = currentStreak;
+            ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
+
+            characterLevel = userSessionManager.Instance.characterLevel;
+            characterLevel = Mathf.Clamp(characterLevel + 1, 0, 7);
+            userSessionManager.Instance.characterLevel = characterLevel;
+            ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
+
+            userSessionManager.Instance.AddCoins(10);
+
+            // Mark weekly goal as completed
+            weeklyGoalStatus = true;
+            ApiDataHandler.Instance.SetWeeklyGoalStatusOnFirebase(true);
+
+            ShowRandomMessageOnPopup(true);
+            Debug.Log($"Weekly goal met early! Streak: {currentStreak}, Level: {characterLevel}");
+        }
+    }
+
+    // Resets for a new week and clears old goal status
+    private void ResetForNewWeek()
+    {
+        // Reset streak or decrease level if goal wasn't met
+        if (!weeklyGoalStatus)
+        {
+            currentStreak = 0;
+            userSessionManager.Instance.userStreak = currentStreak;
+            ApiDataHandler.Instance.SetUserStreakToFirebase(currentStreak);
+
+            characterLevel = userSessionManager.Instance.characterLevel;
+            characterLevel = Mathf.Clamp(characterLevel - 1, 0, 7);
+            userSessionManager.Instance.characterLevel = characterLevel;
+            ApiDataHandler.Instance.SetCharacterLevelToFirebase(characterLevel);
+
+            ShowRandomMessageOnPopup(false);
+            Debug.Log($"Weekly goal not met. Streak reset. Level: {characterLevel}");
+        }
+
+        // Start a new week
+        startOfCurrentWeek = DateTime.Now.Date;
+        ApiDataHandler.Instance.SetCurrentWeekStartDate(startOfCurrentWeek);
+
+        // Reset weekly goal status
+        weeklyGoalStatus = false;
+        ApiDataHandler.Instance.SetWeeklyGoalStatusOnFirebase(false);
+
+        // Filter gym visits for the new week
+        List<string> currentWeekVisits = new List<string>();
+        foreach (string visit in StreakAndCharacterManager.Instance.gymVisits)
+        {
+            if (DateTime.TryParse(visit, out DateTime visitDate) && visitDate >= startOfCurrentWeek)
+            {
+                currentWeekVisits.Add(visit);
+            }
+        }
+        ApiDataHandler.Instance.SetGymVisitsToFirebase(currentWeekVisits);
+
+        Debug.Log("New week started. Weekly goal status reset.");
     }
 
     /// <summary>
@@ -132,5 +254,31 @@ public class StreakAndCharacterManager : GenericSingletonClass<StreakAndCharacte
         weeklyGoal = userSessionManager.Instance.weeklyGoal;
         Debug.Log($"Visits in current 7-day period: {visitCount}/{weeklyGoal}");
         return visitCount >= weeklyGoal;
+    }
+    public void ShowRandomMessageOnPopup(bool isGoalCompleted)
+    {
+        List<Message> messages = isGoalCompleted ? completedMessages : notCompletedMessages;
+
+        if (messages.Count > 0)
+        {
+            // Randomly select a title and a description
+            string randomTitle = messages[UnityEngine.Random.Range(0, messages.Count)].title;
+            string randomDescription = messages[UnityEngine.Random.Range(0, messages.Count)].description;
+
+            List<object> initialData = new List<object> { isGoalCompleted, randomTitle, randomDescription};
+            PopupController.Instance.OpenPopup("shared", "LevelAndStreakPopup", null, initialData);
+        }
+    }
+}
+[System.Serializable]
+public class Message
+{
+    public string title;
+    public string description;
+
+    public Message(string title, string description)
+    {
+        this.title = title;
+        this.description = description;
     }
 }

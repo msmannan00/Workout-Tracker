@@ -24,6 +24,8 @@ public class AuthController : MonoBehaviour, PageController
     public TextMeshProUGUI aTriggerButton;
     public GameObject aForgetPassword;
     public RectTransform aLineDevider;
+    public RectTransform togglePage;
+    public RectTransform contnueButton;
     public RectTransform agoogle;
     public RectTransform aApple;
 
@@ -46,8 +48,10 @@ public class AuthController : MonoBehaviour, PageController
             aPageToggleText2.text = "Create an account.";
             aForgetPassword.SetActive(true);
             aReEnterPassword.gameObject.SetActive(false);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), 35);
-            ChangeYPosition(aLineDevider, -16.5f);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -20);
+            ChangeYPosition(aLineDevider, -85f);
+            ChangeYPosition(togglePage, -511f);
+            ChangeYPosition(contnueButton, -588f);
             ChangeYPosition(agoogle, -86.6f);
             ChangeYPosition(aApple, -168.3f);
         }
@@ -59,8 +63,10 @@ public class AuthController : MonoBehaviour, PageController
             aPageToggleText2.text = "Log In";
             aForgetPassword.SetActive(false);
             aReEnterPassword.gameObject.SetActive(true);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -38);
-            ChangeYPosition(aLineDevider, -68);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -105f);
+            ChangeYPosition(aLineDevider, -130f);
+            ChangeYPosition(togglePage, -555f);
+            ChangeYPosition(contnueButton, -634f);
             ChangeYPosition(agoogle, -138);
             ChangeYPosition(aApple, -220);
             aPageToggleText1.gameObject.SetActive(false);
@@ -74,6 +80,7 @@ public class AuthController : MonoBehaviour, PageController
         aUsername.text = "";
         GoogleAuth = new GoogleAuth();
         GoogleAuth.TryResume(OnSignIn, OnGetAccessToken);
+
         onVerifyFirstLogin();
     }
     public void Start()
@@ -107,23 +114,25 @@ public class AuthController : MonoBehaviour, PageController
 
     public void onVerifyFirstLogin()
     {
-        //string mUsername = PreferenceManager.Instance.GetString("login_username");
-        ////print(mUsername);
-        //if (mUsername.Length > 2)
-        //{
-        //    if (mUsername.Contains("@"))
-        //    {
-        //        mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
-        //    }
-        //    userSessionManager.Instance.OnInitialize(mUsername, mUsername);
-        //    onSignIn();
-        //}
-        //else if (mUsername == "")
-        //{
-        //    PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
-        //}
-        if(FirebaseManager.Instance.user !=null){
+        string mUsername = PreferenceManager.Instance.GetString("login_username");
+        print(mUsername);
+        if (mUsername.Length > 2)
+        {
+           if (mUsername.Contains("@"))
+           {
+               mUsername = HelperMethods.Instance.ExtractUsernameFromEmail(mUsername);
+           }
+           userSessionManager.Instance.OnInitialize(mUsername, mUsername);
+           onSignIn();
+        }
+        else if (mUsername == "")
+        {
+           PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, true);
+        }
+        if (FirebaseManager.Instance.user != null)
+        {
             onSignIn();
+            userSessionManager.Instance.mProfileID = FirebaseManager.Instance.user.UserId;
         }
     }
 
@@ -145,14 +154,14 @@ public class AuthController : MonoBehaviour, PageController
     void GmailSignIn()
     {
 
-        if (GoogleAuth.SavedAuth != null)
-        {
-            GoogleAuth.SignIn(OnSignIn, caching: true);
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-            onSignIn();
-        }
+        //if (GoogleAuth.SavedAuth != null)
+        //{
+        //    GoogleAuth.SignIn(OnSignIn, caching: true);
+        //    userSessionManager.Instance.OnInitialize(mAuthType, "");
+        //    onSignIn();
+        //}
 
-        else
+        //else
         {
             GlobalAnimator.Instance.FadeInLoader();
             GoogleAuth.SignIn(OnSignIn, caching: true);
@@ -176,9 +185,16 @@ public class AuthController : MonoBehaviour, PageController
         if (success)
         {
             GlobalAnimator.Instance.FadeOutLoader();
-            mAuthType = success ? $"{userInfo.name}" : error;
-            userSessionManager.Instance.OnInitialize(mAuthType, "");
-            onSignIn();
+            Action mCallbackSuccess = () =>
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                userSessionManager.Instance.mProfileID=FirebaseManager.Instance.user.UserId;
+                onSignIn();
+            };
+            FirebaseManager.Instance.OnTryRegisterNewAccount(userInfo.email, "z4zazgS4LaejfKcs", mCallbackSuccess, null);
+            //mAuthType = success ? $"{userInfo.name}" : error;
+            //userSessionManager.Instance.OnInitialize(mAuthType, "");
+            //onSignIn();
         }
 
     }
@@ -220,10 +236,10 @@ public class AuthController : MonoBehaviour, PageController
         print("check userName");
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/username", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/username", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
@@ -312,6 +328,34 @@ public class AuthController : MonoBehaviour, PageController
                         string date = data.Value.ToString();
                         userSessionManager.Instance.joiningDate = date;
                         Debug.Log("joining date: " + date);
+                        CheckBadgeNameSet();
+                    }
+                });
+            }
+            else
+            {
+                GlobalAnimator.Instance.FadeOutLoader();
+                Dictionary<string, object> mData = new Dictionary<string, object>
+                {
+                 };
+                StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData);
+            }
+        });
+    }
+    public void CheckBadgeNameSet()
+    {
+        print("check badge name");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", result =>
+        {
+            if (result)
+            {
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string date = data.Value.ToString();
+                        userSessionManager.Instance.badgeName = date;
+                        Debug.Log("badge name: " + date);
                         GlobalAnimator.Instance.FadeOutLoader();
                         StateManager.Instance.OpenStaticScreen("loading", gameObject, "loadingScreen", null);
                     }
@@ -348,10 +392,10 @@ public class AuthController : MonoBehaviour, PageController
         AudioController.Instance.OnButtonClick();
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
-            Action<string, string> mCallbackSuccess = (string pResult1, string pResult2) =>
+            Action/*<string, string>*/ mCallbackSuccess = (/*string pResult1, string pResult2*/) =>
             {
                 GlobalAnimator.Instance.FadeOutLoader();
-                userSessionManager.Instance.OnInitialize(pResult1, pResult2);
+                //userSessionManager.Instance.OnInitialize(pResult1, pResult2);
                 onSignIn();
             };
             Action<FirebaseException> callbackFailure = (pError) =>
@@ -526,4 +570,3 @@ public class AuthController : MonoBehaviour, PageController
     }
 
 }
-

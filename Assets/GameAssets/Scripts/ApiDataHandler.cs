@@ -2,6 +2,14 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Firebase.Database;
+using System.Collections;
+using UnityEngine.Networking;
+using SDev.GiphyAPI;
+using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
+using System.Security.Policy;
+using UnityEngine.UI;
 
 public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 {
@@ -24,12 +32,32 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     [SerializeField]
     private ShopModel shopData = new ShopModel(); 
     [SerializeField]
+    private Dictionary<string, string> friendsData = new Dictionary<string, string>();
+    [SerializeField]
+    private FriendModel friendDataModel = new FriendModel();
+    [SerializeField]
     private string userName;
 
     [Header("Theme Settings")]
     public Theme gameTheme;
 
 
+    public bool isSignUp;
+
+    public void LogOut()
+    {
+        exerciseData = new ExerciseData();
+        achievementData = new AchievementData();
+        personalBestData = new PersonalBestData();
+        templateData= new TemplateData();
+        historyData= new HistoryModel();
+        measurementData=new MeasurementModel();
+        measurementHistory = new MeasurementHistory();
+        notesHistory = new ExerciseNotesHistory();
+        shopData=new ShopModel();
+        friendsData=new Dictionary<string, string>();
+        friendDataModel=new FriendModel();
+    }
     public void SaveTheme(Theme theme)
     {
         PreferenceManager.Instance.SetInt("SelectedTheme", (int)theme);
@@ -50,6 +78,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
          return PlayerPrefs.GetInt("Weight", 0);
     }
+
     public void SaveTemplateData()
     {
         string json = JsonUtility.ToJson(templateData);
@@ -125,7 +154,18 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
             });
     }
-
+    public void LoadFriendData()
+    {
+        FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/friend", data =>
+        {
+            DataSnapshot snapshot = data;
+            foreach (var child in snapshot.Children)
+            {
+                // Add the key (user identifier) and value (user data) to the dictionary
+                friendsData.Add(child.Key, child.Value.ToString());
+            }
+        });
+    }
     public void LoadTemplateData()
     {
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/workoutTempletes", result =>
@@ -178,7 +218,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
                 string exerciseJson = exerciseJsonFile.text;
                 this.exerciseData = JsonUtility.FromJson<ExerciseData>(exerciseJson);
-                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId)
+                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("exercises")
                 .SetRawJsonValueAsync(exerciseJson).ContinueWith(task =>
                 {
                     if (task.IsCompleted)
@@ -195,18 +235,25 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
 
     }
-    public void SaveExerciseData(ExerciseDataItem exercise,int index)
+
+    public void SaveExerciseData(ExerciseDataItem exercise, int index, Action onSuccess = null)
     {
         string json = JsonUtility.ToJson(exercise);
 
-        // Reference the "exercises" node directly
-        var exercisesRef = FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("exercises").Child(index.ToString());
+        var exercisesRef = FirebaseManager.Instance.databaseReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("exercises")
+            .Child("exercises")
+            .Child(index.ToString());
 
-        exercisesRef.SetRawJsonValueAsync(json).ContinueWith(addTask =>
+        exercisesRef.SetRawJsonValueAsync(json).ContinueWith(async addTask =>
         {
-            if (addTask.IsCompleted)
+            if (addTask.IsCompleted && addTask.Exception == null)
             {
                 Debug.Log("Exercise added at index: " + index);
+                this.exerciseData.exercises.Add(exercise);
+                onSuccess?.Invoke();
             }
             else
             {
@@ -214,6 +261,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             }
         });
     }
+
     public object LoadData(string jsonData, Type targetType)
     {
         return JsonUtility.FromJson(jsonData, targetType);
@@ -234,7 +282,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         ExerciseTypeModel back2 = new ExerciseTypeModel
         {
             index = 0,
-            name = "Seated narrow grip row (cable)",
+            name = "Seated row - narrow grip (cable)",
             categoryName = "Lats",
             exerciseType = ExerciseType.WeightAndReps,
             exerciseModel = new List<ExerciseModel>()
@@ -495,7 +543,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         {
             if (task.IsCompleted)
             {
-                Debug.Log("Workout template added.");
+                Debug.Log("notes history added.");
             }
             else
             {
@@ -505,47 +553,118 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public ExerciseNotesHistory getNotesHistory()
     {
+        if (notesHistory == null)
+        {
+            notesHistory = new ExerciseNotesHistory();
+        }
         return notesHistory;
     }
     
+    //public void LoadAchievements()
+    //{
+    //    FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", result =>
+    //    {
+    //        if (result)
+    //        {
+    //            FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", _data =>
+    //            {
+    //                if (_data != null)
+    //                {
+    //                    string jsonData = _data.GetRawJsonValue();
+    //                    achievementData = (AchievementData)LoadData(jsonData, typeof(AchievementData));
+    //                    print("from firebase");
+    //                }
+    //            });
+
+    //            Debug.Log("Data exists at the path.");
+    //        }
+    //        else
+    //        {
+    //            TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+    //            string achievementJson = achievementJsonFile.text;
+    //            this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+
+    //            FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("achievements")
+    //            .SetRawJsonValueAsync(achievementJson).ContinueWith(task =>
+    //            {
+    //                if (task.IsCompleted)
+    //                {
+    //                    Debug.Log("exercise added.");
+    //                }
+    //                else
+    //                {
+    //                    Debug.LogError("Failed to add exercises: " + task.Exception);
+    //                }
+    //            });
+    //        }
+
+    //    });
+    //}
     public void LoadAchievements()
     {
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", result =>
+        TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+        string achievementJson = achievementJsonFile.text;
+        this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+    }
+    public void CheckCompletedAchievements(DataSnapshot completedData,AchievementData achievements)
+    {
+        foreach (var achievementSnapshot in completedData.Children)
         {
-            if (result)
+            string achievementId = (string)achievementSnapshot.Key;  // Get the achievementId
+            print(achievementId);
+            AchievementTemplate achievementTemplate = GetAchievementTemplate(achievementId, achievements);  // Retrieve the template locally
+
+            if (achievementTemplate != null)
             {
-                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/achievements", _data =>
+                print("not null");
+                foreach (var dataItem in achievementTemplate.achievementData)
                 {
-                    if (_data != null)
+                    print("for");
+                    if (achievementSnapshot.Child("completedItemIds").HasChild(dataItem.id))
                     {
-                        string jsonData = _data.GetRawJsonValue();
-                        achievementData = (AchievementData)LoadData(jsonData, typeof(AchievementData));
-                        print("from firebase");
+                        dataItem.isCompleted = true;  // Mark as completed
+                        print(true);
                     }
-                });
-
-                Debug.Log("Data exists at the path.");
+                }
             }
-            else
+        }
+
+    }
+    AchievementTemplate GetAchievementTemplate(string achievementId,AchievementData data)
+    {
+        // Assume 'achievementData' is an instance of AchievementData that contains all the achievement templates
+        foreach (AchievementTemplate template in data.achievements)
+        {
+            if (template.id == achievementId)
             {
-                TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
-                string achievementJson = achievementJsonFile.text;
-                this.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
-
-                FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("achievements")
-                .SetRawJsonValueAsync(achievementJson).ContinueWith(task =>
-                {
-                    if (task.IsCompleted)
-                    {
-                        Debug.Log("exercise added.");
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to add exercises: " + task.Exception);
-                    }
-                });
+                return template;
             }
+        }
+        // Return null if no matching achievement is found
+        return null;
+    }
 
+    public void SaveUserAchievementData(string achievementId, string completedItemId)
+    {
+        // Get a reference to the user's achievement data
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("achievements")
+            .Child(achievementId)
+            .Child("completedItemIds");
+
+        // Save the completed item ID as a key with 'true' as the value
+        reference.Child(completedItemId).SetValueAsync(true).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log($"Achievement item {completedItemId} marked as completed in achievement {achievementId}");
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError($"Failed to save completed item {completedItemId}: {task.Exception}");
+            }
         });
     }
 
@@ -626,32 +745,36 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
 
     public void LoadShopData()
     {
-        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/shop", result =>
-        {
-            if (result)
-            {
-                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId+"/shop", _data =>
-                {
-                    if (_data != null)
-                    {
-                        string jsonData = _data.GetRawJsonValue();
-                        shopData = (ShopModel)LoadData(jsonData, typeof(ShopModel));
-                        print("from firebase");
-                    }
-                });
+        TextAsset shopJsonFile = Resources.Load<TextAsset>("data/shopData");
+        string shopJson = shopJsonFile.text;
+        this.shopData = JsonUtility.FromJson<ShopModel>(shopJson);
 
-                Debug.Log("Data exists at the path.");
-            }
-            else
-            {
-                TextAsset shopJsonFile = Resources.Load<TextAsset>("data/shopData");
-                string shopJson = shopJsonFile.text;
-                this.shopData = JsonUtility.FromJson<ShopModel>(shopJson);
-                SetShopData(shopJson);
-            }
-        });
+        //FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/shop", result =>
+        //{
+        //    if (result)
+        //    {
+        //        FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId+"/shop", _data =>
+        //        {
+        //            if (_data != null)
+        //            {
+        //                string jsonData = _data.GetRawJsonValue();
+        //                shopData = (ShopModel)LoadData(jsonData, typeof(ShopModel));
+        //                print("from firebase");
+        //            }
+        //        });
+
+        //        Debug.Log("Data exists at the path.");
+        //    }
+        //    else
+        //    {
+        //        TextAsset shopJsonFile = Resources.Load<TextAsset>("data/shopData");
+        //        string shopJson = shopJsonFile.text;
+        //        this.shopData = JsonUtility.FromJson<ShopModel>(shopJson);
+        //        SetShopDataToFirebase(shopJson);
+        //    }
+        //});
     }
-    public void SetShopData(string shopJson)
+    public void SetShopDataToFirebase(string shopJson)
     {
         FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("shop")
                .SetRawJsonValueAsync(shopJson).ContinueWith(task =>
@@ -666,26 +789,288 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                    }
                });
     }
+    public void CheckPurchaseItems(DataSnapshot purchaseData, ShopModel shopData)
+    {
+        foreach (var item in purchaseData.Children)
+        {
+            string itemID = (string)item.Key;
+            ShopItem shopItem = GetItemFromShop(itemID, shopData);
 
+            if (shopItem != null)
+            {
+                print("not null");
+                shopItem.buyed = true;
+            }
+        }
+
+    }
+    ShopItem GetItemFromShop(string itemID, ShopModel shopData)
+    {
+        foreach (ShopItem item in shopData.items)
+        {
+            if (item.id == itemID)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+    public void SaveUserPurchaseData(string itemID)
+    {
+        // Get a reference to the user's achievement data
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference
+            .Child("users")
+            .Child(FirebaseManager.Instance.user.UserId)
+            .Child("shop");
+
+        // Save the completed item ID as a key with 'true' as the value
+        reference.Child(itemID).SetValueAsync(true).ContinueWith(task => {
+            if (task.IsCompleted)
+            {
+                Debug.Log($"shop item {itemID} marked as purchase");
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError($"Failed to save purchase item {itemID}: {task.Exception}");
+            }
+        });
+    }
     public void LoadDataFromFirebase()
     {
-        LoadHistory();
-        LoadTemplateData();
-        LoadExercises();
-        LoadMeasurementData();
-        LoadMeasurementHistory();
-        LoadNotesHistory();
         LoadAchievements();
-        LoadPersonalBest();
         LoadShopData();
-        LoadCoins();
-        LoadUserStreak();
-        LoadCharacterLevel();
-        LoadCurrentWeekStartDateFromFirebase();
-        LoadGymVisitsFromFirebase();
+        if (isSignUp)
+        {
+            LoadHistory();
+            LoadTemplateData();
+            LoadExercises();
+            LoadMeasurementData();
+            LoadMeasurementHistory();
+            LoadNotesHistory();
+            
+            LoadPersonalBest();
+            LoadCoins();
+            LoadUserStreak();
+            LoadCharacterLevel();
+            LoadCurrentWeekStartDateFromFirebase();
+            //LoadBadgeName();
+            LoadFriendData();
+            SetClotheOnFirebase("no clothes");
+            SetWeeklyGoalStatusOnFirebase(false);
+            LoadGymVisitsFromFirebase();
+        }
+        else
+            LoadCompleteData();
+
+        
         gameTheme = LoadTheme();
     }
+    public void LoadCompleteData()
+    {
+        FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId, data =>
+        {
+            if (data != null)
+            {
+                print("retriving data");
+                // workoutHistory
+                string workoutHistory = data.Child("workoutHistory").GetRawJsonValue();
+                historyData = (HistoryModel)LoadData(workoutHistory, typeof(HistoryModel));
+                // workoutTempletes
+                string workoutTempletes = data.Child("workoutTempletes").GetRawJsonValue();
+                templateData = (TemplateData)LoadData(workoutTempletes, typeof(TemplateData));
+                // exercise
+                string exercise = data.Child("exercises").GetRawJsonValue();
+                exerciseData = (ExerciseData)LoadData(exercise, typeof(ExerciseData));
+                SyncExercise();
+                // measurements
+                string measurements = data.Child("measurements").GetRawJsonValue();
+                measurementData = (MeasurementModel)LoadData(measurements, typeof(MeasurementModel));
+                // measurementHistory
+                string _measurementHistory = data.Child("measurementHistory").GetRawJsonValue();
+                measurementHistory = (MeasurementHistory)LoadData(_measurementHistory, typeof(MeasurementHistory));
+                // exerciseNotes
+                string exerciseNotes = data.Child("exerciseNotes").GetRawJsonValue();
+                notesHistory = (ExerciseNotesHistory)LoadData(exerciseNotes, typeof(ExerciseNotesHistory));
+                // achievements
+                if (data.HasChild("achievements"))
+                {
+                    print("has achievement");
+                    CheckCompletedAchievements(data.Child("achievements"), achievementData);
+                }
+                //shop
 
+                if (data.HasChild("shop"))
+                {
+                    CheckPurchaseItems(data.Child("shop"), shopData);
+                }
+                //profile image link
+                if (data.HasChild("profileImageUrl"))
+                {
+                    string profileImageUrl = data.Child("profileImageUrl").Value.ToString();
+                    print(profileImageUrl);
+                    StartCoroutine(LoadImageFromUrl(profileImageUrl, (loadedSprite) =>
+                    {
+                        // This callback will receive the newly loaded sprite
+                        userSessionManager.Instance.profileSprite = loadedSprite;  // Assuming profileImage is your UI Image component
+                    }));
+                    //StartCoroutine(LoadImageFromUrl(profileImageUrl,userSessionManager.Instance.profileSprite));
+                }
+                // personalBest
+                string personalBest = data.Child("personalBest").GetRawJsonValue();
+                personalBestData = (PersonalBestData)LoadData(personalBest, typeof(PersonalBestData));
+                //coins
+                string coin = data.Child("coins").Value.ToString();
+                userSessionManager.Instance.currentCoins = int.Parse(coin);
+                //streak
+                string streak = data.Child("streak").Value.ToString();
+                userSessionManager.Instance.userStreak = int.Parse(streak);
+                // CharacterLevel
+                string level = data.Child("CharacterLevel").Value.ToString();
+                userSessionManager.Instance.characterLevel = int.Parse(level);
+                // CurrentWeekStartDate
+                string startDateString = data.Child("CurrentWeekStartDate").Value.ToString();
+                StreakAndCharacterManager.Instance.startOfCurrentWeek = DateTime.Parse(startDateString);
+                // BadgeName
+                string badgeName = data.Child("BadgeName").Value.ToString();
+                userSessionManager.Instance.badgeName = badgeName;
+                //Clothe
+                if (data.HasChild("clothes"))
+                {
+                    userSessionManager.Instance.clotheName = data.Child("clothes").Value.ToString();
+                }
+                else
+                {
+                    SetClotheOnFirebase("no clothes");
+                }
+                // added friend
+                if (data.HasChild("addedFriends"))
+                {
+                    string addedFriends = data.Child("addedFriends").Value.ToString();
+                    userSessionManager.Instance.addedFriends = int.Parse(addedFriends);
+                }
+                // removed friend
+                if (data.HasChild("removedFriends"))
+                {
+                    string addedFriends = data.Child("removedFriends").Value.ToString();
+                    userSessionManager.Instance.removedFriends = int.Parse(addedFriends);
+                }
+                // weekly goal status
+                if (data.HasChild("WeeklyGoalStatus"))
+                {
+                    string value = data.Child("WeeklyGoalStatus").Value.ToString();
+                    bool staus = bool.Parse(value);
+                    StreakAndCharacterManager.Instance.weeklyGoalStatus = staus;
+                }
+                // friends
+                DataSnapshot friendData = data.Child("friend");
+                foreach (var child in friendData.Children)
+                {
+                    friendsData.Add(child.Key, child.Value.ToString());
+                    StartCoroutine(FetchFriendDetails(child.Value.ToString(), child.Key));
+                }
+                // GymVisits
+                if (data.HasChild("GymVisits"))
+                {
+                    DataSnapshot visits = data.Child("GymVisits");
+                    foreach (var child in visits.Children)
+                    {
+                        StreakAndCharacterManager.Instance.gymVisits.Add(child.Value.ToString());
+                    }
+                }
+                // WeeklyGoalSetDate
+                if (data.HasChild("WeeklyGoalSetDate"))
+                {
+                    string dateString = data.Child("WeeklyGoalSetDate").Value.ToString();
+                    userSessionManager.Instance.weeklyGoalSetDate = DateTime.ParseExact(dateString, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
+        });
+    }
+
+    public void SyncExercise()
+    {
+        try{
+            TextAsset exerciseJsonFile = Resources.Load<TextAsset>("data/exercise");
+            string exerciseJson = exerciseJsonFile.text;
+            ExerciseData localExercises = JsonUtility.FromJson<ExerciseData>(exerciseJson);
+
+            foreach (var exercise in localExercises.exercises)
+            {
+                if (!this.exerciseData.exercises.Any(e => e.exerciseName == exercise.exerciseName))
+                {
+                    this.exerciseData.exercises.Add(exercise);
+                }
+            }
+        }catch (Exception ex){
+            print("asd");
+        }
+    }
+    private IEnumerator FetchFriendDetails(string friendId, string friendName)
+    {
+        FriendData friendDetails = new FriendData();
+
+        // Start Firebase request to get friend details
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(friendId).GetValueAsync();
+
+        // Yield until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Once the task completes, process the result
+        if (dataTask.IsCompleted && dataTask.Result != null)
+        {
+            DataSnapshot snapshot = dataTask.Result;
+
+            friendDetails.userName = friendName;
+
+            string level = snapshot.Child("CharacterLevel").Value.ToString();
+            friendDetails.level = int.Parse(level);
+
+            friendDetails.badgeName = snapshot.Child("BadgeName").Value.ToString();
+
+            if (snapshot.HasChild("clothes"))
+            {
+                friendDetails.clothe = snapshot.Child("clothes").Value.ToString();
+            }
+            else { friendDetails.clothe = "no clothes"; }
+
+            string streak = snapshot.Child("streak").Value.ToString();
+            friendDetails.streak = int.Parse(streak);
+
+            string goal = snapshot.Child("weeklyGoal").Value.ToString();
+            friendDetails.goal = int.Parse(goal);
+
+            friendDetails.joiningDate = snapshot.Child("joiningDate").Value.ToString();
+
+            TextAsset achievementJsonFile = Resources.Load<TextAsset>("data/achievement");
+            string achievementJson = achievementJsonFile.text;
+            friendDetails.achievementData = JsonUtility.FromJson<AchievementData>(achievementJson);
+            ApiDataHandler.Instance.CheckCompletedAchievements(snapshot.Child("achievements"), friendDetails.achievementData);
+
+            string personalBest = snapshot.Child("personalBest").GetRawJsonValue();
+            friendDetails.personalBestData = (PersonalBestData)LoadData(personalBest, typeof(PersonalBestData));
+
+            if (snapshot.HasChild("profileImageUrl"))
+            {
+                friendDetails.profileImageUrl= snapshot.Child("profileImageUrl").Value.ToString();
+                StartCoroutine(LoadImageFromUrl(friendDetails.profileImageUrl, (loadedSprite) => {
+                    // This callback will receive the newly loaded sprite
+                    friendDetails.profileImage = loadedSprite;
+                }));
+            }
+
+            friendDataModel.friendData.Add(friendDetails);
+        }
+        else
+        {
+            Debug.LogWarning("Failed to fetch data for friend: " + friendName);
+        }
+    }
+    public FriendModel getAllFriendDetails()
+    {
+        if (this.friendDataModel == null)
+            this.friendDataModel = new FriendModel();
+        return this.friendDataModel;
+    }
     public ExerciseData getExerciseData()
     {
         return this.exerciseData;
@@ -700,6 +1085,8 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public HistoryModel getHistoryData()
     {
+        if (this.historyData == null)
+            return this.historyData = new HistoryModel();
         return this.historyData;
     }
     public TemplateData getTemplateData()
@@ -729,7 +1116,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 if (task.IsCompleted)
                 {
                     userSessionManager.Instance.joiningDate = dateInString;
-                    Debug.Log("weekly goal seted");
+                    Debug.Log("joining date seted");
                 }
                 else
                 {
@@ -762,16 +1149,16 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/coins", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/coins", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
                     {
                         string coin = data.Value.ToString();  // Directly get the value as string
-                        userSessionManager.Instance.currentCoins = int.Parse(coin); ;
+                        userSessionManager.Instance.currentCoins = int.Parse(coin);
                         Debug.Log("Coins retrieved: " + coin);
                     }
                 });
@@ -789,9 +1176,9 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     if (task.IsCompleted)
                     {
-                        userSessionManager.Instance.currentCoins = coin;
+                        //userSessionManager.Instance.currentCoins = coin;
                         onSave?.Invoke(true);
-                        Debug.Log("coin seted: " + coin);
+                        Debug.Log("coin seted on firebase: " + coin);
                     }
                     else
                     {
@@ -831,7 +1218,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     if (task.IsCompleted)
                     {
-                        userSessionManager.Instance.currentCoins = streak;
+                        userSessionManager.Instance.userStreak = streak;
                         Debug.Log("streak seted: " + streak);
                     }
                     else
@@ -845,10 +1232,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
         print("load character");
         FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", result =>
         {
-            print(result);
+            //print(result);
             if (result)
             {
-                print("if");
+                //print("if");
                 FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/CharacterLevel", data =>
                 {
                     if (data.Exists)  // Ensure that data exists
@@ -873,7 +1260,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 {
                     if (task.IsCompleted)
                     {
-                        userSessionManager.Instance.currentCoins = level;
+                        userSessionManager.Instance.characterLevel = level;
                         Debug.Log("level seted: " + level);
                     }
                     else
@@ -882,6 +1269,49 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                     }
                 });
     }
+    public void LoadBadgeName()
+    {
+        print("load badge");
+        FirebaseManager.Instance.CheckIfLocationExists("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", result =>
+        {
+            print(result);
+            if (result)
+            {
+                print("if");
+                FirebaseManager.Instance.GetDataFromFirebase("/users/" + FirebaseManager.Instance.user.UserId + "/BadgeName", data =>
+                {
+                    if (data.Exists)  // Ensure that data exists
+                    {
+                        string badgeName = data.Value.ToString();  // Directly get the value as string
+                        userSessionManager.Instance.badgeName = badgeName;
+                        print("level retrieved: " + badgeName);
+                    }
+                });
+            }
+            else
+            {
+                SetBadgeNameToFirebase("TheGorillaBadge");
+            }
+        });
+    }
+    public void SetBadgeNameToFirebase(string name )
+    {
+        FirebaseManager.Instance.databaseReference.Child("users").Child(FirebaseManager.Instance.user.UserId).Child("BadgeName")
+                .SetValueAsync(name).ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        userSessionManager.Instance.badgeName = name;
+                        Debug.Log("badge name seted: " + name);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to save badge name: " + task.Exception);
+                    }
+                });
+    }
+
+
     //public void SetCharacterLevel(int level)
     //{
     //    PreferenceManager.Instance.SetInt("CharacterLevel", level);
@@ -900,25 +1330,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return PreferenceManager.Instance.GetInt("WeightUnit", 1);
     }
-   
-    public void SetBadgeName(string name)
-    {
-        string badgeName= name.Replace(" ", "");
-        PreferenceManager.Instance.SetString("BadgeName", badgeName);
-    }
-    public string GetBadgeName()
-    {
-        return PreferenceManager.Instance.GetString("BadgeName", "TheGorillaBadge");
-    }
 
-    public void SetBuyedCloths(int count)
-    {
-        PreferenceManager.Instance.SetInt("BuyedCloths", count);
-    }
-    public int GetBuyedCloths()
-    {
-        return PreferenceManager.Instance.GetInt("BuyedCloths", 0);
-    }
     public void SetCreatedWorkoutTempleteCount(int count)
     {
         PreferenceManager.Instance.SetInt("CreatedWorkoutTempleteCount", count);
@@ -944,7 +1356,10 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     {
         return PreferenceManager.Instance.GetInt("AddFriendCount", 0);
     }
-
+    public Dictionary<string,string> GetFriendsData()
+    {
+        return friendsData;
+    }
 
 
 
@@ -1007,6 +1422,41 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
             });
     }
+    public void SetWeeklyGoalStatusOnFirebase(bool status)
+    {
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("WeeklyGoalStatus")
+            .SetValueAsync(status).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    StreakAndCharacterManager.Instance.weeklyGoalStatus = status;
+                    Debug.Log("WeeklyGoalStatus saved to Firebase: " + status);
+                }
+                else
+                {
+                    Debug.LogError("Failed to save WeeklyGoalStatus: " + task.Exception);
+                }
+            });
+    }
+    public void WeeklyGoalSetDate(DateTime date)
+    {
+        string dateString = date.ToString("yyyy-MM-dd");
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("WeeklyGoalSetDate")
+            .SetValueAsync(dateString).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    userSessionManager.Instance.weeklyGoalSetDate = date;
+                    Debug.Log("WeeklyGoalStatus saved to Firebase: " + date);
+                }
+                else
+                {
+                    Debug.LogError("Failed to save WeeklyGoalStatus: " + task.Exception);
+                }
+            });
+    }
     public DateTime GetStartOfCurrentWeek()
     {
         return DateTime.Now;
@@ -1035,7 +1485,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 }
                 else
                 {
-                    //Debug.LogError("Failed to load gym visits: " + task.Exception);
+                    Debug.LogError("Failed to load gym visits: " + task.Exception);
                     //onLoaded(new List<string>());
                 }
             });
@@ -1057,6 +1507,22 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             });
     }
 
+    public void SetClotheOnFirebase(string name)
+    {
+        string userId = FirebaseManager.Instance.user.UserId;
+        FirebaseManager.Instance.databaseReference.Child("users").Child(userId).Child("clothes")
+            .SetValueAsync(name).ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    userSessionManager.Instance.clotheName = name;
+                }
+                else
+                {
+                    Debug.LogError("Failed to save clothe: " + task.Exception);
+                }
+            });
+    }
     public void SetCloths(string name)
     {
         print("set cloths");
@@ -1068,11 +1534,49 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     //------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    public IEnumerator LoadImageFromUrl(string imageUrl, Action<Sprite> onImageLoaded)
+    {
+        print("loading start");
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(imageUrl);
+        yield return www.SendWebRequest();
 
-    public int GetCompletedAchievements()
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            Sprite newSprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            print("image loaded");
+            onImageLoaded?.Invoke(newSprite);
+        }
+        else
+        {
+            print("not load image");
+            Debug.LogError("Failed to load image from URL");
+        }
+        print("complete loading");
+    }
+
+    public IEnumerator CheckFriendSpriteDownloaded(FriendData data, Image image, GameObject loading)
+    {
+        while (data.profileImage == null)
+        {
+            loading.SetActive(true);
+            yield return new WaitForSeconds(3);
+        }
+        loading.SetActive(false);
+        image.sprite = data.profileImage;
+        RectTransform mask = image.transform.parent.GetComponent<RectTransform>();
+        userSessionManager.Instance.FitImage(image, mask);
+    }
+
+    public int GetBuyedCloths()
+    {
+        return shopData.items.Count(item => item.buyed);
+    }
+
+    public int GetCompletedAchievements(AchievementData data)
     {
         int completedCount = 0;
-        foreach (AchievementTemplate achievement in achievementData.achievements)
+        foreach (AchievementTemplate achievement in data.achievements)
         {
             bool isAchievementCompleted = achievement.achievementData.All(item => item.isCompleted);
             if (isAchievementCompleted)

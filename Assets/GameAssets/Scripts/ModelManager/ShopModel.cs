@@ -10,6 +10,7 @@ public class ShopModel
 [Serializable]
 public class ShopItem
 {
+    public string id;
     public string itemName;
     public ShopItemType itemType;
     public int price;

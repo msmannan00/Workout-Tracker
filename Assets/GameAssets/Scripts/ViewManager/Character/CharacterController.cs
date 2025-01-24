@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +14,8 @@ public class CharacterController : MonoBehaviour,PageController
     public Button shopButton, emotesButton, achievementButton;
     public Button leftButton;
     public Button rightButton;
-    public ProGifPlayerPanel gifPlayer;
+    public ImageSpriteLoop characterImage;
+    //public List<string> spriteFolderNames;
     public void onInit(Dictionary<string, object> data, Action<object> callback) 
     {
         levelText.GetComponent<Button>().onClick.AddListener(LevelDetailPopup);
@@ -93,14 +96,47 @@ public class CharacterController : MonoBehaviour,PageController
         switch (currentSide)
         {
             case CharacterSide.Front:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+
+                LoadSpriteFromFolder(userSessionManager.Instance.clotheName + " front");
                 break;
             case CharacterSide.Side:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " side.gif");
+                LoadSpriteFromFolder(userSessionManager.Instance.clotheName + " side");
                 break;
             case CharacterSide.Back:
-                gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " back.gif");
+                LoadSpriteFromFolder(userSessionManager.Instance.clotheName + " back");
                 break;
+        }
+    }
+    private void LoadSpriteFromFolder(string folderName)
+    {
+        string path=($"{userSessionManager.Instance.gifsPath}{userSessionManager.Instance.GetGifFolder(userSessionManager.Instance.characterLevel)}{folderName}");
+        print(path);
+        var sprites = Resources.LoadAll<Sprite>(path);
+        if (sprites.Length > 0)
+        {
+            var sortedSprites = sprites
+           .OrderBy(sprite =>
+            {
+                // Extract the numeric part of the name using Regex
+                var match = Regex.Match(sprite.name, @"\d+$");
+                return match.Success ? int.Parse(match.Value) : 0; // Parse number, default to 0 if no match
+            }).ToArray();
+
+            var match = Regex.Match(userSessionManager.Instance.GetGifFolder(userSessionManager.Instance.characterLevel), @"\d+(?=/)");
+            if (match.Success)
+            {
+                int extractedValue = int.Parse(match.Value);
+                if (extractedValue == 0)
+                    characterImage.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                else if(extractedValue==1)
+                    characterImage.transform.localScale = new Vector3(0.62f, 0.62f, 0.62f);
+
+            }
+            characterImage.ResetGif(sortedSprites);
+        }
+        else
+        {
+            Debug.LogError($"No sprites found in folder: {folderName}");
         }
     }
 }

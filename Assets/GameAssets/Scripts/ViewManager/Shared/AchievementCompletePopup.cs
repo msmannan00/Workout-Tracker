@@ -7,15 +7,26 @@ using UnityEngine;
 public class AchievementCompletePopup : MonoBehaviour, IPrefabInitializer
 {
     public GameObject achievementButton,continue1, continue2;
-    public TextMeshProUGUI achievementNameText;
-    public TextMeshProUGUI descriptionText;
+    public GameObject item,content;
     public ParticleSystem particles;
     public bool isAchievement;
+    List<AchievementTemplateDataItem> items = new List<AchievementTemplateDataItem>();
+    List<string> titles = new List<string>();
+    string popupName;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
     {
-        achievementNameText.text = (string)data[0];
-        descriptionText.text = (string)data[1];
-        isAchievement = (bool)data[2];
+        items = (List<AchievementTemplateDataItem>) data[0];
+        titles = (List<string>) data[1];
+        popupName = (string)data[2];
+        isAchievement = (bool)data[3];
+        for (int i = 0; i < items.Count; i++)
+        {
+            GameObject obj = Instantiate(item, content.transform);
+            obj.name = titles[i];
+            obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = titles[i];
+            obj.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = items[i].description;
+        }
+        item.SetActive(false);
         if (isAchievement)
         {
             achievementButton.SetActive(true);
@@ -57,8 +68,9 @@ public class AchievementCompletePopup : MonoBehaviour, IPrefabInitializer
     }
     public void Continue()
     {
-        ApiDataHandler.Instance.SaveAchievementData();
+        userSessionManager.Instance.completedItemsInSingleCheck = new List<AchievementTemplateDataItem>();
+        userSessionManager.Instance.completedItemsTitles = new List<string>();
         AudioController.Instance.OnButtonClick();
-        PopupController.Instance.ClosePopup("AchievementCompletePopup");
+        PopupController.Instance.ClosePopup(popupName);
     }
 }

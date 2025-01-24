@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class ProfileController : MonoBehaviour,PageController
 {
+    public Image characterImage;
     public TextMeshProUGUI userNameText;
     public TextMeshProUGUI streakText;
     public TextMeshProUGUI achievementText;
@@ -17,27 +18,34 @@ public class ProfileController : MonoBehaviour,PageController
     public TextMeshProUGUI levelText;
     public Image badgeIamge;
     public Button settingButton;
-    public ProGifPlayerPanel gifPlayer;
+    //public ProGifPlayerPanel gifPlayer;
     void PageController.onInit(Dictionary<string, object> data, Action<object> callback)
     {
         
     }
     private void Start()
     {
-        gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+        //gifPlayer.LoadAndPlay(userSessionManager.Instance.gifsPath + ApiDataHandler.Instance.GetClothes() + " front.gif");
+        string clothName = userSessionManager.Instance.clotheName + " front";
+        string path = ($"{userSessionManager.Instance.gifsPath}{userSessionManager.Instance.GetGifFolder(userSessionManager.Instance.characterLevel)}{clothName}/{clothName}_1");
+        Sprite loadedSprite = Resources.Load<Sprite>(path);
+        characterImage.sprite = loadedSprite;
         userNameText.text = userSessionManager.Instance.mProfileUsername;
-        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements().ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
+        achievementText.text = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData()).ToString() + " / " + ApiDataHandler.Instance.GetTotalAchievements();
         joinedText.text = userSessionManager.Instance.joiningDate.ToString();
 
         settingButton.onClick.AddListener(Settings);
         streakText.GetComponent<Button>().onClick.AddListener(OpenStreakDetail);
+        levelText.GetComponent<Button>().onClick.AddListener(LevelDetailPopup);
+        
     }
     private void OnEnable()
     {
         levelText.text= "Level "+userSessionManager.Instance.characterLevel.ToString();
         streakText.text = "Streak: " + userSessionManager.Instance.userStreak.ToString();
+        joinedText.text = userSessionManager.Instance.joiningDate.ToString();
         goalText.text = userSessionManager.Instance.weeklyGoal.ToString();
-        string badgeName = ApiDataHandler.Instance.GetBadgeName();
+        string badgeName = userSessionManager.Instance.badgeName;
         Sprite sprite = Resources.Load<Sprite>("UIAssets/Badge/" + badgeName);
         badgeIamge.sprite= sprite;
     }
@@ -61,7 +69,8 @@ public class ProfileController : MonoBehaviour,PageController
     }
     public void BadgeSelection()
     {
-        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", null, true);
+        Dictionary<string, object> mData = new Dictionary<string, object> {  };
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ChangeBadgeScreen", mData, true);
         StateManager.Instance.CloseFooter();
     }
     public void WeeklyGoal()
@@ -83,8 +92,18 @@ public class ProfileController : MonoBehaviour,PageController
 
         
     }
+    public void OpenGymStartDate()
+    {
+        Dictionary<string, object> mData = new Dictionary<string, object> { { "firstTime", false }};
+        StateManager.Instance.OpenStaticScreen("date", gameObject, "DateScreen", mData,true);
+        StateManager.Instance.CloseFooter();
+    }
     public void OpenStreakDetail()
     {
         PopupController.Instance.OpenPopup("profile","levelDetailPopup",null,null);
+    }
+    public void LevelDetailPopup()
+    {
+        PopupController.Instance.OpenPopup("character", "levelDetailPopup", null, null);
     }
 }

@@ -14,6 +14,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public Image spriteImage;
     public Sprite darkTheme, lightTheme;
     public DefaultTempleteModel defaultTempleteModel;
+    public ScrollRect parentScroll;
     private Action<object> callback;
     List<TextMeshProUGUI> exerciseText=new List<TextMeshProUGUI>();
     private GameObject parent;
@@ -22,36 +23,103 @@ public class DashboardItemController : MonoBehaviour, ItemController
         this.callback = callback;
         defaultTempleteModel = (DefaultTempleteModel)data["data"];
         parent = (GameObject)data["parent"];
+        parentScroll = (ScrollRect)data["scroll"];
         workoutNameText.text = userSessionManager.Instance.FormatStringAbc(defaultTempleteModel.templeteName);
         //editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
         //editWorkoutName.onEndEdit.AddListener(OnNameChanged);
-        playButton.onClick.AddListener(PlayButton);
-        playButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        if (playButton != null) 
+            playButton.onClick.AddListener(PlayButton);
         //editButton.onClick.AddListener(EditWorkoutName);
         editButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         editButton.onClick.AddListener(EditWorkout);
 
-
         foreach (var exercise in defaultTempleteModel.exerciseTemplete)
         {
             ExerciseTypeModel exerciseData = exercise;
+            // Create the main parent GameObject
+            GameObject mainParentObject = new GameObject($"ExerciseParent_{exerciseData.name}");
+            mainParentObject.transform.SetParent(exerciseParent, false);
+            Image imageComponent = mainParentObject.AddComponent<Image>();
+            mainParentObject.GetComponent<RectTransform>().sizeDelta = new Vector2(25, 25);
+            imageComponent.color = Color.clear;
+
+            // Create the first GameObject (Image with mask)
+            GameObject firstImageObject = new GameObject($"Image_{exerciseData.name}");
+            firstImageObject.transform.SetParent(mainParentObject.transform, false); // Set it as a child of the main parent
+
+            // Add Image component to the first GameObject
+            Image firstImage = firstImageObject.AddComponent<Image>();
+            firstImage.type = Image.Type.Sliced; // Set image type to sliced
+            firstImage.preserveAspect = true; // Preserve aspect ratio if needed
+
+            // Load sprite from Resources folder and assign to the first image
+            Sprite firstSprite = Resources.Load<Sprite>("UIAssets/Shared/Images/Rounded Corners/circle"); // Adjust the path
+            firstImage.sprite = firstSprite;
+
+            // Set width, height, and pixel per unit
+            RectTransform firstRectTransform = firstImageObject.GetComponent<RectTransform>();
+            firstRectTransform.sizeDelta = new Vector2(25, 25); // Set width and height as 25
+            firstImage.pixelsPerUnitMultiplier = 7.5f; // Set pixel per unit to 1.75
+
+            // Add Mask component to the first image
+            firstImageObject.AddComponent<Mask>();
+
+            // Create the second GameObject (another image)
+            GameObject secondImageObject = new GameObject($"Image_{exerciseData.name}_Second");
+            secondImageObject.transform.SetParent(firstImageObject.transform, false); // Parent it to the first image
+
+            // Add Image component to the second GameObject
+            Image secondImage = secondImageObject.AddComponent<Image>();
+            secondImage.preserveAspect = true; // Preserve aspect ratio if needed
+
+            // Load sprite from Resources and assign to the second image
+            Sprite sp = null;
+            if (exerciseData.name == "Pec deck")
+                sp = Resources.Load<Sprite>("UIAssets/ExcerciseIcons/Chest fly (machine)-1");
+            else
+                sp = Resources.Load<Sprite>("UIAssets/ExcerciseIcons/" + exerciseData.name + "-1");
+            if (sp != null)
+                secondImage.sprite = sp;
+
+            // Set width and height for the second image
+            RectTransform secondRectTransform = secondImageObject.GetComponent<RectTransform>();
+            secondRectTransform.sizeDelta = new Vector2(28, 28); // Set width and height as 28
+
+            // Create the TextMeshPro GameObject
             GameObject textLabelObject = new GameObject($"Exercise_{exerciseData.name}");
-            //GameObject textLabelObject = Instantiate(exerciseNamePrefab, exerciseParent.transform);
+            textLabelObject.transform.SetParent(mainParentObject.transform, false); // Parent it to the main parent
 
-            textLabelObject.transform.SetParent(exerciseParent, false);
-
+            // Add TextMeshProUGUI component to the text label object
             TextMeshProUGUI textMeshPro = textLabelObject.AddComponent<TextMeshProUGUI>();
-            textLabelObject.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 20);
-            //TextMeshProUGUI textMeshPro = textLabelObject.GetComponent<TextMeshProUGUI>();
-            textMeshPro.text = exerciseData.name + " x " + exerciseData.exerciseModel.Count.ToString();
+            //textMeshPro.maskable = false;
+
+            // Set the size of the text box and text properties
+            RectTransform textRectTransform = textLabelObject.GetComponent<RectTransform>();
+            textRectTransform.sizeDelta = new Vector2(275, 20); // Set width and height
+            textMeshPro.text = exerciseData.name + " x " + exerciseData.exerciseModel.Count.ToString(); // Set text content
             textMeshPro.fontSize = 16;
             textMeshPro.fontStyle = FontStyles.Normal;
             textMeshPro.alignment = TextAlignmentOptions.Left;
+
+            // Set the pivot and position of the TextMeshPro element
+            textRectTransform.pivot = new Vector2(0, 0.5f); // Left-middle pivot
+            textRectTransform.anchoredPosition = new Vector2(30, 0); // Set position with X offset of 30
+
+            // Add the TextMeshProUGUI element to the list
             exerciseText.Add(textMeshPro);
+
+            // Optionally set the text color or any other settings
             SetColor(textMeshPro);
-            // textMeshPro.margin = new Vector4(20, 0, 0, 0); // Optional
+
+            // Optional margin (uncomment if needed)
+            // textMeshPro.margin = new Vector4(20, 0, 0, 0); // Optional margin
         }
+        
         transform.SetSiblingIndex(transform.parent.childCount - 1);
+        if (exerciseParent.childCount < 8)
+        {
+            GetComponentInChildren<ScrollRect>().enabled = false;
+        }
     }
     private void OnEnable()
     {
@@ -73,6 +141,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public void PlayButton()
     {
         callback?.Invoke(defaultTempleteModel);
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.CloseFooter();
     }
     //public void EditWorkoutName()

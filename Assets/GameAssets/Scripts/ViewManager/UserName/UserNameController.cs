@@ -26,8 +26,12 @@ public class UserNameController : MonoBehaviour, PageController
         {
             GlobalAnimator.Instance.ShowTextMessage(messageText, "Username: minimum 4 characters", 2);
         }
+        else if (lengthWithoutSpaces > 17)
+        {
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Username: maximum 17 characters", 2);
+        }
         else
-            CheckAndStoreUsername(userNameInput.text,userSessionManager.Instance.mProfileID);
+            CheckAndStoreUsername(stringWithoutSpaces, userSessionManager.Instance.mProfileID);
     }
     public void CheckAndStoreUsername(string username,string userID)
     {
@@ -65,10 +69,23 @@ public class UserNameController : MonoBehaviour, PageController
     }
 
     // Function to store the username in the Firebase Database
-    private void StoreUsername(string username,string userID)
+    private void StoreUsername(string username, string userID)
     {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userID))
+        {
+            Debug.LogError("Username or userID is empty.");
+            return;
+        }
+
+        // Sanitize userID and username to ensure no invalid characters
+        username = username.Replace(".", "_").Replace("#", "_");
+
+        Debug.Log("Saving username under path: users/" + userID + "/username");
+        Debug.Log("Saving username under path: usernames/" + username);
+
+        // Store username under the user UID
         FirebaseManager.Instance.databaseReference.Child("users")
-            .Child(userID)  // Save under the user's UID
+            .Child(userID)
             .Child("username").SetValueAsync(username)
             .ContinueWithOnMainThread(task =>
             {
@@ -80,19 +97,18 @@ public class UserNameController : MonoBehaviour, PageController
                 {
                     GlobalAnimator.Instance.ShowTextMessage(messageText, "Failed to store username", 2);
                     Debug.LogError("Error saving username under UID: " + task.Exception);
-                    return;
                 }
             });
 
-
+        // Store username under the "usernames" node to prevent duplicates
         var usernameRef = FirebaseDatabase.DefaultInstance.GetReference("usernames");
-        usernameRef.Child(username).SetValueAsync(true).ContinueWithOnMainThread(task =>
+        usernameRef.Child(username).SetValueAsync(userID).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
                 Dictionary<string, object> mData = new Dictionary<string, object> { { "data", true } };
                 StateManager.Instance.OpenStaticScreen("profile", gameObject, "weeklyGoalScreen", mData);
-                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_" /*+ userSessionManager.Instance.mProfileUsername*/, false);
+                PreferenceManager.Instance.SetBool("FirstTimePlanInitialized_", false);
                 Debug.Log("Username stored successfully!");
             }
             else
@@ -101,5 +117,6 @@ public class UserNameController : MonoBehaviour, PageController
                 Debug.LogError("Failed to store username: " + task.Exception);
             }
         });
+        userSessionManager.Instance.mProfileUsername= username;
     }
 }

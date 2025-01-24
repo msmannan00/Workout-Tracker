@@ -35,6 +35,7 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 break;
         }
         List<ExerciseWithDate> _exerciseHistory = _SearchExerciseByName(ApiDataHandler.Instance.getHistoryData(), exercise.exerciseName);
+        _exerciseHistory.Reverse();
         if (exercise.exerciseType == ExerciseType.WeightAndReps )
         {
             ExerciseWithDate heaviestSet = GetTopPerformance(_exerciseHistory, HistoryPerformance.HeaviestLifted);
@@ -72,13 +73,14 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
                 switch ((WeightUnit)ApiDataHandler.Instance.GetWeightUnit())
                 {
                     case WeightUnit.kg:
-                        bestSetText.text = bestSet.GetBestSet().weight.ToString() + " X " + bestSet.GetBestSet().reps.ToString("F1");
+                        
+                        bestSetText.text = bestSet.GetBestSet().weight.ToString() + " X " + userSessionManager.Instance.ShowFormattedNumber(bestSet.GetBestSet().reps);
                         estimate1RMText.text = roundedResult % 1 == 0
                     ? roundedResult.ToString("F0")
                     : roundedResult.ToString("F1");
                         break;
                     case WeightUnit.lbs:
-                        bestSetText.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(bestSet.GetBestSet().weight)).ToString("F0") + " X " + bestSet.GetBestSet().reps.ToString("F1");
+                        bestSetText.text = Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(bestSet.GetBestSet().weight)).ToString("F0") + " X " + userSessionManager.Instance.ShowFormattedNumber(bestSet.GetBestSet().reps);
                         estimate1RMText.text = roundedResult % 1 == 0
                    ? Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F0")
                    : Mathf.Round(userSessionManager.Instance.ConvertKgToLbs(roundedResult)).ToString("F1");
@@ -184,7 +186,6 @@ public class ExerciseHistoryController : MonoBehaviour, PageController
     public void Back()
     {
         StateManager.Instance.HandleBackAction(gameObject);
-        StateManager.Instance.OpenFooter(null, null, false);
     }
 
     public List<HistoryExerciseModel> SearchExerciseByName(HistoryModel history, string exerciseName)

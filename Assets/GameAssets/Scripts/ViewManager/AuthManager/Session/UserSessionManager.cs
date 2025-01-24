@@ -7,6 +7,9 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using UnityEngine.TextCore.Text;
+using System.Collections;
+using UnityEngine.Networking;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -18,11 +21,19 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public GameObject currentScreen;
     public int weeklyGoal;
     public string joiningDate;
+    public string badgeName;
+    public DateTime weeklyGoalSetDate;
     public int currentCoins;
     public int userStreak;
     public int characterLevel;
-    public string gifsPath = "Resources/UIAssets/character/gifs/";
-
+    public int addedFriends;
+    public int removedFriends;
+    public string clotheName;
+    public bool badgeChange;
+    public Sprite profileSprite;
+    public string gifsPath = "gifs";
+    public List<AchievementTemplateDataItem> completedItemsInSingleCheck = new List<AchievementTemplateDataItem>();
+    public List<string> completedItemsTitles = new List<string>();
     [Header("Theme Settings")]
     private Theme gameTheme;
     public TMP_FontAsset darkPrimaryFont, darkSecondaryFont;
@@ -40,6 +51,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public DefaultTempleteModel selectedTemplete;
     private TemplateData templateData = new TemplateData();
     private HistoryModel historyData = new HistoryModel();
+
+    private object coinLock = new object();
     //public PersonalBest
 
     private void Start()
@@ -64,7 +77,21 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         darkXPbutton = new Color32(241, 183, 32, 255);
 
     }
-
+    public void Logout()
+    {
+        mProfileUsername = "";
+        mProfileID = "";
+        weeklyGoal = 0;
+        joiningDate = "";
+        badgeName = "";
+        currentCoins = 0;
+        userStreak = 0;
+        characterLevel = 0;
+        addedFriends = 0;
+        removedFriends = 0;
+        clotheName = "";
+        profileSprite = null;
+}
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
         this.mProfileID = pProfileID;
@@ -103,10 +130,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckCardioTimeAchievements(_data, ApiDataHandler.Instance.getHistoryData(), trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.Streak:
-                    CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.userStreak, trophyImages, progressText, descriptionText, coinText);
+                    CheckStreakAndLevelAchievements(_data, userStreak, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.LevelUp:
-                    CheckStreakAndLevelAchievements(_data, userSessionManager.Instance.characterLevel, trophyImages, progressText, descriptionText, coinText);
+                    CheckStreakAndLevelAchievements(_data, characterLevel, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.CompleteAllAchievements:
                     CheckCompleteAllAchivements(_data, trophyImages, progressText, descriptionText, coinText);
@@ -118,13 +145,13 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.ChangeTrainingBadge:
-                    ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText, coinText);
+                    ChangeTrainingBadgeAchievements(_data, badgeChange, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.AddFriends:
-                    CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);
+                    CheckAchievements(_data, addedFriends, AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.RemoveFriend:
-                    CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
+                    CheckAchievements(_data, removedFriends, AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
                     break;
                 case AchievementType.AddPersonBest:
                     CheckAchievements(_data, GetExercisesWithWeightGreaterThanZero(ApiDataHandler.Instance.getPersonalBestData()), AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
@@ -144,7 +171,16 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             }
         }
         //ApiDataHandler.Instance.SaveAchievementData();
-        
+        if (completedItemsInSingleCheck.Count == 1)
+        {
+            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "SingleAchievementCompletePopup", false };
+            PopupController.Instance.OpenPopup("shared", "SingleAchievementCompletePopup", null, initialData);
+        }
+        else if (completedItemsInSingleCheck.Count > 1)
+        {
+            List<object> initialData = new List<object> { completedItemsInSingleCheck, completedItemsTitles, "MultipleAchievementCompletePopup", false };
+            PopupController.Instance.OpenPopup("shared", "MultipleAchievementCompletePopup", null, initialData);
+        }
     }
     
     
@@ -183,16 +219,16 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckAchievements(_data, GetHighestExerciseInSingleSession(ApiDataHandler.Instance.getHistoryData()), AchievementType.ExercisesInSingleSession, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.ChangeTrainingBadge:
-                ChangeTrainingBadgeAchievements(_data, ApiDataHandler.Instance.GetBadgeName(), trophyImages, progressText, descriptionText, coinText);
+                ChangeTrainingBadgeAchievements(_data, badgeChange, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.AddFriends:
-                CheckAchievements(_data, ApiDataHandler.Instance.GetAddFriendCount(), AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);
+                CheckAchievements(_data, addedFriends, AchievementType.AddFriends, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.RemoveFriend:
-                CheckAchievements(_data, ApiDataHandler.Instance.GetRemoveFriendCount(), AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
+                CheckAchievements(_data, removedFriends, AchievementType.RemoveFriend, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.AddPersonBest:
-                CheckAchievements(_data, GetGapBetweenLatestTwoWorkoutsInDays(ApiDataHandler.Instance.getHistoryData()), AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
+                CheckAchievements(_data, GetExercisesWithWeightGreaterThanZero(ApiDataHandler.Instance.getPersonalBestData()), AchievementType.AddPersonBest, trophyImages, progressText, descriptionText, coinText);
                 break;
             case AchievementType.CreateWorkout:
                 CheckAchievements(_data, ApiDataHandler.Instance.GetCreatedWorkoutTempleteCount(), AchievementType.CreateWorkout, trophyImages, progressText, descriptionText, coinText);
@@ -207,9 +243,6 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 CheckAchievements(_data, GetTotalWeightInTons(ApiDataHandler.Instance.getHistoryData()), AchievementType.WeightLifted, trophyImages, progressText, descriptionText, coinText);
                 break;
         }
-     
-        //ApiDataHandler.Instance.SaveAchievementData();
-
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------
@@ -219,53 +252,66 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         for (int i = 0; i < data.achievementData.Count; i++)
         {
             AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
-
             if (achievementDataItem.isCompleted)
             {
-                if(trophyImages != null)
+                if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 continue; // Skip if it's already completed
             }
+
+            // Calculate the total weight by comparing latest workout and personal best for each exercise
             int totalWeight = 0;
+
             foreach (string exerciseName in data.category_exercise)
             {
-                PersonalBestDataItem matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.ToLower() == exerciseName.ToLower());
+                // Get weight for the exercise from the latest workout
+                float latestWorkoutWeight = GetPerformedWeightForExercise(ApiDataHandler.Instance.getHistoryData(), exerciseName);
+
+                // Get weight for the exercise from personal best
+                float personalBestWeight = 0;
+                var matchingExercise = personalBest.exercises.Find(exercise => exercise.exerciseName.Equals(exerciseName, StringComparison.OrdinalIgnoreCase));
                 if (matchingExercise != null)
-                {
-                    totalWeight += matchingExercise.weight;
-                }
+                    personalBestWeight = matchingExercise.weight;
+
+                // Add the greater weight to the total
+                totalWeight += (int)Math.Max(latestWorkoutWeight, personalBestWeight);
             }
+
+            // Calculate the required value based on the achievement multiplier
             float value = achievementDataItem.value * ApiDataHandler.Instance.getMeasurementData().weight;
-            if (totalWeight >= (int)value)
+
+            if ((float)totalWeight >= value)
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
+
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, true };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
                 }
             }
             else
             {
                 if (progressText != null && descriptionText != null)
                 {
-                    progressText.text = totalWeight.ToString() + "kg / " + value.ToString()+"kg";
+                    progressText.text = totalWeight.ToString() + "kg / " + value.ToString() + "kg";
                     descriptionText.text = achievementDataItem.description;
-                    coinText.text=achievementDataItem.coins.ToString();
+                    coinText.text = achievementDataItem.coins.ToString();
                 }
                 return;
             }
         }
+
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count-1].description;
     }
 
     public void CheckWorkoutCountAchievements(AchievementTemplate data, int performedWorkouts, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
@@ -284,12 +330,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -305,11 +354,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text= "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
 
     public void CheckExerciseCountAchievements(AchievementTemplate data, int performedExercises, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
@@ -328,12 +376,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -349,11 +400,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
 
     public void CheckSpecialistAchievements(AchievementTemplate data, HistoryModel historyModel, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
@@ -372,12 +422,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -393,11 +446,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
 
     public void CheckCardioTimeAchievements(AchievementTemplate data, HistoryModel historyModel, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
@@ -417,12 +469,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -438,8 +493,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
         //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
@@ -459,12 +514,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -480,11 +538,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
     public void CheckCompleteAllAchivements(AchievementTemplate data, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
     {
@@ -498,17 +555,20 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                 continue; // Skip if it's already completed
             }
             int totalAchievements = ApiDataHandler.Instance.GetTotalAchievements() - 1;
-            int completeAchievements = ApiDataHandler.Instance.GetCompletedAchievements();
+            int completeAchievements = ApiDataHandler.Instance.GetCompletedAchievements(ApiDataHandler.Instance.getAchievementData());
             if (completeAchievements==totalAchievements)
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -524,8 +584,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
@@ -545,12 +605,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -566,12 +629,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
-    public void ChangeTrainingBadgeAchievements(AchievementTemplate data, string currentBadgeName, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
+    public void ChangeTrainingBadgeAchievements(AchievementTemplate data, bool badgeChange, List<Image> trophyImages, TextMeshProUGUI progressText, TextMeshProUGUI descriptionText, TextMeshProUGUI coinText)
     {
         for (int i = 0; i < data.achievementData.Count; i++)
         {
@@ -582,16 +645,19 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 continue; // Skip if it's already completed
             }
-            if (currentBadgeName != "TheGorillaBadge")
+            if (badgeChange)
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -607,8 +673,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
     }
@@ -628,12 +694,15 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 achievementDataItem.isCompleted = true;
                 AddCoins(achievementDataItem.coins);
+                SaveCompletedAchievementToFirebase(data.id, achievementDataItem.id);
                 if (trophyImages != null)
                     trophyImages[i].transform.GetChild(0).gameObject.SetActive(true);
                 else
                 {
-                    List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
-                    PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
+                    completedItemsInSingleCheck.Add(achievementDataItem);
+                    completedItemsTitles.Add(data.title);
+                    //List<object> initialData = new List<object> { data.title, achievementDataItem.description, false };
+                    //PopupController.Instance.OpenPopup("shared", "AchievementCompletePopup", null, initialData);
                 }
             }
             else
@@ -657,14 +726,37 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         }
         if (progressText != null && descriptionText != null)
         {
-            coinText.gameObject.SetActive(false);
             progressText.gameObject.SetActive(false);
+            coinText.transform.parent.gameObject.SetActive(false);
             descriptionText.text = "Congratulations! You've reached peak performance – keep the momentum going!";
         }
-        //descriptionText.text = _data.achievementData[_data.achievementData.Count - 1].description;
     }
 
     //------------------------------------------------------Helper Functions----------------------------------------------------------------------------------
+
+
+    public float GetPerformedWeightForExercise(HistoryModel historyModel, string exerciseName)
+    {
+        float maxWeight = 0;
+
+        // Iterate through all templates and check for the maximum weight of the exercise
+        foreach (var template in historyModel.exerciseTempleteModel)
+        {
+            var exerciseType = template.exerciseTypeModel
+                .FirstOrDefault(type => type.exerciseName.Equals(exerciseName, StringComparison.OrdinalIgnoreCase));
+
+            if (exerciseType != null && exerciseType.exerciseModel.Any())
+            {
+                // Get the maximum weight for the sets of this exercise
+                float currentMaxWeight = exerciseType.exerciseModel.Max(set => set.weight);
+
+                // Keep track of the overall maximum weight
+                maxWeight = Math.Max(maxWeight, currentMaxWeight);
+            }
+        }
+
+        return maxWeight; // Return the maximum weight found
+    }
 
     public int GetUniqueExerciseCount(HistoryModel historyModel)
     {
@@ -757,7 +849,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
     public int GetHighestExerciseInSingleSession(HistoryModel history)
     {
-        if (history.exerciseTempleteModel.Count < 2)
+        if (history.exerciseTempleteModel.Count < 1)
             return 0;
         // Get the highest count of exerciseTypeModel in the list
         int highestCount = history.exerciseTempleteModel
@@ -793,7 +885,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             // Calculate the gap in days between the two latest dates
             int gapInDays = (sortedDates[0] - sortedDates[1]).Days;
 
-            return gapInDays;
+            if (gapInDays >= 14)
+                return gapInDays;
+            else
+                return 0;
         }
         catch (Exception ex)
         {
@@ -810,9 +905,16 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     }
     public void AddCoins(int coins)
     {
-        int currentCoins = this.currentCoins;
-        currentCoins += coins;
-        ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+        lock (coinLock)
+        {
+            this.currentCoins += coins;
+            print("set coins: " + currentCoins);
+            ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+        }
+    }
+    public void SaveCompletedAchievementToFirebase(string achievementId,string itemId)
+    {
+        ApiDataHandler.Instance.SaveUserAchievementData(achievementId, itemId);
     }
 
     public float ConvertLbsToKg(float pounds)
@@ -842,5 +944,54 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         string result = string.Join(" ", words).Trim();
         return result.Replace(" (", " (").Replace(") ", ")");
     }
+    public string ShowFormattedNumber(float number)
+    {
+        // Format the number
+        string formattedNumber = (number % 1 == 0) ? number.ToString("0") : number.ToString("0.##");
 
+        return formattedNumber;
+    }
+    public string GetGifFolder(int level)
+    {
+        int characterIndex = level / 4;
+
+        // Ensure the index is within the bounds of the array
+        characterIndex = Mathf.Clamp(characterIndex, 0, 1);
+        return characterIndex.ToString()+ "/";
+    }
+
+    public void FitImage(Image targetImage, RectTransform mask)
+    {
+        if (targetImage == null || mask == null) return;
+
+        targetImage.SetNativeSize();
+        // Get the dimensions of the image and the mask
+        float imageWidth = targetImage.sprite.texture.width;
+        float imageHeight = targetImage.sprite.texture.height;
+
+        // Get the dimensions of the mask
+        float maskWidth = mask.rect.width;
+        float maskHeight = mask.rect.height;
+
+        // Calculate aspect ratios
+        float imageAspectRatio = imageWidth / imageHeight;
+        float maskAspectRatio = maskWidth / maskHeight;
+
+        // Scale uniformly to ensure the image fills the mask
+        if (imageAspectRatio > maskAspectRatio)
+        {
+            // Image is wider than the mask; scale height to fill
+            float scaleFactor = maskHeight / imageHeight;
+            targetImage.rectTransform.sizeDelta = new Vector2(imageWidth * scaleFactor, maskHeight);
+        }
+        else
+        {
+            // Image is taller than the mask; scale width to fill
+            float scaleFactor = maskWidth / imageWidth;
+            targetImage.rectTransform.sizeDelta = new Vector2(maskWidth, imageHeight * scaleFactor);
+        }
+
+        // Ensure the image stays centered within the mask
+        targetImage.rectTransform.anchoredPosition = Vector2.zero;
+    }
 }

@@ -62,7 +62,7 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
                 ApiDataHandler.Instance.AddItemToTemplateData(modifiedModel);
             }
         }
-        StreakAndCharacterManager.Instance.AddVisit(DateTime.Now.ToString("yyyy-MM-dd"));
+        
         //int index = GetIndexByTempleteName(modifiedModel.templeteName);
         //ApiDataHandler.Instance.RemoveItemFromTempleteData(index);
         //ApiDataHandler.Instance.InsertItemToTemplateData(index, modifiedModel);//.exerciseTemplete.Insert(index, modifiedModel);

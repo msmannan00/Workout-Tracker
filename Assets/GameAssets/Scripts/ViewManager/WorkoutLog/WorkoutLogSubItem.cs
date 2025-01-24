@@ -164,54 +164,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         mile.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(mile));
         weight.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(weight));
         timerText.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(()=> userSessionManager.Instance.ActiveInput(timerText));
-        //TMP_FontAsset textFont = null;
-        //Color color = Color.white;
-        //switch (userSessionManager.Instance.gameTheme)
-        //{
-        //    case Theme.Dark:
-        //        textFont = userSessionManager.Instance.darkTextFont;
-        //        color = userSessionManager.Instance.darkBgColor;
-        //        sets.font = textFont;
-        //        sets.color = Color.white;
-        //        previous.color = Color.white;
-        //        previous.font = textFont;
-        //        ChangeInputFieldFount_Color(timerText, textFont, Color.white);
-        //        ChangeInputFieldFount_Color(weight, textFont, Color.white);
-        //        ChangeInputFieldFount_Color(reps, textFont, Color.white);
-        //        ChangeImageColorAndOutlineColor(timerText.gameObject, color, Color.white);
-        //        ChangeImageColorAndOutlineColor(previousImage.gameObject, color, Color.white);
-        //        ChangeImageColorAndOutlineColor(weight.gameObject, color, Color.white);
-        //        ChangeImageColorAndOutlineColor(reps.gameObject, color, Color.white);
-        //        ChangeImageColorAndOutlineColor(rir.gameObject, color, Color.white);
-        //        ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, color, Color.white);
-        //        rir.captionText.color= Color.white;
-        //        dropDownArrow.color= Color.white;
-        //        //rir.itemText.color= Color.white;
-        //        isComplete.graphic.color = Color.white;
-        //        break;
-        //    case Theme.Light:
-        //        textFont = userSessionManager.Instance.lightTextFont;
-        //        color = userSessionManager.Instance.darkBgColor;
-        //        sets.font = textFont;
-        //        sets.color = color;
-        //        previous.color = color;
-        //        previous.font = textFont;
-        //        ChangeInputFieldFount_Color(timerText, textFont, color);
-        //        ChangeInputFieldFount_Color(weight, textFont, color);
-        //        ChangeInputFieldFount_Color(reps, textFont, color);
-        //        Color outLine = userSessionManager.Instance.lightButtonColor;
-        //        ChangeImageColorAndOutlineColor(timerText.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        ChangeImageColorAndOutlineColor(previousImage.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        ChangeImageColorAndOutlineColor(weight.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        ChangeImageColorAndOutlineColor(reps.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        ChangeImageColorAndOutlineColor(rir.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        ChangeImageColorAndOutlineColor(isComplete.targetGraphic.gameObject, new Color32(246, 236, 220, 255), outLine);
-        //        rir.captionText.color = color;
-        //        rir.itemText.color = color;
-        //        dropDownArrow.color= color;
-        //        isComplete.graphic.color = outLine;
-        //        break;
-        //}
+
     }
     
     void ChangeInputFieldFount_Color(TMP_InputField inputField,TMP_FontAsset fontAsset,Color color)
@@ -293,7 +246,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnRpeChanged(int newRepsIndex)
     {
-        exerciseModel.rpe = newRepsIndex+1;
+        exerciseModel.rpe = newRepsIndex;
         UpdateToggleInteractableState();
     }
     private void OnTimerInput(string input)

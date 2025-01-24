@@ -1,3 +1,4 @@
+using Firebase.Database;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ public class shopController : MonoBehaviour, PageController
             ShopItem itemData = GetShopItemByName(shopModel, nameText.text);
             if (itemData.buyed)
             {
-                priceText.text = "Buyed";
+                priceText.text = "Bought";
             }
             else
             {
@@ -48,7 +49,8 @@ public class shopController : MonoBehaviour, PageController
     {
         if (shopItem.buyed)
         {
-            ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+            StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));
+            //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
             GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text+" Selected", 2);
         }
         else
@@ -56,10 +58,9 @@ public class shopController : MonoBehaviour, PageController
             if (userSessionManager.Instance.currentCoins >= shopItem.price)
             {
                 //GlobalAnimator.Instance.FadeInLoader();
-                int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
-                ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
-                GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
-                SuccessfullyBuy(shopItem,priceText,nameText);
+                List<object> initialData = new List<object> { shopItem,priceText,nameText};
+                Action<List<object>> onFinish = Bought;
+                PopupController.Instance.OpenPopup("character", "BoughtPopup", onFinish,initialData);
 
             }
             else
@@ -69,15 +70,32 @@ public class shopController : MonoBehaviour, PageController
             }
         }
     }
+    public void Bought(List<object> list)
+    {
+        ShopItem shopItem = (ShopItem)list[0];
+        TextMeshProUGUI priceText = (TextMeshProUGUI)list[1];
+        TextMeshProUGUI nameText = (TextMeshProUGUI)list[2];
+        int newCoins = userSessionManager.Instance.currentCoins - shopItem.price;
+        userSessionManager.Instance.currentCoins= newCoins;
+        print("new coin: " + newCoins);
+        ApiDataHandler.Instance.SetCoinsToFirebase(newCoins);
+        GlobalAnimator.Instance.ShowTextMessage(messageText, nameText.text + " Selected", 2);
+        SuccessfullyBuy(shopItem, priceText, nameText);
+    }
     public void SuccessfullyBuy(ShopItem shopItem, TextMeshProUGUI priceText, TextMeshProUGUI nameText)
     {
         //GlobalAnimator.Instance.FadeOutLoader();
         shopItem.buyed = true;
-        ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
-        string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
-        ApiDataHandler.Instance.SetShopData(jsonString);
-        priceText.text = "Buyed";
-        print("success end");
+        StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));
+        //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+
+        //string jsonString = JsonUtility.ToJson(ApiDataHandler.Instance.getShopData());
+        //ApiDataHandler.Instance.SetShopDataToFirebase(jsonString);
+
+        ApiDataHandler.Instance.SaveUserPurchaseData(shopItem.id);
+
+        userSessionManager.Instance.CheckAchievementStatus();
+        priceText.text = "Bought";
     }
     void SearchItems(string searchTerm)
     {
@@ -125,5 +143,30 @@ public class shopController : MonoBehaviour, PageController
         }
 
         return item;
+    }
+    public IEnumerator SetClotheName(string name)
+    {
+        GlobalAnimator.Instance.FadeInLoader();
+        // Build the reference path for the 'friends' node
+        string path = $"users/{FirebaseManager.Instance.user.UserId}/clothes/";
+
+        // Start deleting the friend from Firebase
+        //var deleteTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).RemoveValueAsync();
+        var dataTask = FirebaseDatabase.DefaultInstance.RootReference.Child(path).SetValueAsync(name);
+
+        // Wait until the task completes
+        yield return new WaitUntil(() => dataTask.IsCompleted);
+
+        // Check for errors
+        if (dataTask.Exception != null)
+        {
+            Debug.LogError("Error while saving clothe: " + dataTask.Exception);
+        }
+        else
+        {
+            userSessionManager.Instance.clotheName = name;
+        }
+        GlobalAnimator.Instance.FadeOutLoader();
+        Back();
     }
 }

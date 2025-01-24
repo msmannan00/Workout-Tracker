@@ -1,10 +1,12 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Storage;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class FirebaseManager : GenericSingletonClass<FirebaseManager>
 {
@@ -12,6 +14,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
     public FirebaseUser user;
     public DependencyStatus dependencyStatus = DependencyStatus.UnavilableMissing;
     public DatabaseReference databaseReference { get; private set; }
+    public StorageReference storageReference { get; private set; }
     public bool firebaseInitialized;
 
     private void Start()
@@ -31,6 +34,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
                 dependencyStatus = DependencyStatus.Available;
                 auth = FirebaseAuth.DefaultInstance;
                 databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+                storageReference = FirebaseStorage.DefaultInstance.RootReference;
                 firebaseInitialized = true;
                 user = auth.CurrentUser;
                 if (user != null)
@@ -56,7 +60,7 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         PlayerPrefs.Save();
     }
 
-    public void OnTryLogin(string email, string password, Action<string, string> onSuccess, Action<FirebaseException> onFailure)
+    public void OnTryLogin(string email, string password, Action onSuccess, Action<FirebaseException> onFailure)
     {
         print("out");
         if (!firebaseInitialized)
@@ -70,21 +74,44 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
         {
             print("in");
+            print("in");
+            print("in");
+            print("in");
+            print("in");
+            print("in");
+            print("in");
+            print("in");
+            print("in");
 
             if (task.IsCanceled || task.IsFaulted)
             {
+                print("if");
+                print("if");
+                print("if");
+                print("if");
+                print("if");
+                print("if");
+                print("if");
+                print("if");
                 print("if");
                 onFailure?.Invoke(task.Exception.GetBaseException() as FirebaseException);
             }
             else
             {
                 print("else");
+                print("else");
+                print("else");
+                print("else");
+                print("else");
+                print("else");
+                print("else");
+                print("else");
                 user = task.Result.User;
                 //OnSaveUser(email, password);
                 string username = HelperMethods.Instance.ExtractUsernameFromEmail(email);
                 string userId = user.UserId;
                 print(username + "  " + userId);
-                onSuccess?.Invoke(username, userId);
+                onSuccess?.Invoke();
             }
         });
     }
@@ -97,15 +124,37 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
             print("checking");
             if (task.IsCanceled)
             {
-                print("cancel");
                 onFailure(task.Exception);
+                return;
             }
-            else if (task.IsFaulted)
+            if (task.IsFaulted)
             {
-                print("fault");
-                onFailure(task.Exception);
+                // Handle specific error codes here
+                FirebaseException firebaseException = task.Exception?.InnerException as FirebaseException;
+                if (firebaseException != null)
+                {
+                    AuthError errorCode = (AuthError)firebaseException.ErrorCode;
+                    if (errorCode == AuthError.EmailAlreadyInUse)
+                    {
+                        // add code for sign in
+                        //Debug.Log("This email is already in use.");
+                        OnTryLogin(email, password, pCallbackSuccess, null);
+                    }
+                    else
+                    {
+                        //Debug.Log("Error checking email: " + firebaseException.Message);
+                    }
+                }
+                else
+                {
+                    // General error handling if we don't get a FirebaseException
+                    //Debug.Log("An unknown error occurred: " + task.Exception?.Message);
+                }
+                return;
             }
-            else
+
+
+            if (task.IsCompleted)
             {
                 print("create");
                 user = task.Result.User;
@@ -115,11 +164,26 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         });
     }
 
+    public void OnTryPasswordReset(string email, Action onSuccess, Action<FirebaseException> onFailure)
+    {
+        auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted|| task.IsCanceled)
+            {
+                onFailure?.Invoke(task.Exception.GetBaseException() as FirebaseException);
+                return;
+            }
+            if (task.IsCompleted)
+            {
+                onSuccess?.Invoke();
+            }
+        });
+    }
     public void OnLogout()
     {
         auth.SignOut();
-        PlayerPrefs.DeleteKey("email");
-        PlayerPrefs.DeleteKey("password");
+        user = null;
+        PlayerPrefs.DeleteAll();
     }
 
     public void OnLogoutForced()
@@ -212,30 +276,33 @@ public class FirebaseManager : GenericSingletonClass<FirebaseManager>
         {
             print("Error: " + ex.Message);
         }
-        //databaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
-        //{
-        //    if (task.IsCompleted)
-        //    {
-        //        DataSnapshot snapshot = task.Result;
-
-        //        if (snapshot.Exists)
-        //        {
-        //            // If data exists at the path, pass it to the callback
-        //            callback(snapshot);
-        //        }
-        //        else
-        //        {
-        //            // If no data exists at the path
-        //            print("No data exist"+" "+path);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //callback("Error: " + task.Exception?.Message);
-        //        print("error"+task.Exception?.Message);
-        //    }
-        //});
     }
+
+    public Task<(string,string)> FetchFriendDetails(string friendId)
+    {
+        var taskCompletionSource = new TaskCompletionSource<(string, string)>();
+        databaseReference.Child("users").Child(friendId).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+
+                 string level = snapshot.Child("CharacterLevel").Value.ToString();
+                 string badge = snapshot.Child("BadgeName").Value.ToString();
+
+                // Do something with the friend data (level and badge)
+                Debug.Log("Friend ID: " + friendId + " Level: " + level + " Badge: " + badge);
+                taskCompletionSource.SetResult((level, badge));
+
+            }
+            else
+            {
+                taskCompletionSource.SetResult(("", "")); // Return empty values if something goes wrong
+            }
+        });
+        return taskCompletionSource.Task;
+    }
+   
 
     public void OnServerInitialized()
     {

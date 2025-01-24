@@ -11,9 +11,12 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
     public TMP_InputField weight;
     public TMP_InputField rep;
     public PersonalBestDataItem _data;
+    private bool isSocial = false;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
     {
         _data = (PersonalBestDataItem)data["data"];
+        if (data.ContainsKey("social"))
+            isSocial = (bool)data["social"];
         exerciseName.text = userSessionManager.Instance.FormatStringAbc(_data.exerciseName);
         rep.text = _data.rep.ToString();
         weight.text = _data.weight.ToString() + " kg";
@@ -22,6 +25,11 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
         if (new[] { "bench press (barbell)", "squat (barbell)", "deadlifts (barbell)" }.Contains(_data.exerciseName.ToLower()))
         {
             transform.SetAsFirstSibling();
+        }
+        if (isSocial)
+        {
+            weight.interactable = false;
+            rep.interactable= false;
         }
     }
     void RepValueChange(string value)

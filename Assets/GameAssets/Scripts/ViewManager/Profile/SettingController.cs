@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Mail;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -133,7 +134,7 @@ public class SettingController : MonoBehaviour, PageController
         AudioController.Instance.OnButtonClick();
         DateTime now = DateTime.Now;
         //print(now + "    " + ApiDataHandler.Instance.GetCurrentWeekStartDate());
-        TimeSpan timeDifference = now - StreakAndCharacterManager.Instance.startOfCurrentWeek;
+        TimeSpan timeDifference = now - userSessionManager.Instance.weeklyGoalSetDate;
         if (timeDifference.TotalDays >= 14 || userSessionManager.Instance.weeklyGoal == 0)
         {
             Dictionary<string, object> mData = new Dictionary<string, object> { { "data", false } };
@@ -144,6 +145,7 @@ public class SettingController : MonoBehaviour, PageController
         {
             if (!onMessage)
             {
+                print(timeDifference.TotalDays);
                 onMessage = true;
                 GlobalAnimator.Instance.ShowTextMessage(messageText, "This can only be changed once every 2 weeks.", 2f);
                 StartCoroutine(OffMessageText(2));
@@ -151,6 +153,12 @@ public class SettingController : MonoBehaviour, PageController
         }
 
 
+    }
+    public void ContactUs()
+    {
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ContactUsScreen", null, true);
+        //string mailto = $"mailto:{"stregnthclanfitness@gmail.com"}";
+        //Application.OpenURL(mailto);
     }
     public void RPE_RIR_Popup()
     {
@@ -160,11 +168,19 @@ public class SettingController : MonoBehaviour, PageController
     public void LogOut()
     {
         FirebaseManager.Instance.OnLogout();
+        ApiDataHandler.Instance.LogOut();
+        userSessionManager.Instance.Logout();
+        PlayerPrefs.DeleteAll();
         Dictionary<string, object> mData = new Dictionary<string, object>
             {
                 { AuthKey.sAuthType, AuthConstant.sAuthTypeLogin}
             };
-        StateManager.Instance.OpenStaticScreen("auth", null, "authScreen", mData);
+        StateManager.Instance.DeleteFooter();
+        StateManager.Instance.OpenStaticScreen("auth", this.gameObject, "authScreen", mData);
+    }
+    public void Subscrition()
+    {
+        IAPManager.Instance.Subscription_Btn_Pressed();
     }
     public void TermsAndConditions()
     {
