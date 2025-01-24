@@ -20,6 +20,7 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
     public RectTransform switchButton;
     public TextMeshProUGUI switchWorkout, switchSplit;
     public Button createNewWorkout, startNewWorkout, workout, split;
+    public ScrollRect scroll;
     List<GameObject> items = new List<GameObject>();
     bool isWorkout;
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -97,7 +98,8 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
             Dictionary<string, object> mData = new Dictionary<string, object>
             {
                 { "data", templeteData },
-                {"parent",gameObject }
+                {"parent",gameObject },
+                {"scroll",scroll }
             };
 
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");

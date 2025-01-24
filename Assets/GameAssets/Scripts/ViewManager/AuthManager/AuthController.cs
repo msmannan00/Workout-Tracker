@@ -24,6 +24,8 @@ public class AuthController : MonoBehaviour, PageController
     public TextMeshProUGUI aTriggerButton;
     public GameObject aForgetPassword;
     public RectTransform aLineDevider;
+    public RectTransform togglePage;
+    public RectTransform contnueButton;
     public RectTransform agoogle;
     public RectTransform aApple;
 
@@ -46,8 +48,10 @@ public class AuthController : MonoBehaviour, PageController
             aPageToggleText2.text = "Create an account.";
             aForgetPassword.SetActive(true);
             aReEnterPassword.gameObject.SetActive(false);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), 35);
-            ChangeYPosition(aLineDevider, -16.5f);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -20);
+            ChangeYPosition(aLineDevider, -85f);
+            ChangeYPosition(togglePage, -511f);
+            ChangeYPosition(contnueButton, -588f);
             ChangeYPosition(agoogle, -86.6f);
             ChangeYPosition(aApple, -168.3f);
         }
@@ -59,8 +63,10 @@ public class AuthController : MonoBehaviour, PageController
             aPageToggleText2.text = "Log In";
             aForgetPassword.SetActive(false);
             aReEnterPassword.gameObject.SetActive(true);
-            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -38);
-            ChangeYPosition(aLineDevider, -68);
+            ChangeYPosition(aError.gameObject.GetComponent<RectTransform>(), -105f);
+            ChangeYPosition(aLineDevider, -130f);
+            ChangeYPosition(togglePage, -555f);
+            ChangeYPosition(contnueButton, -634f);
             ChangeYPosition(agoogle, -138);
             ChangeYPosition(aApple, -220);
             aPageToggleText1.gameObject.SetActive(false);

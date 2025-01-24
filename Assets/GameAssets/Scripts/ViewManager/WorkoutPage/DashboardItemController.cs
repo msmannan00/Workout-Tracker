@@ -14,6 +14,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public Image spriteImage;
     public Sprite darkTheme, lightTheme;
     public DefaultTempleteModel defaultTempleteModel;
+    public ScrollRect parentScroll;
     private Action<object> callback;
     List<TextMeshProUGUI> exerciseText=new List<TextMeshProUGUI>();
     private GameObject parent;
@@ -22,11 +23,12 @@ public class DashboardItemController : MonoBehaviour, ItemController
         this.callback = callback;
         defaultTempleteModel = (DefaultTempleteModel)data["data"];
         parent = (GameObject)data["parent"];
+        parentScroll = (ScrollRect)data["scroll"];
         workoutNameText.text = userSessionManager.Instance.FormatStringAbc(defaultTempleteModel.templeteName);
         //editWorkoutName.textComponent.text = defaultTempleteModel.templeteNotes;
         //editWorkoutName.onEndEdit.AddListener(OnNameChanged);
-        playButton.onClick.AddListener(PlayButton);
-        playButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
+        if (playButton != null) 
+            playButton.onClick.AddListener(PlayButton);
         //editButton.onClick.AddListener(EditWorkoutName);
         editButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
         editButton.onClick.AddListener(EditWorkout);
@@ -139,6 +141,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
     public void PlayButton()
     {
         callback?.Invoke(defaultTempleteModel);
+        AudioController.Instance.OnButtonClick();
         StateManager.Instance.CloseFooter();
     }
     //public void EditWorkoutName()

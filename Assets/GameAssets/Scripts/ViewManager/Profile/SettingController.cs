@@ -154,12 +154,11 @@ public class SettingController : MonoBehaviour, PageController
 
 
     }
-    public void ContactUsPopup()
+    public void ContactUs()
     {
-        string mailto = $"mailto:{"stregnthclanfitness@gmail.com"}";
-        Application.OpenURL(mailto);
-        //back = false;
-        //PopupController.Instance.OpenPopup("profile", "ContactUsPopup", OnBackCheck, null);
+        StateManager.Instance.OpenStaticScreen("profile", gameObject, "ContactUsScreen", null, true);
+        //string mailto = $"mailto:{"stregnthclanfitness@gmail.com"}";
+        //Application.OpenURL(mailto);
     }
     public void RPE_RIR_Popup()
     {
