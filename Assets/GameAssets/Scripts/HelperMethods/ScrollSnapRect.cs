@@ -111,15 +111,12 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     //------------------------------------------------------------------------
     void Update()
     {
-        print("0");
         // Check if the number of items has changed
         if (_container.childCount != _previousPageCount)
         {
-            print("1");
             // Update the page count and positions
             if (_container.childCount > 0)
             {
-                print("2");
                 _pageCount = _container.childCount;
                 SetPagePositions();
                 SetPage(startingPage);
