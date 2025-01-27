@@ -58,8 +58,8 @@ public class DashboardItemController : MonoBehaviour, ItemController
 
             // Set width, height, and pixel per unit
             RectTransform firstRectTransform = firstImageObject.GetComponent<RectTransform>();
-            firstRectTransform.sizeDelta = new Vector2(25, 25); // Set width and height as 25
-            firstImage.pixelsPerUnitMultiplier = 7.5f; // Set pixel per unit to 1.75
+            firstRectTransform.sizeDelta = new Vector2(40, 40); // Set width and height as 25
+            firstImage.pixelsPerUnitMultiplier = 4.8f; // Set pixel per unit to 1.75
 
             // Add Mask component to the first image
             firstImageObject.AddComponent<Mask>();
@@ -83,7 +83,23 @@ public class DashboardItemController : MonoBehaviour, ItemController
 
             // Set width and height for the second image
             RectTransform secondRectTransform = secondImageObject.GetComponent<RectTransform>();
-            secondRectTransform.sizeDelta = new Vector2(28, 28); // Set width and height as 28
+            secondRectTransform.sizeDelta = new Vector2(43, 43); // Set width and height as 28
+
+            // Create Overlay
+            GameObject overlay = new GameObject($"Image_{exerciseData.name}_Overlay");
+            overlay.transform.SetParent(mainParentObject.transform, false); // Parent it to the first image
+
+            // Add Image component to the second GameObject
+            Image overlayImage = overlay.AddComponent<Image>();
+            overlayImage.preserveAspect = true; // Preserve aspect ratio if needed
+
+            // Load sprite from Resources and assign to the second image
+            overlayImage.sprite = Resources.Load<Sprite>("UIAssets/Shared/Images/Rounded Corners/profile circle/profile overlay"); ;
+            overlayImage.color= new Color32(249, 249, 241, 255);
+
+            // Set width and height for the second image
+            RectTransform overlayRectTransform = overlay.GetComponent<RectTransform>();
+            overlayRectTransform.sizeDelta = new Vector2(50, 50); // Set width and height as 28
 
             // Create the TextMeshPro GameObject
             GameObject textLabelObject = new GameObject($"Exercise_{exerciseData.name}");

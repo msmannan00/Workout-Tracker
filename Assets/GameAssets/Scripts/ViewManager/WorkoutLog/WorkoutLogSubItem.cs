@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public class WorkoutLogSubItem : MonoBehaviour, ItemController
 {
@@ -215,13 +216,43 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnWeightChanged(string newWeight)
     {
+        if (newWeight.Contains("."))
+        {
+            string[] parts = newWeight.Split('.');
+
+            // Validate digits before the decimal point
+            if (parts[0].Length > 4)
+            {
+                parts[0] = parts[0].Substring(0, 4);
+            }
+
+            // Validate digits after the decimal point
+            if (parts.Length > 1 && parts[1].Length > 2)
+            {
+                parts[1] = parts[1].Substring(0, 2);
+            }
+
+            // Reassemble the input
+            newWeight = string.Join(".", parts);
+        }
+        else
+        {
+            // No decimal point, limit total input to 4 characters
+            if (newWeight.Length > 4)
+            {
+                newWeight = newWeight.Substring(0, 4);
+                print("come");
+            }
+        }
         if (float.TryParse(newWeight, out float weightValue))
         {
             exerciseModel.weight = weightValue;
+            weight.text = newWeight;
         }
         else
         {
             exerciseModel.weight = 0;
+            weight.text = "";
         }
         UpdateToggleInteractableState();
     }
