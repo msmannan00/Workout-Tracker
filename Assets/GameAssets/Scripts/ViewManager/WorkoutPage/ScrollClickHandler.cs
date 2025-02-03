@@ -83,7 +83,7 @@ public class ScrollClickHandler : MonoBehaviour, IBeginDragHandler, IEndDragHand
         {
             if (dashboardItemController != null)
             {
-                dashboardItemController.PlayButton(); // Call the button logic
+                //dashboardItemController.PlayButton(); // Call the button logic
             }
             else
             {

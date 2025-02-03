@@ -1,15 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using System;
 using UnityEngine.UI;
 using System.Linq;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using UnityEngine.TextCore.Text;
-using System.Collections;
-using UnityEngine.Networking;
+using System.IO;
 
 public class userSessionManager : GenericSingletonClass<userSessionManager>
 {
@@ -91,7 +87,16 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         removedFriends = 0;
         clotheName = "";
         profileSprite = null;
-}
+        string path = Path.Combine(Application.persistentDataPath, "lastImage.png");
+
+        // Check if the file exists
+        if (File.Exists(path))
+        {
+            // Delete the file
+            File.Delete(path);
+            Debug.Log("File deleted successfully.");
+        }
+    }
     public void OnInitialize(string pProfileUsername, string pProfileID)
     {
         this.mProfileID = pProfileID;
@@ -458,7 +463,9 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
         {
             AchievementTemplateDataItem achievementDataItem = data.achievementData[i];
             int performed = GetTotalPerformancedExerciseTime(historyModel, data.category_exercise);
-            float performedTime = (float)performed / 60;
+            print(performed);
+            float performedTime = (float)performed / 3600f;
+            print(performedTime);
             if (achievementDataItem.isCompleted)
             {
                 if (trophyImages != null)
@@ -484,7 +491,10 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             {
                 if (progressText != null && descriptionText != null)
                 {
-                    progressText.text = performedTime.ToString() + " / " + ((float)achievementDataItem.value / 60).ToString();
+                    progressText.text = performedTime % 1 == 0 ? 
+                        performedTime.ToString("0") + " / " + ((float)achievementDataItem.value / 60).ToString() : 
+                        performedTime.ToString("0.##") + " / " + ((float)achievementDataItem.value / 60).ToString();
+                    //progressText.text = performedTime.ToString("F2") + " / " + ((float)achievementDataItem.value / 60).ToString();
                     descriptionText.text = achievementDataItem.description;
                     coinText.text=achievementDataItem.coins.ToString();
                 }
@@ -774,15 +784,13 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int GetPerformancedExercisesByCategory(HistoryModel myHistory, List<string> categoryNames)
     {
         int totalCount = 0;
-        foreach (var item in categoryNames)
-        {
-            item.ToLower();
-        }
+        List<string> lowerCaseCategories = categoryNames.Select(c => c.ToLower()).ToList();
+
         foreach (HistoryTempleteModel historyTemplate in myHistory.exerciseTempleteModel)
         {
             foreach (HistoryExerciseTypeModel exerciseType in historyTemplate.exerciseTypeModel)
             {
-                if (categoryNames.Contains(SplitString(exerciseType.categoryName).ToLower()))
+                if (lowerCaseCategories.Contains(SplitString(exerciseType.categoryName).ToLower()))
                 {
                     totalCount++;
                 }
@@ -795,10 +803,8 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public int GetTotalPerformancedExerciseTime(HistoryModel myHistory, List<string> categoryNames)
     {
         int totalTime = 0;
-        foreach (var item in categoryNames)
-        {
-            item.ToLower();
-        }
+        List<string> lowerCaseCategories = categoryNames.Select(c => c.ToLower()).ToList();
+        
         // Loop through each exercise template in the history
         foreach (HistoryTempleteModel historyTemplate in myHistory.exerciseTempleteModel)
         {
@@ -806,7 +812,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
             foreach (HistoryExerciseTypeModel exerciseType in historyTemplate.exerciseTypeModel)
             {
                 // Check if the exercise category matches any category in the achievement template
-                if (categoryNames.Contains(exerciseType.categoryName.ToLower()))
+                if (lowerCaseCategories.Contains(exerciseType.categoryName.ToLower()))
                 {
                     // Loop through each exercise model and sum its time
                     foreach (HistoryExerciseModel exercise in exerciseType.exerciseModel)

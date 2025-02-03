@@ -55,6 +55,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
             // Load sprite from Resources folder and assign to the first image
             Sprite firstSprite = Resources.Load<Sprite>("UIAssets/Shared/Images/Rounded Corners/circle"); // Adjust the path
             firstImage.sprite = firstSprite;
+            firstImage.color = new Color32(236,229, 210, 255);
 
             // Set width, height, and pixel per unit
             RectTransform firstRectTransform = firstImageObject.GetComponent<RectTransform>();
@@ -111,7 +112,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
 
             // Set the size of the text box and text properties
             RectTransform textRectTransform = textLabelObject.GetComponent<RectTransform>();
-            textRectTransform.sizeDelta = new Vector2(275, 20); // Set width and height
+            textRectTransform.sizeDelta = new Vector2(240, 20); // Set width and height
             textMeshPro.text = exerciseData.name + " x " + exerciseData.exerciseModel.Count.ToString(); // Set text content
             textMeshPro.fontSize = 16;
             textMeshPro.fontStyle = FontStyles.Normal;

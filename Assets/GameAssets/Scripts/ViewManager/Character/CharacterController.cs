@@ -48,7 +48,7 @@ public class CharacterController : MonoBehaviour,PageController
     }
     public void EmotesButtonClick()
     {
-        GlobalAnimator.Instance.ShowTextMessage(messageText, "Comming Soon...", 2);
+        GlobalAnimator.Instance.ShowTextMessage(messageText, "Coming Soon...", 2);
         //StateManager.Instance.OpenStaticScreen("character", gameObject, "emotesScreen", null, true);
         //StateManager.Instance.CloseFooter();
     }

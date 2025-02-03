@@ -18,7 +18,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     public TMP_Dropdown rpe;
     public Toggle isComplete;
     public ExerciseType exerciseType;
-    public Image previousImage,dropDownArrow;
+    public Image previousImage,dropDownArrow,setBg;
     public ExerciseModel exerciseModel;
 
     //public bool timerReached; 
@@ -395,13 +395,15 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //this.callBack?.Invoke(value);
             if (value)
             {
-            AudioController.Instance.OnSetComplete();
+                AudioController.Instance.OnSetComplete();
                 isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
-            }
+                setBg.color= new Color32(255, 127, 127, 255);
+        }
             else
             {
                 isComplete.targetGraphic.color = new Color32(246, 236, 220, 255);
-            }
+            setBg.color = Color.white;
+        }
         //}
     }
     private void UpdateToggleInteractableState()
@@ -420,7 +422,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                     isComplete.interactable = (exerciseModel.time > 0 && exerciseModel.mile > 0);
                     break;
                 case ExerciseType.WeightAndReps:
-                    isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+                    isComplete.interactable = (/*exerciseModel.weight > 0 &&*/ exerciseModel.reps > 0);
                     break;
             }
             //if (exerciseType == ExerciseType.WeightAndReps)

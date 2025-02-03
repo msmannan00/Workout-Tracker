@@ -26,6 +26,7 @@ public class MeasurementController : MonoBehaviour,PageController
     public TMP_InputField rightForearm;
     public TMP_InputField leftCalf;
     public TMP_InputField rightCalf;
+    public List<Button> buttons;
 
     public List<MeasurementHistoryItem> historyItems=new List<MeasurementHistoryItem>();
     public void onInit(Dictionary<string, object> data, Action<object> callback)
@@ -46,6 +47,11 @@ public class MeasurementController : MonoBehaviour,PageController
     }
     void AddListeners()
     {
+        foreach(Button button in buttons)
+        {
+            TMP_InputField input = button.transform.parent.GetComponentInChildren<TMP_InputField>();
+            button.onClick.AddListener(() => userSessionManager.Instance.ActiveInput(input));
+        }
         saveButton.onClick.AddListener(Save);
         backButton.onClick.AddListener(Back);
         backButton.onClick.AddListener(AudioController.Instance.OnButtonClick);
