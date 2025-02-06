@@ -38,8 +38,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -27.99}
-  m_SizeDelta: {x: 0, y: -85.94}
+  m_AnchoredPosition: {x: 0, y: -7.980011}
+  m_SizeDelta: {x: 0, y: -125.96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &825877233973629561
 CanvasRenderer:
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Content: {fileID: 3356451413942550935}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 2
+  m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -143,7 +143,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5554229619279137516
 RectTransform:
   m_ObjectHideFlags: 0
@@ -161,8 +161,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 2, y: -33}
-  m_SizeDelta: {x: 67.2796, y: 67.2796}
+  m_AnchoredPosition: {x: 2, y: 4}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3688852270807401131
 CanvasRenderer:
@@ -185,14 +185,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.85490197, g: 0.20392157, b: 0.20392157, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9ad1be2ced3f32044b866f9a0903c270, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 610397ca1ef12d44782e387d2f06d927, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -427,7 +427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   workoutNameText: {fileID: 8228771854172273581}
   exerciseParent: {fileID: 3356451413942550935}
-  playButton: {fileID: 0}
+  playButton: {fileID: 3967167124217961917}
   editButton: {fileID: 3817677687655011896}
   spriteImage: {fileID: 1073455097264210998}
   darkTheme: {fileID: 21300000, guid: ddb72a0bd93c705419c78cf7f1ce01ce, type: 3}
@@ -462,7 +462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   background: {fileID: 1073455097264210998}
-  playButton: {fileID: 7426482890950774195}
+  playButton: {fileID: 0}
   character: {fileID: 0}
   xpBar: {fileID: 0}
   xpButton: {fileID: 0}
@@ -483,8 +483,7 @@ MonoBehaviour:
   inputFieldSearchIcon: []
   buttons:
   - {fileID: 4662021515260973242}
-  button2:
-  - {fileID: 4617370426625602996}
+  button2: []
   workoutLogDropdownToggle: []
   line:
   - {fileID: 1029026138725541468}
@@ -1356,10 +1355,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5554229619279137516}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
-  m_SizeDelta: {x: -45.9862, y: -45.9862}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2353130264081936975
 CanvasRenderer:
@@ -1382,7 +1381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2, g: 0.09019608, b: 0.09019608, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1433,8 +1432,8 @@ RectTransform:
   - {fileID: 5838260024978694301}
   - {fileID: 7206464736492677955}
   - {fileID: 691016211496210575}
-  - {fileID: 5554229619279137516}
   - {fileID: 2741134085084266726}
+  - {fileID: 5554229619279137516}
   m_Father: {fileID: 1590467961988058275}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -2173,9 +2172,9 @@ MonoBehaviour:
     m_Left: 25
     m_Right: 0
     m_Top: 20
-    m_Bottom: 0
+    m_Bottom: 10
   m_ChildAlignment: 0
-  m_Spacing: 10
+  m_Spacing: 25
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0

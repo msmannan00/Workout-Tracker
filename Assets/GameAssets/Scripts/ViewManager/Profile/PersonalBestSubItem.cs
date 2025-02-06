@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PersonalBestSubItem : MonoBehaviour,ItemController
 {
@@ -31,6 +32,8 @@ public class PersonalBestSubItem : MonoBehaviour,ItemController
             weight.interactable = false;
             rep.interactable= false;
         }
+        weight.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(() => userSessionManager.Instance.ActiveInput(weight));
+        rep.transform.parent.GetChild(1).GetComponent<Button>().onClick.AddListener(() => userSessionManager.Instance.ActiveInput(rep));
     }
     void RepValueChange(string value)
     {

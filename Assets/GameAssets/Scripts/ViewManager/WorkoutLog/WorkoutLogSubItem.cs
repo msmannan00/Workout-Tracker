@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public class WorkoutLogSubItem : MonoBehaviour, ItemController
 {
@@ -17,7 +18,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     public TMP_Dropdown rpe;
     public Toggle isComplete;
     public ExerciseType exerciseType;
-    public Image previousImage,dropDownArrow;
+    public Image previousImage,dropDownArrow,setBg;
     public ExerciseModel exerciseModel;
 
     //public bool timerReached; 
@@ -215,13 +216,43 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
     }
     private void OnWeightChanged(string newWeight)
     {
+        if (newWeight.Contains("."))
+        {
+            string[] parts = newWeight.Split('.');
+
+            // Validate digits before the decimal point
+            if (parts[0].Length > 4)
+            {
+                parts[0] = parts[0].Substring(0, 4);
+            }
+
+            // Validate digits after the decimal point
+            if (parts.Length > 1 && parts[1].Length > 2)
+            {
+                parts[1] = parts[1].Substring(0, 2);
+            }
+
+            // Reassemble the input
+            newWeight = string.Join(".", parts);
+        }
+        else
+        {
+            // No decimal point, limit total input to 4 characters
+            if (newWeight.Length > 4)
+            {
+                newWeight = newWeight.Substring(0, 4);
+                print("come");
+            }
+        }
         if (float.TryParse(newWeight, out float weightValue))
         {
             exerciseModel.weight = weightValue;
+            weight.text = newWeight;
         }
         else
         {
             exerciseModel.weight = 0;
+            weight.text = "";
         }
         UpdateToggleInteractableState();
     }
@@ -364,13 +395,15 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
         //this.callBack?.Invoke(value);
             if (value)
             {
-            AudioController.Instance.OnSetComplete();
+                AudioController.Instance.OnSetComplete();
                 isComplete.targetGraphic.color = new Color32(255, 182, 193, 255);
-            }
+                setBg.color= new Color32(255, 127, 127, 255);
+        }
             else
             {
                 isComplete.targetGraphic.color = new Color32(246, 236, 220, 255);
-            }
+            setBg.color = Color.white;
+        }
         //}
     }
     private void UpdateToggleInteractableState()
@@ -389,7 +422,7 @@ public class WorkoutLogSubItem : MonoBehaviour, ItemController
                     isComplete.interactable = (exerciseModel.time > 0 && exerciseModel.mile > 0);
                     break;
                 case ExerciseType.WeightAndReps:
-                    isComplete.interactable = (exerciseModel.weight > 0 && exerciseModel.reps > 0);
+                    isComplete.interactable = (/*exerciseModel.weight > 0 &&*/ exerciseModel.reps > 0);
                     break;
             }
             //if (exerciseType == ExerciseType.WeightAndReps)

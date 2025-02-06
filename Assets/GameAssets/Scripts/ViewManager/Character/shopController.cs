@@ -36,6 +36,10 @@ public class shopController : MonoBehaviour, PageController
                 priceText.text=itemData.price.ToString();
             }
             item.GetComponent<Button>().onClick.AddListener(() => BuyItemButton(itemData, priceText,nameText));
+            if (itemData.price == 0)
+            {
+                priceText.text = itemData.price.ToString();
+            }
         }
     }
     private void Update()
@@ -47,6 +51,13 @@ public class shopController : MonoBehaviour, PageController
     }
     public void BuyItemButton(ShopItem shopItem,TextMeshProUGUI priceText,TextMeshProUGUI nameText)
     {
+        if (shopItem.price == 0)
+        {
+            StartCoroutine(SetClotheName("no clothes"));
+            //ApiDataHandler.Instance.SetCloths(shopItem.itemName.ToLower());
+            GlobalAnimator.Instance.ShowTextMessage(messageText, "Clear Clothe", 2);
+            return;
+        }
         if (shopItem.buyed)
         {
             StartCoroutine(SetClotheName(shopItem.itemName.ToLower()));

@@ -10,7 +10,7 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
     public TextMeshProUGUI messageText;
     public Button saveButton, discardButton, fade;
     public GameObject workoutScreen;
-    private bool isTemplateCreator;
+    public bool isTemplateCreator;
     private DefaultTempleteModel modifiedModel;
     private HistoryTempleteModel historyData;
     Action<List<object>> callback;
@@ -55,12 +55,12 @@ public class FinishWorkoutPopup : MonoBehaviour,IPrefabInitializer
         }
         if (isTemplateCreator)
         {
-            modifiedModel.exerciseTemplete.RemoveAll(model => model.exerciseModel.Count == 0);
-            if (modifiedModel.exerciseTemplete.Count > 0)
-            {
-                ApiDataHandler.Instance.AddExerciseTemplate(modifiedModel,ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Count);
-                ApiDataHandler.Instance.AddItemToTemplateData(modifiedModel);
-            }
+            //modifiedModel.exerciseTemplete.RemoveAll(model => model.exerciseModel.Count == 0);
+            //if (modifiedModel.exerciseTemplete.Count > 0)
+            //{
+            //    ApiDataHandler.Instance.AddExerciseTemplate(modifiedModel,ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Count);
+            //    ApiDataHandler.Instance.AddItemToTemplateData(modifiedModel);
+            //}
         }
         
         //int index = GetIndexByTempleteName(modifiedModel.templeteName);

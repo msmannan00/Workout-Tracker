@@ -186,7 +186,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
             }
             else
             {
-                CreateRandomDefaultEntry();
+                //CreateRandomDefaultEntry();
 
                 Debug.Log("No data found at the path.");
             }
@@ -907,6 +907,7 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
                 if (data.HasChild("profileImageUrl"))
                 {
                     string profileImageUrl = data.Child("profileImageUrl").Value.ToString();
+                    userSessionManager.Instance.profileImageUrl = profileImageUrl;
                     print(profileImageUrl);
                     StartCoroutine(LoadImageFromUrl(profileImageUrl, (loadedSprite) =>
                     {
@@ -1091,6 +1092,9 @@ public class ApiDataHandler : GenericSingletonClass<ApiDataHandler>
     }
     public TemplateData getTemplateData()
     {
+        if(this.templateData == null)
+            return  new TemplateData();
+
         return this.templateData;
     }
    public ShopModel getShopData()

@@ -11,6 +11,8 @@ public class DemoScript : MonoBehaviour {
     [Header("References")]
     public Image frame;
 
+    public GameObject loading;
+
     private string imagePath;
 
     void Start()
@@ -20,6 +22,11 @@ public class DemoScript : MonoBehaviour {
 
         // Load the last image if it exists
         LoadLastImage();
+
+        //if (userSessionManager.Instance.profileSprite != null)
+        //{
+           
+        //}
     }
 
     // This function is called by the Button
@@ -101,6 +108,7 @@ public class DemoScript : MonoBehaviour {
         else
         {
             Debug.Log("No previously saved image found.");
+            StartCoroutine(CheckSpriteDownloaded(userSessionManager.Instance.profileSprite, frame, loading));
         }
     }
 
@@ -162,5 +170,29 @@ public class DemoScript : MonoBehaviour {
         userRef.SetValueAsync(url);
 
         GlobalAnimator.Instance.FadeOutLoader();
+    }
+
+    public IEnumerator CheckSpriteDownloaded(Sprite sprite, Image image, GameObject loading)
+    {
+        print("efrwefrwe");
+        while (sprite == null)
+        {
+            if (string.IsNullOrEmpty(userSessionManager.Instance.profileImageUrl))
+                yield break;
+            if(loading!=null)
+                loading.SetActive(true);
+            print("dfgsrgrg");
+
+            yield return new WaitForSeconds(3);
+        }
+        print("ewtrevbf");
+
+        if (loading != null)
+            loading.SetActive(false);
+        image.sprite = sprite;
+        image.rectTransform.anchoredPosition = new Vector2(0, 0);
+        image.rectTransform.sizeDelta = new Vector2(90, 90);
+        RectTransform mask = image.transform.parent.GetComponent<RectTransform>();
+        userSessionManager.Instance.FitImage(image, mask);
     }
 }

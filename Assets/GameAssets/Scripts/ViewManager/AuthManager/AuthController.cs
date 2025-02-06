@@ -482,22 +482,16 @@ public class AuthController : MonoBehaviour, PageController
             FirebaseManager.Instance.OnTryRegisterNewAccount(this.aUsername.text, this.aPassword.text, callbackSuccess, callbackFailure);
         }
     }
-    private void OnSignInSuccess(string userId)
-    {
-        GlobalAnimator.Instance.FadeOutLoader();
-        userSessionManager.Instance.OnInitialize(userId, aUsername.text);
-        onSignIn();
-    }
 
-    private void OnSignInFailure(string error)
-    {
-        GlobalAnimator.Instance.FadeOutLoader();
-        GlobalAnimator.Instance.FadeIn(aError.gameObject);
-        aError.text = error; // You can customize the error message here.
-    }
 
     public void OnForgotPassword()
     {
+        if (aUsername.text == "")
+        {
+            aError.text = "Invalid or emtpy email";
+            GlobalAnimator.Instance.FadeIn(aError.gameObject);
+            return;
+        }
         Action callbackSuccess = () =>
         {
             Action callbackSuccess = () =>
@@ -514,23 +508,32 @@ public class AuthController : MonoBehaviour, PageController
             alertController.InitController("Reset password instructions have been sent to your email address", pCallbackSuccess: callbackSuccess, pTrigger: "Open Mail");
             GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
         };
+        Action<FirebaseException> callbackFailure = (pError) =>
+        {
+            GlobalAnimator.Instance.FadeOutLoader();
+            GlobalAnimator.Instance.FadeIn(aError.gameObject);
+            string errorMessage = pError?.InnerException != null
+                ? pError.InnerException.Message
+                : pError?.Message ?? "An unknown error occurred.";
+            aError.text = ErrorManager.Instance.getTranslateError(errorMessage);
+            GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
+            GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
+            alertsContainer.transform.SetAsLastSibling();
+            GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
+            AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
+            alertController.InitController("Email address was not found in our database", pTrigger: "Continue", pHeader: "Request Error");
+            GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
+        };
+        GlobalAnimator.Instance.FadeInLoader();
+        FirebaseManager.Instance.OnTryPasswordReset(aUsername.text, callbackSuccess, callbackFailure);
 
-        //Action<PlayFabError> callbackFailure = (pError) =>
-        //{
-        //    GlobalAnimator.Instance.FadeOutLoader();
-        //    GlobalAnimator.Instance.FadeIn(aError.gameObject);
-        //    aError.text = ErrorManager.Instance.getTranslateError(pError.Error.ToString());
 
-        //    GameObject alertPrefab = Resources.Load<GameObject>("Prefabs/alerts/alertFailure");
-        //    GameObject alertsContainer = GameObject.FindGameObjectWithTag("alerts");
-        //    alertsContainer.transform.SetAsLastSibling();
-        //    GameObject instantiatedAlert = Instantiate(alertPrefab, alertsContainer.transform);
-        //    AlertController alertController = instantiatedAlert.GetComponent<AlertController>();
-        //    alertController.InitController("Email address was not found in out database", pTrigger: "Continue", pHeader: "Request Error");
-        //    GlobalAnimator.Instance.AnimateAlpha(instantiatedAlert, true);
-        //};
-        //GlobalAnimator.Instance.FadeInLoader();
-        //aPlayFabManager.InitiatePasswordRecovery(aUsername.text, callbackSuccess, callbackFailure);
+
+
+
+
+        
+
     }
 
 

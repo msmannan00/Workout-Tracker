@@ -18,7 +18,7 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
     Action<object> callback;
     bool isWorkoutLog;
     public bool isTemplateCreator;
-    List<HistoryExerciseModel> exerciseHistory;
+    public List<HistoryExerciseModel> exerciseHistory;
     public DefaultTempleteModel templeteModel;
     public List<WorkoutLogSubItem> workoutLogSubItems;
     //InputFieldManager inputFieldManager;
@@ -181,26 +181,26 @@ public class workoutLogScreenDataModel : MonoBehaviour, ItemController
                 }
             }
         }
-        switch (type)
-        {
-            case ExerciseType.RepsOnly:
-                exerciseDataList = exerciseDataList
-                .OrderBy(e => e.reps)
-                .ToList();
-                break;
-            case ExerciseType.TimeBased:
-                exerciseDataList = exerciseDataList
-                .OrderBy(e => e.time)
-                .ToList();
-                break;
-            case ExerciseType.TimeAndMiles:
-                break;
-            case ExerciseType.WeightAndReps:
-                exerciseDataList = exerciseDataList
-                .OrderByDescending(e => e.weight * e.reps)
-                .ToList();
-                break;
-        }
+        //switch (type)
+        //{
+        //    case ExerciseType.RepsOnly:
+        //        exerciseDataList = exerciseDataList
+        //        .OrderBy(e => e.reps)
+        //        .ToList();
+        //        break;
+        //    case ExerciseType.TimeBased:
+        //        exerciseDataList = exerciseDataList
+        //        .OrderBy(e => e.time)
+        //        .ToList();
+        //        break;
+        //    case ExerciseType.TimeAndMiles:
+        //        break;
+        //    case ExerciseType.WeightAndReps:
+        //        exerciseDataList = exerciseDataList
+        //        .OrderByDescending(e => e.weight * e.reps)
+        //        .ToList();
+        //        break;
+        //}
         return exerciseDataList;
     }
 
