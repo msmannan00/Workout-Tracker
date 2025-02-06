@@ -133,7 +133,7 @@ public class DashboardItemController : MonoBehaviour, ItemController
         }
         
         transform.SetSiblingIndex(transform.parent.childCount - 1);
-        if (exerciseParent.childCount < 8)
+        if (exerciseParent.childCount < 7)
         {
             GetComponentInChildren<ScrollRect>().enabled = false;
         }

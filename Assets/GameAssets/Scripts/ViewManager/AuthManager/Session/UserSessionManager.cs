@@ -27,6 +27,7 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     public string clotheName;
     public bool badgeChange;
     public Sprite profileSprite;
+    public string profileImageUrl;
     public string gifsPath = "gifs";
     public List<AchievementTemplateDataItem> completedItemsInSingleCheck = new List<AchievementTemplateDataItem>();
     public List<string> completedItemsTitles = new List<string>();

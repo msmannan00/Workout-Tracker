@@ -23,10 +23,10 @@ public class DemoScript : MonoBehaviour {
         // Load the last image if it exists
         LoadLastImage();
 
-        if (userSessionManager.Instance.profileSprite != null)
-        {
-            CheckSpriteDownloaded(userSessionManager.Instance.profileSprite, frame, loading);
-        }
+        //if (userSessionManager.Instance.profileSprite != null)
+        //{
+           
+        //}
     }
 
     // This function is called by the Button
@@ -108,6 +108,7 @@ public class DemoScript : MonoBehaviour {
         else
         {
             Debug.Log("No previously saved image found.");
+            StartCoroutine(CheckSpriteDownloaded(userSessionManager.Instance.profileSprite, frame, loading));
         }
     }
 
@@ -173,12 +174,19 @@ public class DemoScript : MonoBehaviour {
 
     public IEnumerator CheckSpriteDownloaded(Sprite sprite, Image image, GameObject loading)
     {
+        print("efrwefrwe");
         while (sprite == null)
         {
+            if (string.IsNullOrEmpty(userSessionManager.Instance.profileImageUrl))
+                yield break;
             if(loading!=null)
                 loading.SetActive(true);
+            print("dfgsrgrg");
+
             yield return new WaitForSeconds(3);
         }
+        print("ewtrevbf");
+
         if (loading != null)
             loading.SetActive(false);
         image.sprite = sprite;

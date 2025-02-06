@@ -9,13 +9,8 @@ using UnityEngine.UI;
 
 public class DashboardController : MonoBehaviour, PageController, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    //public List<TextMeshProUGUI> headingTexts;
-    //public TextMeshProUGUI headingColorText;
-    //public List<Image> footerButtonImages;
-    //public List<Image> headerButtonImages;
-    //public GameObject bottomMiddelObject;
+    public GameObject noWorkoutMessage,noResultMessage;
     public TMP_InputField searchInputField;
-    //public Image searchIcon1, searchIcon2, topButtonBar;
     public Transform content;
     public RectTransform switchButton;
     public TextMeshProUGUI switchWorkout, switchSplit;
@@ -92,6 +87,17 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
         {
             Destroy(child.gameObject);
         }
+        if (ApiDataHandler.Instance.getTemplateData().exerciseTemplete.Count == 0)
+        {
+            scroll.gameObject.SetActive(false);
+            noWorkoutMessage.SetActive(true);
+            noResultMessage.SetActive(false);
+        }
+        else
+        {
+            noWorkoutMessage.SetActive(false);
+            noResultMessage.SetActive(false);
+        }
         foreach (var exercise in ApiDataHandler.Instance.getTemplateData().exerciseTemplete)
         {
             DefaultTempleteModel templeteData = exercise;
@@ -136,6 +142,7 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
         TemplateData exerciseData = ApiDataHandler.Instance.getTemplateData();
 
         bool showAll = string.IsNullOrEmpty(filter);
+        bool foundMatch = false;
 
         foreach (DefaultTempleteModel template in exerciseData.exerciseTemplete)
         {
@@ -148,7 +155,9 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
             {
                 continue;
             }
-
+            foundMatch = true;
+            noResultMessage.SetActive(false);
+            noWorkoutMessage.SetActive(false);
             // If a match is found, spawn the dashboard prefab
             GameObject exercisePrefab = Resources.Load<GameObject>("Prefabs/dashboard/dashboardDataModel");
             GameObject newExerciseObject = Instantiate(exercisePrefab, content);
@@ -157,14 +166,18 @@ public class DashboardController : MonoBehaviour, PageController, IBeginDragHand
             Dictionary<string, object> initData = new Dictionary<string, object>
             {
                 { "data", template },
-                {"parent",gameObject }
+                {"parent",gameObject },
+                {"scroll",scroll }
             };
 
             // Initialize the DashboardItemController
             DashboardItemController itemController = newExerciseObject.GetComponent<DashboardItemController>();
             itemController.onInit(initData, StartEmptyWorkoutWithTemplate);
-
-
+        }
+        if (!foundMatch)
+        {
+            noResultMessage.SetActive(true);
+            noWorkoutMessage.SetActive(false);
         }
     }
  
