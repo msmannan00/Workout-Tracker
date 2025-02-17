@@ -10,6 +10,7 @@ public class LevelAndStreakPopup : MonoBehaviour, IPrefabInitializer
     public TextMeshProUGUI descriptionText;
     public ParticleSystem particles;
     public GameObject coins;
+    public TextMeshProUGUI coinText;
     bool goalComplete;
     public void InitPrefab(Action<List<object>> onFinish, List<object> data)
     {
@@ -19,6 +20,10 @@ public class LevelAndStreakPopup : MonoBehaviour, IPrefabInitializer
         if (goalComplete)
         {
             coins.SetActive(true);
+            if (IAPManager.Instance.isSubscripted)
+                coinText.text = "+10";
+            else
+                coinText.text = "0";
             Invoke("PlayParticle", 0.5f);
         }
         else

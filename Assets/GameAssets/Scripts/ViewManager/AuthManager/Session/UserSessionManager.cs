@@ -914,9 +914,12 @@ public class userSessionManager : GenericSingletonClass<userSessionManager>
     {
         lock (coinLock)
         {
-            this.currentCoins += coins;
-            print("set coins: " + currentCoins);
-            ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+            if (IAPManager.Instance.isSubscripted)
+            {
+                this.currentCoins += coins;
+                print("set coins: " + currentCoins);
+                ApiDataHandler.Instance.SetCoinsToFirebase(currentCoins);
+            }
         }
     }
     public void SaveCompletedAchievementToFirebase(string achievementId,string itemId)

@@ -7,6 +7,7 @@ using Assets.SimpleGoogleSignIn.Scripts;
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
+using System.Text.RegularExpressions;
 
 public class AuthController : MonoBehaviour, PageController
 {
@@ -389,6 +390,18 @@ public class AuthController : MonoBehaviour, PageController
 
     public void OnTrigger()
     {
+        if (aUsername.text == "")
+        {
+            aError.text = "Invalid or emtpy email";
+            GlobalAnimator.Instance.FadeIn(aError.gameObject);
+            return;
+        }
+        else if (aPassword.text.Length < 8)
+        {
+            aError.text = "Password: minimum 8 characters";
+            aError.gameObject.SetActive(true);
+            return;
+        }
         AudioController.Instance.OnButtonClick();
         if (this.mAuthType == AuthConstant.sAuthTypeLogin)
         {
@@ -437,6 +450,12 @@ public class AuthController : MonoBehaviour, PageController
         }
         else if (this.mAuthType == AuthConstant.sAuthTypeSignup)
         {
+            if (!IsPasswordValid(aPassword.text))
+            {
+                aError.text = "Password must include digit, uppercase and lowercase";
+                aError.gameObject.SetActive(true);
+                return;
+            }
             if (aPassword.text != aReEnterPassword.text)
             {
                 aError.text = "Password does't match";
@@ -536,7 +555,14 @@ public class AuthController : MonoBehaviour, PageController
 
     }
 
+    public bool IsPasswordValid(string password)
+    {
+        bool hasNumber = Regex.IsMatch(password, @"\d");       // Checks for a digit (0-9)
+        bool hasLower = Regex.IsMatch(password, @"[a-z]");     // Checks for a lowercase letter (a-z)
+        bool hasUpper = Regex.IsMatch(password, @"[A-Z]");     // Checks for an uppercase letter (A-Z)
 
+        return hasNumber && hasLower && hasUpper;
+    }
 
     public void OnSignGmail()
     {
