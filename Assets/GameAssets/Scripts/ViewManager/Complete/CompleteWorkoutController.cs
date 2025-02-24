@@ -12,6 +12,7 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
     public TextMeshProUGUI dateText;
     public TextMeshProUGUI totalTimeText;
     public TextMeshProUGUI totalWeightText;
+    public TextMeshProUGUI coinText;
     public Transform content;
     public ParticleSystem particleComplete;
     public GameObject workoutScreen;
@@ -65,6 +66,10 @@ public class CompleteWorkoutController : MonoBehaviour, IPrefabInitializer
             }
         }
         StartCoroutine(ParticleAndCoinWait());
+        if (IAPManager.Instance.isSubscripted)
+            coinText.text = "+5";
+        else
+            coinText.text = "0";
         //Invoke("onParticleSystem", 0.5f);
         //Destroy(workoutScreen);
     }

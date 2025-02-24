@@ -169,16 +169,16 @@ public class IAPManager : GenericSingletonClass<IAPManager>, IDetailedStoreListe
                 SetupBuilder();
             }
         }
-        else
-        {
-            if (check)
-            {
-                check = false;
-                noInternet.transform.DOScale(1, 2).SetEase(Ease.OutBounce).OnComplete(() =>
-                noInternet.transform.DOScale(0, 1).SetEase(Ease.Linear).OnComplete(() =>
-                check = true));
-            }
-        }
+        //else
+        //{
+        //    if (check)
+        //    {
+        //        check = false;
+        //        noInternet.transform.DOScale(1, 2).SetEase(Ease.OutBounce).OnComplete(() =>
+        //        noInternet.transform.DOScale(0, 1).SetEase(Ease.Linear).OnComplete(() =>
+        //        check = true));
+        //    }
+        //}
     }
 
     #endregion
@@ -275,48 +275,6 @@ public class IAPManager : GenericSingletonClass<IAPManager>, IDetailedStoreListe
         print("purchase failed" + failureDescription);
     }
     #endregion
-
-
-    #region extra 
-
-
-
-    [Header("Non Consumable")]
-    public GameObject removedButton;
-    public GameObject removeAdsButton;
-
-    public bool simulateAskToBuy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    void RemoveAds()
-    {
-        DisplayAds(false);
-    }
-    void ShowAds()
-    {
-        DisplayAds(true);
-        print("ded");
-    }
-    void DisplayAds(bool x)
-    {
-        if (!x)
-        {
-            removedButton.SetActive(true);
-            removeAdsButton.SetActive(false);
-            PlayerPrefs.SetInt("Remove Ads", 1);
-            print(PlayerPrefs.GetInt("Remove Ads"));
-            //FindObjectOfType<AdmobAdsScript>().DestroyBannerAd();
-        }
-
-    }
-
-
-
-
-
-
-
-    #endregion
-
 }
 
 

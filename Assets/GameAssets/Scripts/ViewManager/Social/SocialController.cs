@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class SocialController : MonoBehaviour,PageController
@@ -157,6 +158,10 @@ public class SocialController : MonoBehaviour,PageController
             if (snapshot.HasChild("profileImageUrl"))
             {
                 friendDetails.profileImageUrl = snapshot.Child("profileImageUrl").Value.ToString();
+                StartCoroutine(LoadImageFromUrl(friendDetails.profileImageUrl, (loadedSprite) => {
+                    // This callback will receive the newly loaded sprite
+                    friendDetails.profileImage = loadedSprite;
+                }));
             }
 
             ApiDataHandler.Instance.getAllFriendDetails().friendData.Add(friendDetails);
@@ -190,5 +195,26 @@ public class SocialController : MonoBehaviour,PageController
         GameObject exerciseObject = Instantiate(exercisePrefab, content);
         exerciseObject.GetComponent<SocialDataModel>().onInit(mData, null);
         noFriendText.gameObject.SetActive(false);
+    }
+
+    public IEnumerator LoadImageFromUrl(string imageUrl, Action<Sprite> onImageLoaded)
+    {
+        print("loading start");
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(imageUrl);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            Sprite newSprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            print("image loaded");
+            onImageLoaded?.Invoke(newSprite);
+        }
+        else
+        {
+            print("not load image");
+            Debug.LogError("Failed to load image from URL");
+        }
+        print("complete loading");
     }
 }
